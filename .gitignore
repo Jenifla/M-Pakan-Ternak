@@ -1,0 +1,26 @@
+# Ignore node_modules
+/node_modules
+
+# Ignore vendor directory
+/vendor
+
+# Ignore environment files
+.env
+
+# Ignore storage and log files
+/storage/*.key
+/storage/logs
+/storage/framework/sessions
+/storage/framework/views
+/storage/framework/cache
+
+# Ignore compiled files
+/public/storage
+
+# Ignore IDE config files
+.idea
+.vscode
+
+# Ignore npm and yarn logs
+npm-debug.log
+yarn-error.log
