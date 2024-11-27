@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use DB;
 use Auth;
 use Hash;
+use PDF;
 use App\User;
 use Newsletter;
 use App\Models\Cart;
@@ -30,12 +31,14 @@ class FrontendController extends Controller
         $banners=Banner::where('status','active')->limit(3)->orderBy('id','DESC')->get();
         // return $banner;
         $products=Product::with('gambarProduk')->where('status','active')->orderBy('id','DESC')->limit(8)->get();
+        $productsmost=Product::with('gambarProduk')->where('status','active')->orderBy('id','DESC')->get();
         $category=Category::where('status','active')->where('is_parent',1)->orderBy('title','ASC')->get();
         // return $category;
         return view('frontend.index')
                 ->with('posts',$posts)
                 ->with('banners',$banners)
                 ->with('product_lists',$products)
+                ->with('product_most',$productsmost)
                 ->with('category_lists',$category);
     }   
 
@@ -52,12 +55,16 @@ class FrontendController extends Controller
     public function accountorder()
     {
         // Mengambil data order dengan relasi carts dan product menggunakan eager loading
-        $orders = Order::with(['cart.product.gambarProduk'])
+        $orders = Order::with(['cart.product.gambarProduk', 'cancel'])
                         ->where('user_id', auth()->user()->id)
                         ->orderBy('id', 'DESC')
-                        ->paginate(10);
+                        ->get();
+        foreach ($orders as $order) {
+            $order->paymentDeadline = date('Y-m-d H:i:s', strtotime($order->updated_at . ' + 24 hours'));
+            $order->shippedDeadline = date('Y-m-d', strtotime($order->updated_at . ' + 3 days'));
+        }
 
-        return view('frontend.pages.account.order')->with('orders', $orders);
+        return view('frontend.pages.account.order', compact('orders'));
     }
 
     // public function orderShow($id)
@@ -71,12 +78,49 @@ class FrontendController extends Controller
         $order=Order::with(['payment', 'user', 'cart.product.gambarProduk'])->find($id);
         return view('frontend.pages.account.detailorder')->with('order',$order);
     }
+    public function invoice(Request $request){
+        $order=Order::getAllOrder($request->id);
+        // return $order;
+        $file_name=$order->order_number.'-'.$order->first_name.'.pdf';
+        // return $file_name;
+        $pdf=PDF::loadview('frontend.pages.account.invoice',compact('order'));
+        return $pdf->download($file_name);
+    }
     public function accountaddress(){
         return view('frontend.pages.account.address');
     }
     public function accountdetail(){
-        return view('frontend.pages.account.myaccount');
+        $user = Auth::user();
+        return view('frontend.pages.account.myaccount', compact('user'));
     }
+
+    public function accountUpdate(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . Auth::id(),
+            'no_hp' => 'required|regex:/^62[0-9]{8,15}$/',
+            'password' => 'nullable|string|min:8', // Password lama (opsional untuk verifikasi)
+            'npassword' => 'nullable|string|min:8|confirmed', // Baru + konfirmasi
+        ]);
+
+        $user = Auth::user();
+
+        // Update data pengguna
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->no_hp = $request->input('no_hp');
+
+        // Perbarui password hanya jika kolom password baru diisi
+        if ($request->filled('npassword')) {
+            $user->password = Hash::make($request->input('npassword')); // Hash password baru
+        }
+
+        $user->save();
+
+        return redirect()->route('account-dash')->with('success', 'Profil berhasil diperbarui.');
+    }
+
 
     public function aboutUs(){
         return view('frontend.pages.about-us');
@@ -236,28 +280,41 @@ class FrontendController extends Controller
 
     
     public function productCat(Request $request){
-        $products=Category::getProductByCat($request->slug);
-        // return $request->slug;
-        $recent_products=Product::where('status','active')->orderBy('id','DESC')->limit(3)->get();
-
+        $category = Category::with('products')->where('slug', $request->slug)->first();
+        // Paginasi produk berdasarkan kategori
+        $products = $category->products()->paginate(10);
+    
+        $recent_products = Product::where('status', 'active')->orderBy('id', 'DESC')->limit(3)->get();
+    
         if(request()->is('e-shop.loc/product-grids')){
-            return view('frontend.pages.product-grids')->with('products',$products->products)->with('recent_products',$recent_products);
+            return view('frontend.pages.product-grids', [
+                'products' => $products, // Ambil produk dari paginasi
+                'recent_products' => $recent_products
+            ]);
         }
         else{
-            return view('frontend.pages.product-lists')->with('products',$products->products)->with('recent_products',$recent_products);
+            return view('frontend.pages.product-lists', [
+                'products' => $products, // Ambil produk dari paginasi
+                'recent_products' => $recent_products
+            ]);
         }
-
     }
+    
+    
     public function productSubCat(Request $request){
-        $products=Category::getProductBySubCat($request->sub_slug);
+        // $products=Category::getProductBySubCat($request->sub_slug);
+
+        $category = Category::with('sub_products')->where('slug', $request->sub_slug)->first();
+
+        $products = $category->sub_products()->paginate(10);
         // return $products;
         $recent_products=Product::where('status','active')->orderBy('id','DESC')->limit(3)->get();
 
         if(request()->is('e-shop.loc/product-grids')){
-            return view('frontend.pages.product-grids')->with('products',$products->sub_products)->with('recent_products',$recent_products);
+            return view('frontend.pages.product-grids')->with(['products'=> $products, 'recent_products'=>$recent_products]);
         }
         else{
-            return view('frontend.pages.product-lists')->with('products',$products->sub_products)->with('recent_products',$recent_products);
+            return view('frontend.pages.product-lists')->with(['products'=> $products, 'recent_products'=>$recent_products]);
         }
 
     }
@@ -400,6 +457,7 @@ class FrontendController extends Controller
         $this->validate($request,[
             'name'=>'string|required|min:2',
             'email'=>'string|required|unique:users,email',
+            'no_hp'=>'string|required|regex:/^62[0-9]{8,15}$/',
             'password'=>'required|min:6|confirmed',
         ]);
         $data=$request->all();
@@ -419,6 +477,7 @@ class FrontendController extends Controller
         return User::create([
             'name'=>$data['name'],
             'email'=>$data['email'],
+            'no_hp'=>$data['no_hp'],
             'password'=>Hash::make($data['password']),
             'status'=>'active'
             ]);

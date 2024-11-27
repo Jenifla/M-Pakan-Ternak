@@ -33,10 +33,16 @@ class HomeController extends Controller
         return view('user.index');
     }
 
+    // public function profile(){
+    //     $profile=Auth()->user();
+    //     // return $profile;
+    //     return view('user.users.profile')->with('profile',$profile);
+    // }
+
     public function profile(){
         $profile=Auth()->user();
         // return $profile;
-        return view('user.users.profile')->with('profile',$profile);
+        return view('frontend.pages.account.myaccount')->with('profile',$profile);
     }
 
     public function profileUpdate(Request $request,$id){

@@ -15,10 +15,10 @@
       <!-- Nav Tabs -->
       <ul class="nav nav-tabs" id="orderTab" role="tablist">
         <li class="nav-item">
-            <a class="nav-link active" id="new-orders-tab" data-toggle="tab" href="#new-orders" role="tab" aria-controls="new-orders" aria-selected="true">All Orders</a>
+            <a class="nav-link show active" id="all-orders-tab" data-toggle="tab" href="#all-orders" role="tab" aria-controls="all-orders" aria-selected="true">All Orders</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="processing-orders-tab" data-toggle="tab" href="#processing-orders" role="tab" aria-controls="processing-orders" aria-selected="false">New Orders</a>
+            <a class="nav-link" id="new-orders-tab" data-toggle="tab" href="#new-orders" role="tab" aria-controls="new-orders" aria-selected="false">New Orders</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" id="topay-orders-tab" data-toggle="tab" href="#topay-orders" role="tab" aria-controls="topay-orders" aria-selected="false">To Pay</a>
@@ -40,23 +40,38 @@
 
     <div class="tab-content">
       <!-- New Orders Table -->
-      <div class="tab-pane fade show active" id="new-orders" role="tabpanel" aria-labelledby="new-orders-tab">
-          @include('backend.order.new_orders', ['order' => $newOrders])
+      <div class="tab-pane fade show active" id="all-orders" role="tabpanel" aria-labelledby="all-orders-tab">
+        @include('backend.order.all_orders', ['order' => $allOrders])
       </div>
 
-      <!-- Processing Orders Table -->
+      <!-- New Orders Table -->
+      <div class="tab-pane fade" id="new-orders" role="tabpanel" aria-labelledby="new-orders-tab">
+        @include('backend.order.new_orders', ['order' => $newOrders])
+    </div>
+
+      <!-- To Pay Orders Table -->
       <div class="tab-pane fade" id="topay-orders" role="tabpanel" aria-labelledby="topay-orders-tab">
           @include('backend.order.topay_orders', ['order' => $topayOrders])
       </div>
 
-      <!-- Delivered Orders Table -->
+      <!-- To Ship Orders Table -->
       <div class="tab-pane fade" id="toship-orders" role="tabpanel" aria-labelledby="toship-orders-tab">
           @include('backend.order.toship_orders', ['order' => $toshipOrders])
       </div>
 
-      <!-- Canceled Orders Table -->
+      <!-- To Receive Orders Table -->
       <div class="tab-pane fade" id="toreceive-orders" role="tabpanel" aria-labelledby="toreceive-orders-tab">
           @include('backend.order.toreceive_orders', ['order' => $toreceiveOrders])
+      </div>
+
+      <!-- Completed Orders Table -->
+      <div class="tab-pane fade" id="completed-orders" role="tabpanel" aria-labelledby="completed-orders-tab">
+        @include('backend.order.complete_orders', ['order' => $completedOrders])
+      </div>
+
+      <!-- Canceled Orders Table -->
+      <div class="tab-pane fade" id="canceled-orders" role="tabpanel" aria-labelledby="canceled-orders-tab">
+        @include('backend.order.cancel_orders', ['order' => $cancelOrders])
       </div>
   </div>
     
@@ -132,9 +147,7 @@
   </style>
 @endpush
 
-@push('scripts')
-
-  <!-- Page level plugins -->
+{{-- @push('scripts')
   <script src="{{asset('backend/vendor/datatables/jquery.dataTables.min.js')}}"></script>
   <script src="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
@@ -147,7 +160,7 @@
             "columnDefs":[
                 {
                     "orderable":false,
-                    "targets":[8]
+                    "targets":[5]
                 }
             ]
         } );
@@ -187,4 +200,4 @@
           })
       })
   </script>
-@endpush
+@endpush --}}

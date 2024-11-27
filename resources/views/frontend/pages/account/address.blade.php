@@ -6,9 +6,9 @@
 <div >
     <div class="card">
         <div class="card-header">
-            <h5 class="mb-0">Shipping Address</h5>
+            <h5 class="mb-0">Alamat Pengiriman</h5>
             <div class="add-address">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal">Add Address</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal">Tambah Alamat</button>
             </div>
         </div>
         <div class="card-body">
@@ -22,14 +22,14 @@
                     <h3>{{ $address->full_nama }}</h3>
                     <p>{{ $address->kelurahan }}, {{ $address->detail_alamat }}<br>
                         {{ $address->kecamatan }}, {{ $address->kabupaten }}, {{ $address->provinsi }}, {{ $address->kode_pos }}</p>
-                    <p><strong>Phone Number:</strong>{{ $address->no_hp }}</p>
+                    <p><strong>Nomor Telepon:</strong>{{ $address->no_hp }}</p>
                 </div>
                 <div class="actions">
                     <a href="{{ route('address.get', $address->id) }}">Edit</a>
                     <form action="{{ route('set-default', $address->id) }}" method="POST">
                         @csrf
                         @method('POST') <!-- Menyertakan metode POST jika form mengubah data -->
-                        <button type="submit" class="dflt">SET AS DEFAULT</button>
+                        <button type="submit" class="dflt">ATUR SEBAGAI DEFAULT</button>
                     </form>
                     <form action="{{ route('address.delete', $address->id) }}" method="POST">
                         @csrf
@@ -41,13 +41,13 @@
             </div>
             @endforeach
             @else
-            <a>You Dont Have an Address</a>
+            <a>Anda Tidak Memiliki Alamat</a>
             @endif
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
+{{-- <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -58,12 +58,12 @@
                     @csrf
                     @method('PUT') <!-- Menggunakan PUT karena ini adalah pembaruan data -->
                     <div class="checkout-form">
-                        <p>Edit Address</p>
+                        <p>Edit Alamat</p>
                         <!-- Form -->
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <label>Full Name<span>*</span></label>
+                                    <label>Nama Lengkap<span>*</span></label>
                                     <input type="text" name="full_nama" placeholder="" value="{{ old('full_nama', $address->full_nama) }}" required>
                                     @error('full_nama')
                                         <span class='text-danger'>{{$message}}</span>
@@ -72,7 +72,7 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <label>Phone Number <span>*</span></label>
+                                    <label>Nomor Telepon <span>*</span></label>
                                     <input type="text" name="no_hp" placeholder="" value="{{ old('no_hp', $address->no_hp) }}" required>
                                     @error('no_hp')
                                         <span class='text-danger'>{{$message}}</span>
@@ -137,7 +137,7 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <label>Postal Code</label>
+                                    <label>Kode Pos</label>
                                     <input type="text" name="kode_pos" value="{{ old('kode_pos', $address->kode_pos) }}">
                                     @error('kode_pos')
                                         <span class='text-danger'>{{$message}}</span>
@@ -168,7 +168,7 @@
                     <div class="single-widget get-button">
                         <div class="content">
                             <div class="button">
-                                <button type="submit" class="btn-add">Update Address</button>
+                                <button type="submit" class="btn-add">Simpan</button>
                             </div>
                         </div>
                     </div>
@@ -177,6 +177,9 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
+
+
+
 
 @endsection

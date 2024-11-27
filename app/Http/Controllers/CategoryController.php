@@ -48,8 +48,8 @@ class CategoryController extends Controller
     {
         // return $request->all();
         $this->validate($request,[
-            'title'=>'string|required',
-            'photo'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'title'=>'required|string',
+            'photo'=>'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'status'=>'required|in:active,inactive',
             'is_parent'=>'sometimes|in:1',
             'parent_id'=>'nullable|exists:categories,id',
@@ -153,8 +153,8 @@ class CategoryController extends Controller
 
     // Validasi input
     $this->validate($request, [
-        'title' => 'string|required',
-        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'title' => 'required|string',
+        'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         'status' => 'required|in:active,inactive',
         'is_parent' => 'sometimes|in:1',
         'parent_id' => 'nullable|exists:categories,id',

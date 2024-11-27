@@ -13,12 +13,12 @@
                             <div class="navbar-collapse">	
                                 <div class="nav-inner">	
                                     <ul class="nav main-menu menu navbar-nav">
-                                        <li class="{{Request::path()=='' ? 'active' : ''}}"><a href="{{route('home')}}">Home</a></li>
-                                        <li class="{{Request::path()=='product-grids' ? 'active' : ''}}"><a href="{{route('product-grids')}}">Shop</a></li>
+                                        <li class="{{Request::path()=='' ? 'active' : ''}}"><a href="{{route('home')}}">Beranda</a></li>
+                                        <li class="{{Request::path()=='product-grids' ? 'active' : ''}}"><a href="{{route('product-grids')}}">Toko</a></li>
                                         
-                                        <li class="{{Request::path()=='blog' ? 'active' : ''}}"><a href="{{route('blog')}}">Blog</a></li>									
+                                        <li class="{{Request::path()=='blog' ? 'active' : ''}}"><a href="{{route('blog')}}">Artikel</a></li>									
                                            
-                                        <li class="{{Request::path()=='contact' ? 'active' : ''}}"><a href="{{route('contact')}}">Contact Us</a></li>
+                                        <li class="{{Request::path()=='contact' ? 'active' : ''}}"><a href="{{route('contact')}}">Kontak</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -56,7 +56,7 @@
                                     </select> --}}
                                     <form method="POST" action="{{route('product.search')}}">
                                         @csrf
-                                        <input name="search" placeholder="Search products here..." type="search">
+                                        <input name="search" placeholder="Cari Produk disini..." type="search">
                                         <button class="btnn" type="submit"><i class="ti-search"></i></button>
                                     </form>
                                 </div>
@@ -73,7 +73,7 @@
                             <div class="dropdown-content">
                                 <form method="POST" action="{{ route('product.search') }}">
                                     @csrf
-                                    <input type="text" placeholder="Search here..." name="search" required>
+                                    <input type="text" placeholder="Cari disini..." name="search" required>
                                     <button type="submit"><i class="ti-search"></i></button>
                                 </form>
                             </div>
@@ -86,8 +86,8 @@
                             @auth
                                 <div class="shopping-item">
                                     <div class="dropdown-cart-header">
-                                        <span>{{count(Helper::getAllProductFromCart())}} Items</span>
-                                        <a href="{{route('cart')}}">View Cart</a>
+                                        <span>{{count(Helper::getAllProductFromCart())}} Item</span>
+                                        <a href="{{route('cart')}}">Lihat Keranjang</a>
                                     </div>
                                     <ul class="shopping-list">
                                         {{-- {{Helper::getAllProductFromCart()}} --}}
@@ -130,9 +130,9 @@
                                         </a>
                                         <div class="dropdown-menu" aria-labelledby="userDropdown">
                                             @if(Auth::user()->role == 'admin')
-                                                <a class="dropdown-item" href="{{ route('admin') }}"><i class="ti-user"></i>My Account</a>
+                                                <a class="dropdown-item" href="{{ route('admin') }}" target="_blank"><i class="ti-user"></i>Akun Saya</a>
                                             @else
-                                                <a class="dropdown-item" href="{{ route('account-dash') }}"><i class="ti-user"></i>My Account</a>
+                                                <a class="dropdown-item" href="{{ route('account-dash') }}"><i class="ti-user"></i>Akun Saya</a>
                                             @endif
                                             <a class="dropdown-item" href="{{ route('user.logout') }}"><i class="ti-power-off"></i>Logout</a>
                                         </div>
@@ -212,10 +212,10 @@
 <div class="mobile-menu" id="mobileMenu">
     <span class="close-icon" id="closeMenu"><i class="ti-close"></i></span>
     <ul>
-        <li><a href="{{ route('home') }}">Home</a></li>
-        <li><a href="{{ route('product-grids') }}">Shop</a></li>
-        <li><a href="{{ route('blog') }}">Blog</a></li>
-        <li><a href="{{ route('contact') }}">Contact Us</a></li>
+        <li><a href="{{ route('home') }}">Beranda</a></li>
+        <li><a href="{{ route('product-grids') }}">Toko</a></li>
+        <li><a href="{{ route('blog') }}">Artikel</a></li>
+        <li><a href="{{ route('contact') }}">Kontak</a></li>
     </ul>
 </div>
     
@@ -278,7 +278,7 @@ document.addEventListener('click', function (event) {
 .dropdown-content {
     display: none; /* Awalnya disembunyikan */
     position: absolute;
-    right: 10px;
+    right: -90px;
     border-radius: 10px;
     background-color: #f9f9f9;
     min-width: 200px; /* Lebar dropdown */
@@ -300,7 +300,7 @@ document.addEventListener('click', function (event) {
 }
 
 .dropdown-content button {
-    background-color: #ff2c2b;
+    background-color: #ffa800;
     color: white;
     border: none;
     padding: 10px; 

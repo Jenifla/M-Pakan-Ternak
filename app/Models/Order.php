@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $fillable=['user_id','address_id','order_number','ongkir','status','total_amount','date_order','date_packed','date_sent','date_cancel','alasan','shipping_id'];
+    protected $fillable=['user_id','address_id','order_number','ongkir','status','total_amount','date_order','date_shipped','date_received','date_cancel','alasan','shipping_id'];
 
     public function cart_info(){
         return $this->hasMany('App\Models\Cart','order_id','id');
@@ -42,7 +42,7 @@ class Order extends Model
     // Relasi Order ke Payment (One to One)
     public function payment()
     {
-        return $this->hasOne(Payment::class);
+        return $this->hasOne(Payment::class, 'order_id');
     }
 
     public function cancel()
@@ -59,15 +59,19 @@ class Order extends Model
         return $data;
     }
     public static function countProcessingOrder(){
-        $data = Order::where('status', 'process')->count();
-        return $data;
+        $toPayCount = Order::where('status', 'to pay')->count();
+        $toShipCount = Order::where('status', 'to ship')->count();
+        $toReceiveCount = Order::where('status', 'to receive')->count();
+        $totalCount = $toPayCount + $toShipCount + $toReceiveCount;
+        return $totalCount;
     }
+    
     public static function countDeliveredOrder(){
-        $data = Order::where('status', 'delivered')->count();
+        $data = Order::where('status', 'completed')->count();
         return $data;
     }
     public static function countCancelledOrder(){
-        $data = Order::where('status', 'cancel')->count();
+        $data = Order::where('status', ['cancel', 'rejected'])->count();
         return $data;
     }
     

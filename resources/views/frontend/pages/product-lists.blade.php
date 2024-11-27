@@ -11,8 +11,8 @@
 					<div class="col-12">
 						<div class="bread-inner">
 							<ul class="bread-list">
-								<li><a href="{{route('home')}}">Home<i class="ti-arrow-right"></i></a></li>
-								<li class="active"><a href="javascript:void(0);">Shop List</a></li>
+								<li><a href="{{route('home')}}">Beranda<i class="ti-arrow-right"></i></a></li>
+								<li class="active"><a href="javascript:void(0);">Toko</a></li>
 							</ul>
 						</div>
 					</div>
@@ -30,7 +30,7 @@
 							<div class="shop-sidebar">
                                 <!-- Single Widget -->
                                 <div class="single-widget category">
-                                    <h3 class="title">Categories</h3>
+                                    <h3 class="title">Kategori</h3>
                                     <ul class="categor-list">
 										@php
 											// $category = new Category();
@@ -63,7 +63,7 @@
                                 <!--/ End Single Widget -->
                                 <!-- Shop By Price -->
 								<div class="single-widget range">
-									<h3 class="title">Shop by Price</h3>
+									<h3 class="title">Temukan Berdasarkan Harga</h3>
 									<div class="price-filter">
 										<div class="price-filter-inner">
 											{{-- <div id="slider-range" data-min="10" data-max="2000" data-currency="%"></div>
@@ -79,7 +79,7 @@
 											@endphp
 											<div id="slider-range" data-min="0" data-max="{{$max}}"></div>
 											<div class="product_filter">
-											<button type="submit" class="filter_button">Filter</button>
+											<button type="submit" class="filter_button">Terapkan</button>
 											<div class="label-input">
 												<span>Range:</span>
 												<input style="" type="text" id="amount" readonly/>
@@ -88,57 +88,8 @@
 											</div>
 										</div>
 									</div>
-									{{-- <ul class="check-box-list">
-										<li>
-											<label class="checkbox-inline" for="1"><input name="news" id="1" type="checkbox">$20 - $50<span class="count">(3)</span></label>
-										</li>
-										<li>
-											<label class="checkbox-inline" for="2"><input name="news" id="2" type="checkbox">$50 - $100<span class="count">(5)</span></label>
-										</li>
-										<li>
-											<label class="checkbox-inline" for="3"><input name="news" id="3" type="checkbox">$100 - $250<span class="count">(8)</span></label>
-										</li>
-									</ul> --}}
 								</div>
 								<!--/ End Shop By Price -->
-                                <!-- Single Widget -->
-                                {{-- <div class="single-widget recent-post">
-                                    <h3 class="title">Recently Added</h3> --}}
-                                    {{-- {{dd($recent_products)}} --}}
-                                    {{-- @foreach($recent_products as $product)
-                                        <!-- Single Post -->
-                                        @php 
-                                            $photo=explode(',',$product->photo);
-                                        @endphp
-                                        <div class="single-post first">
-                                            <div class="image">
-                                                <img src="{{$photo[0]}}" alt="{{$photo[0]}}">
-                                            </div>
-                                            <div class="content">
-                                                <h5><a href="{{route('product-detail',$product->slug)}}">{{$product->title}}</a></h5>
-                                                @php
-                                                    $org=($product->price-($product->price*$product->discount)/100);
-                                                @endphp
-                                                <p class="price"><del class="text-muted">${{number_format($product->price,2)}}</del>   ${{number_format($org,2)}}  </p>                                                
-                                            </div>
-                                        </div>
-                                        <!-- End Single Post -->
-                                    @endforeach
-                                </div> --}}
-                                <!--/ End Single Widget -->
-                                <!-- Single Widget -->
-                                {{-- <div class="single-widget category">
-                                    <h3 class="title">Brands</h3>
-                                    <ul class="categor-list">
-                                        @php
-                                            $brands=DB::table('brands')->orderBy('title','ASC')->where('status','active')->get();
-                                        @endphp
-                                        @foreach($brands as $brand)
-                                            <li><a href="{{route('product-brand',$brand->slug)}}">{{$brand->title}}</a></li>
-                                        @endforeach
-                                    </ul>
-                                </div> --}}
-                                <!--/ End Single Widget -->
                         	</div>
 						</div>
 						<div class="col-lg-9 col-md-8 col-12">
@@ -213,8 +164,8 @@
 																@php
 																	$after_discount=($product->price-($product->price*$product->discount)/100);
 																@endphp
-																<span>${{number_format($after_discount,2)}}</span>
-																<del>${{number_format($product->price,2)}}</del>
+																<span>${{number_format($after_discount, 0, ',', '.')}}</span>
+																<del>${{number_format($product->price, 0, ',', '.')}}</del>
 															</div>
 															<h3 class="title"><a href="{{route('product-detail',$product->slug)}}">{{$product->title}}</a></h3>
 														{{-- <p>{!! html_entity_decode($product->summary) !!}</p> --}}
@@ -227,15 +178,60 @@
 										</div>
 										<!-- End Single List -->
 									@endforeach
+
+									@if($products->lastPage() > 1)
+										<div class="col-md-12 d-flex justify-content-center">
+											<nav aria-label="Page navigation">
+												<ul class="pagination">
+													<!-- Previous Page Link -->
+													@if ($products->onFirstPage())
+														<li class="page-item disabled">
+															<span class="page-link"><i class="ti-angle-left"></i></span>
+														</li>
+													@else
+														<li class="page-item">
+															<a class="page-link" href="{{ $products->previousPageUrl() }}" rel="prev"><i class="ti-angle-left"></i></a>
+														</li>
+													@endif
+										
+													<!-- Page Numbers -->
+													@for ($i = 1; $i <= $products->lastPage(); $i++)
+														@if ($i == 1 || $i == $products->lastPage() || ($i >= $products->currentPage() - 2 && $i <= $products->currentPage() + 2))
+															<li class="page-item {{ $products->currentPage() == $i ? 'active' : '' }}">
+																<a class="page-link" href="{{ $products->url($i) }}">{{ $i }}</a>
+															</li>
+														@elseif ($i == 2 || $i == $products->lastPage() - 1)
+															<li class="page-item disabled"><span class="page-link">...</span></li>
+														@endif
+													@endfor
+										
+													<!-- Next Page Link -->
+													@if ($products->hasMorePages())
+														<li class="page-item">
+															<a class="page-link" href="{{ $products->nextPageUrl() }}" rel="next"><i class="ti-angle-right"></i></a>
+														</li>
+													@else
+														<li class="page-item disabled">
+															<span class="page-link"><i class="ti-angle-right"></i></span>
+														</li>
+													@endif
+												</ul>
+											</nav>
+										</div>
+									@endif
+							
+								
 								@else
 									<h4 class="text-danger" style="margin:100px auto;">Sorry, there are no products according to the range given. Try selecting different one to see more results.</h4>
 								@endif
 							</div>
-							 <div class="row">
+							 {{-- <div class="row">
                             <div class="col-md-12 justify-content-center d-flex">
-                                {{-- {{$products->appends($_GET)->links()}}  --}}
+                                {{$products->appends($_GET)->links()}} 
                             </div>
-                          </div>
+                          </div> --}}
+						
+						
 						</div>
 					</div>
 				</div>
@@ -243,7 +239,7 @@
 			<!--/ End Product Style 1  -->	
 		</form>
 		<!-- Modal -->
-		@if($products)
+		{{-- @if($products)
 			@foreach($products as $key=>$product)
 				<div class="modal fade" id="{{$product->id}}" tabindex="-1" role="dialog">
 						<div class="modal-dialog" role="document">
@@ -276,11 +272,7 @@
 												<div class="quickview-ratting-review">
 													<div class="quickview-ratting-wrap">
 														<div class="quickview-ratting">
-															{{-- <i class="yellow fa fa-star"></i>
-															<i class="yellow fa fa-star"></i>
-															<i class="yellow fa fa-star"></i>
-															<i class="yellow fa fa-star"></i>
-															<i class="fa fa-star"></i> --}}
+															
 															@php
 																$rate=DB::table('product_reviews')->where('product_id',$product->id)->avg('rate');
 																$rate_count=DB::table('product_reviews')->where('product_id',$product->id)->count();
@@ -360,14 +352,51 @@
 						</div>
 				</div>
 			@endforeach
-		@endif
+		@endif --}}
 			<!-- Modal end -->
 @endsection
 @push ('styles')
 <style>
-	 .pagination{
+	 /* .pagination{
         display:inline-flex;
-    }
+    } */
+
+	/* CSS untuk memperbaiki tampilan pagination */
+/* Styling untuk pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+}
+
+.pagination .page-item {
+    margin: 0 5px;
+}
+
+.pagination .page-link {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    color: #F7941D;
+}
+
+.pagination .active .page-link {
+    background-color: #F7941D;
+    border: none;
+    color: white;
+}
+
+.pagination .disabled .page-link {
+    color: #ccc;
+}
+
+.pagination .page-link:hover {
+    background-color: #F7941D;
+    color: white;
+}
+
+
 	.filter_button{
         /* height:20px; */
         text-align: center;

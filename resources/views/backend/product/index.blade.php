@@ -19,7 +19,7 @@
           <thead>
             <tr>
               <th>No</th>
-              <th>Title</th>
+              <th>Name</th>
               <th>Category</th>
               <th>Price</th>
               <th>Weight</th>

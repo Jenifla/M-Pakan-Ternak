@@ -4,7 +4,7 @@
 
 @section('main-content')
 <div class="card">
-<h5 class="card-header">Order Detail      <a href="" class=" btn btn-sm btn-primary shadow-sm float-right"><i class="fas fa-download fa-sm text-white-50"></i> Generate PDF</a>
+<h5 class="card-header">Order Detail      <a href="{{route('order.pdf',$order->id)}}" class=" btn btn-sm btn-primary shadow-sm float-right"><i class="fas fa-download fa-sm text-white-50"></i> Generate PDF</a>
   </h5>
   <div class="card-body">
     @if($order)
@@ -25,50 +25,49 @@
                         <td> : {{$order->created_at->format('D d M, Y')}} at {{$order->created_at->format('g : i a')}} </td>
                     </tr>
                     <tr>
-                        <td>Quantity</td>
-                        <td> : {{$order->quantity}}</td>
-                    </tr>
-                    <tr>
                         <td>Order Status</td>
-                        <td> : {{$order->status}}</td>
-                    </tr>
-                    <tr>
-                        <td>Shipping Charge</td>
-                        <td> : Rp {{$order->shipping->price}}</td>
-                    </tr>
-                    <tr>
-                      <td>Coupon</td>
-                      <td> : Rp {{number_format($order->coupon,2)}}</td>
-                    </tr>
-                    <tr>
-                        <td>Total Amount</td>
-                        <td> : Rp {{number_format($order->total_amount,2)}}</td>
+                        <td> : 
+                            @if($order->status=='new')
+                            <span class="badge badge-warning">NEW</span>
+                            @elseif($order->status=='to pay')
+                            <span class="badge badge-danger">To Pay</span>
+                            @elseif($order->status=='to ship')
+                            <span class="badge badge-primary">To Ship</span>
+                            @elseif($order->status=='to receive')
+                            <span class="badge badge-primary">To Receive</span>
+                            @elseif($order->status=='completed')
+                            <span class="badge badge-success">Completed</span>
+                            @elseif($order->status=='cancel')
+                            <span class="badge badge-warning">Cancel</span>
+                            @else
+                            <span class="badge badge-warning">Rejected</span>
+                            {{-- <span class="badge badge-primary">{{$order->status}}</span> --}}
+                            @endif
+                        </td>
                     </tr>
                     <tr>
                         <!-- <td>Payment Method</td>
-                        <td> : @if($order->payment_method=='cod') Cash on Delivery @else Paypal @endif</td> -->
+                        <td> : @if($order->payment->method_payment=='cod') Cash on Delivery @else Paypal @endif</td> -->
                         <td>Payment Method</td>
                         <td> : 
-                            @if($order->payment_method == 'cod')
+                            @if($order->payment->method_payment == 'cod')
                                 Cash on Delivery
-                            @elseif($order->payment_method == 'paypal')
-                                Paypal
-                            @elseif($order->payment_method == 'cardpay')
-                                Card Payment
+                            @elseif($order->payment->method_payment == 'online payment')
+                                Online Payment/Transfer
                             @endif
                         </td>
 
                     </tr>
                     <!-- <tr>
                         <td>Payment Status</td>
-                        <td> : {{$order->payment_status}}</td>
+                        <td> : {{$order->payment->status}}</td>
                     </tr> -->
                     <tr>
                       <td>Payment Status</td>
                       <td> : 
-                          @if($order->payment_status == 'paid')
+                          @if($order->payment->status == 'paid')
                               <span class="badge badge-success">Paid</span>
-                          @elseif($order->payment_status == 'unpaid')
+                          @elseif($order->payment->status == 'unpaid')
                               <span class="badge badge-danger">Unpaid</span>
                           @else
                               {{$order->payment_status}}
@@ -86,23 +85,25 @@
               <table class="table table-borderless">
                     <tr class="">
                         <td>Full Name</td>
-                        <td> : {{$order->first_name}} {{$order->last_name}}</td>
+                        <td> : {{$order->user->name}}</td>
                     </tr>
                     <tr>
                         <td>Phone No.</td>
-                        <td> : {{$order->phone}}</td>
+                        <td> : {{$order->user->no_hp}}</td>
                     </tr>
                     <tr>
-                        <td>Address</td>
-                        <td> : {{$order->address1}}, {{$order->address2}}</td>
+                        <td>Email</td>
+                        <td> : {{$order->user->email}}</td>
                     </tr>
+              </table>
+              <h4 class="text-center pb-4">Shipping Info</h4>
+              <table class="table table-borderless">
                     <tr>
-                        <td>Country</td>
-                        <td> : {{$order->country}}</td>
-                    </tr>
-                    <tr>
-                        <td>Post Code</td>
-                        <td> : {{$order->post_code}}</td>
+                        {{-- <td>Address</td> --}}
+                        <td><strong>{{ $order->address->full_nama }}</strong><br>{{ $order->address->kelurahan }}, {{ $order->address->detail_alamat }}<br>
+                            {{ $order->address->kecamatan }}, {{ $order->address->kabupaten }}, {{ $order->address->provinsi }}, {{ $order->address->kode_pos }}<br>
+                        <strong>Phone Number:</strong>{{ $order->address->no_hp }}
+                        </td>
                     </tr>
               </table>
             </div>
@@ -112,75 +113,73 @@
     </section>
 
     <h4 class="text-center pb-4">Product Details</h4>
+  <div class="table-responsive">
     <table class="table table-striped table-hover">
       <thead>
         <tr>
-            <th>#</th>
-            <th>Product ID</th>
-            <th>Product Name</th>
+            <th>Product</th>
             <th>Qty.</th>
             <th>Price</th>
-            <th>Discount</th>
             <th>Subtotal</th>
-            {{-- <th>Status</th>
-            <th>Action</th> --}}
         </tr>
       </thead>
       <tbody>
+        @php
+            $subtotal_cart = 0; // Inisialisasi subtotal
+            $total_items = 0; // Inisialisasi jumlah total barang
+        @endphp
+        @foreach($order->cart as $cart)
+        @php
+        $original_price = $cart->product['price']; // Harga asli produk
+        $discount = $cart->product['discount']; // Diskon produk
+        $price_after_discount = $original_price - ($original_price * $discount / 100); // Harga setelah diskon
+        $total_price = $price_after_discount * $cart->quantity;
+        $subtotal_cart += $total_price; 
+        $total_items += $cart->quantity;
+        @endphp
         <tr>
-            <td>{{$order->id}}</td>
-            <td>{{$order->order_number}}</td>
-            <td>{{$order->first_name}} {{$order->last_name}}</td>
-            <td>{{$order->email}}</td>
-            <td>{{$order->quantity}}</td>
-            <td>Rp{{$order->shipping->price}}</td>
-            <td>Rp{{number_format($order->total_amount,2)}}</td>
-            {{-- <td>
-                @if($order->status=='new')
-                  <span class="badge badge-primary">NEW</span>
-                @elseif($order->status=='process')
-                  <span class="badge badge-warning">PROCESSING</span>
-                @elseif($order->status=='delivered')
-                  <span class="badge badge-success">DELIVERED</span>
-                @else
-                  <span class="badge badge-danger">{{$order->status}}</span>
-                @endif
-            </td>
+            {{-- <td>{{$cart->id}}</td> --}}
             <td>
-                <a href="{{route('order.edit',$order->id)}}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
-                <form method="POST" action="{{route('order.destroy',[$order->id])}}">
-                  @csrf
-                  @method('delete')
-                      <button class="btn btn-danger btn-sm dltBtn" data-id={{$order->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
-                </form>
-            </td> --}}
+                @if($cart->product->gambarProduk->isNotEmpty())
+                <img src="{{ asset($cart->product->gambarProduk->first()->gambar) }}" alt="Product Image" class="me-3" style="width: 80px; height: 80px; object-fit: cover; border-radius:9px; margin-right:10px;">
+            @else
+                <img src="{{ asset('default-image.jpg') }}" alt="Default Image" class="me-3" style="width: 80px; height: 80px; object-fit: cover;">
+            @endif
+            <div>
+                <h6 class="one-line-text">{{ $cart->product->title }}</h6>
+                
+            </div></td>
+            <td>{{$cart->quantity}}</td>
+            <td>Rp{{$price_after_discount}}</td>
+            <td>Rp{{number_format($total_price,2)}}</td>
 
         </tr>
+        @endforeach
       </tbody>
     </table>
+  </div>
     <table class="table summary mt-4">
       <tbody>
           <tr>
-              <td class="label">Order Tax</td>
-              <td class="value">Rp 2550.00</td>
+              <td class="label">Subtotal Product</td>
+              <td class="value">Rp{{number_format($subtotal_cart,2)}}</td>
           </tr>
           <tr>
-              <td class="label">Discount</td>
-              <td class="value">0.00</td>
+              <td class="label">Shipping Cost</td>
+              <td class="value">Rp
+                @if ($order->shipping->status_biaya == 0)
+                        {{ $order->ongkir, 0, ',', '.' }}
+                    @else
+                        {{ $order->shipping->price, 0, ',', '.' }}
+                    @endif
+              </td>
           </tr>
           <tr>
-              <td class="label">Shipping</td>
-              <td class="value">Rp 150.00</td>
-          </tr>
-          <tr>
-              <td class="label">Total Amount</td>
-              <td class="value">Rp2620.65</td>
+              <td class="label">Order Total</td>
+              <td class="value">Rp{{number_format($order->total_amount,2)}}</td>
           </tr>
       </tbody>
   </table>
-  <div class="paid mt-3">
-      Paid Rp 9680.65
-  </div>
     @endif
 
   </div>

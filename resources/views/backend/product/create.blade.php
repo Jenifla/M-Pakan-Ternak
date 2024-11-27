@@ -8,8 +8,8 @@
       <form method="post" action="{{route('product.store')}}" enctype="multipart/form-data">
         {{csrf_field()}}
         <div class="form-group">
-          <label for="inputTitle" class="col-form-label">Title <span class="text-danger">*</span></label>
-          <input id="inputTitle" type="text" name="title" placeholder="Enter title"  value="{{old('title')}}" class="form-control">
+          <label for="inputTitle" class="col-form-label">Name <span class="text-danger">*</span></label>
+          <input id="inputTitle" type="text" name="title" placeholder="Enter name product"  value="{{old('title')}}" class="form-control">
           @error('title')
           <span class="text-danger">{{$message}}</span>
           @enderror
@@ -39,6 +39,9 @@
                   <option value='{{$cat_data->id}}'>{{$cat_data->title}}</option>
               @endforeach
           </select>
+          @error('cat_id')
+          <span class="text-danger">{{$message}}</span>
+          @enderror
         </div>
 
         <div class="form-group d-none" id="child_cat_div">
@@ -49,6 +52,7 @@
                   <option value='{{$parent_cat->id}}'>{{$parent_cat->title}}</option>
               @endforeach --}}
           </select>
+          
         </div>
 
         <div class="form-group">
@@ -94,26 +98,30 @@
         <div class="form-group">
           <label for="inputPhoto" class="col-form-label">Photo <span class="text-danger">*</span></label>
           <div class="input-group">
-              {{-- <span class="input-group-btn">
-                  <a id="lfm" data-input="thumbnail" data-preview="holder" class="btn btn-secondary text-white">
-                  <i class="fa fa-picture-o"></i> Choose
-                  </a>
-              </span> --}}
               <input type="file" class="form-control" id="photos" name="photos[]" multiple onchange="previewImages(event)">
         </div>
         <div id="holder" style="display: flex; flex-wrap: wrap;"></div>
-          @error('photo')
+          @error('photos')
           <span class="text-danger">{{$message}}</span>
           @enderror
+          @if($errors->has('photos.*'))
+          <ul>
+              @foreach ($errors->get('photos.*') as $messages)
+                  @foreach ($messages as $message)
+                      <li class="text-danger">{{ $message }}</li>
+                  @endforeach
+              @endforeach
+          </ul>
+          @endif
         </div>
         
-        <!-- Div untuk menampilkan preview gambar -->
+        {{-- <!-- Div untuk menampilkan preview gambar -->
         <div class="form-group">
           <label for="photos_preview" class="col-form-label">Preview:</label>
           <div id="photos_preview" style="display: flex; gap: 10px; flex-wrap: wrap;">
               <!-- Preview gambar akan muncul di sini -->
           </div>
-      </div>
+      </div> --}}
 
         <div class="form-group">
           <label for="status" class="col-form-label">Status <span class="text-danger">*</span></label>

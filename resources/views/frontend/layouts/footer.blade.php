@@ -22,13 +22,13 @@
 					<div class="col-lg-2 col-md-6 col-12">
 						<!-- Single Widget -->
 						<div class="single-footer links">
-							<h4>Information</h4>
+							<h4>Informasi</h4>
 							<ul>
-								<li><a href="{{route('about-us')}}">About Us</a></li>
+								{{-- <li><a href="{{route('about-us')}}">Tentan</a></li> --}}
 								{{-- <li><a href="#">Faq</a></li> --}}
 								<li><a href="#">Terms & Conditions</a></li>
-								<li><a href="{{route('contact')}}">Contact Us</a></li>
-								<li><a href="#">Help</a></li>
+								<li><a href="{{route('contact')}}">Kontak</a></li>
+								<li><a href="#">Bantuan</a></li>
 							</ul>
 						</div>
 						<!-- End Single Widget -->
@@ -36,12 +36,12 @@
 					<div class="col-lg-2 col-md-6 col-12">
 						<!-- Single Widget -->
 						<div class="single-footer links">
-							<h4>Quick Links</h4>
+							<h4>Tautan Cepat</h4>
 							<ul>
-								<li><a href="#">Shop Produk</a></li>
-								<li><a href="#">Shopping Cart</a></li>
-								<li><a href="#">Blog</a></li>
-								<li><a href="#">Order</a></li>
+								<li><a href="#">Produk Toko</a></li>
+								<li><a href="#">Keranjang</a></li>
+								<li><a href="#">Artikel</a></li>
+								<li><a href="#">Pesanan</a></li>
 								{{-- <li><a href="#">Privacy Policy</a></li> --}}
 							</ul>
 						</div>
@@ -50,7 +50,7 @@
 					<div class="col-lg-3 col-md-6 col-12">
 						<!-- Single Widget -->
 						<div class="single-footer social">
-							<h4>Get In Tuch</h4>
+							<h4>Hubungi Kami</h4>
 							<!-- Single Widget -->
 							<div class="contact">
 								<ul>

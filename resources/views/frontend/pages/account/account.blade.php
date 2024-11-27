@@ -10,8 +10,8 @@
                 <div class="col-12">
                     <div class="bread-inner">
                         <ul class="bread-list">
-                            <li><a href="{{route('home')}}">Home<i class="ti-arrow-right"></i></a></li>
-                            <li class="active"><a href="javascript:void(0);">Account</a></li>
+                            <li><a href="{{route('home')}}">Beranda<i class="ti-arrow-right"></i></a></li>
+                            <li class="active"><a href="javascript:void(0);">Akun</a></li>
                         </ul>
                     </div>
                 </div>
@@ -52,13 +52,14 @@
             <div class="modal-body">
                 <form class="form" method="POST" action="{{route('address.store')}}">
                     @csrf
+                    @method('POST')
                     <div class="checkout-form">
-                        <p>New Address</p>
+                        <p>Alamat Baru</p>
                         <!-- Form -->
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <label>Full Name<span>*</span></label>
+                                    <label>Nama Lengkap<span>*</span></label>
                                     <input type="text" name="full_nama" placeholder="" value="{{old('full_nama')}}"  required>
                                     @error('full_nama')
                                         <span class='text-danger'>{{$message}}</span>
@@ -68,7 +69,7 @@
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
                                     
-                                    <label>Phone Number <span>*</span></label>
+                                    <label>Nomor Telepon <span>*</span></label>
                                     <input type="text" name="no_hp" placeholder="" required value="{{old('no_hp')}}">
                                     @error('no_hp')
                                         <span class='text-danger'>{{$message}}</span>
@@ -129,7 +130,7 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <label>Postal Code</label>
+                                    <label>Kode Pos<span>*</span></label>
                                     <input type="text" name="kode_pos" placeholder="" value="{{old('kode_pos')}}">
                                     @error('kode_pos')
                                         <span class='text-danger'>{{$message}}</span>
@@ -161,7 +162,7 @@
                     <div class="single-widget get-button">
                         <div class="content">
                             <div class="button">
-                                <button type="submit" class="btn-add">Submit</button>
+                                <button type="submit" class="btn-add" >Simpan</button>
                             </div>
                         </div>
                     </div>
@@ -322,7 +323,7 @@ form.addEventListener('submit', function(e) {
             });
         });
     </script>
-    <script>
+    {{-- <script>
         // Optionally add your JS here for handling form submission, etc.
         document.getElementById('saveAddressBtn').addEventListener('click', function() {
             const recipientName = document.getElementById('recipientName').value;
@@ -339,7 +340,7 @@ form.addEventListener('submit', function(e) {
             // Close the modal after saving
             $('#addAddressModal').modal('hide');
         });
-    </script>
+    </script> --}}
 
 {{-- <script>
     document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(function(tabElement) {

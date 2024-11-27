@@ -47,11 +47,11 @@ class ProductController extends Controller
     {
         // return $request->all();
         $this->validate($request,[
-            'title'=>'string|required',
-            'summary'=>'string|required',
+            'title'=>'required|string',
+            'summary'=>'required|string',
             'description'=>'string|nullable',
+            'photos.*' => 'image|mimes:jpeg,png,jpg|max:2048',
             'photos' => 'required|array',
-            'photos.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'stock'=>"required|numeric",
             'cat_id'=>'required|exists:categories,id',
             'child_cat_id'=>'nullable|exists:categories,id',
@@ -143,11 +143,11 @@ class ProductController extends Controller
     {
         $product=Product::findOrFail($id);
         $this->validate($request,[
-            'title'=>'string|required',
-            'summary'=>'string|required',
+            'title'=>'required|string',
+            'summary'=>'required|string',
             'description'=>'string|nullable',
             'photo'=>'array|nullable',
-            'photo.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photo.*' => 'image|mimes:jpeg,png,jpg|max:2048',
             'stock'=>"required|numeric",
             'cat_id'=>'required|exists:categories,id',
             'child_cat_id'=>'nullable|exists:categories,id',
@@ -159,7 +159,7 @@ class ProductController extends Controller
         ]);
 
         $data=$request->all();
-        $data['is_featured']=$request->input('is_featured',0);
+       
         
         // return $data;
         $status=$product->fill($data)->save();

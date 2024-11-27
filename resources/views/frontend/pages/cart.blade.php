@@ -8,8 +8,8 @@
 				<div class="col-12">
 					<div class="bread-inner">
 						<ul class="bread-list">
-							<li><a href="{{('home')}}">Home<i class="ti-arrow-right"></i></a></li>
-							<li class="active"><a href="">Cart</a></li>
+							<li><a href="{{('home')}}">Beranda<i class="ti-arrow-right"></i></a></li>
+							<li class="active"><a href="">Keranjang</a></li>
 						</ul>
 					</div>
 				</div>
@@ -27,10 +27,10 @@
 					<table class="table shopping-summery">
 						<thead>
 							<tr class="main-hading">
-								<th >PRODUCT</th>
+								<th >PRODUK</th>
 								{{-- <th>NAME</th>
 								<th class="text-center">UNIT PRICE</th> --}}
-								<th class="text-center hide-mobile">QUANTITY</th>
+								<th class="text-center hide-mobile">JUMLAH</th>
 								<th class="text-center">TOTAL</th>
 								<th class="text-center hide-mobile"><i class="ti-trash remove-icon"></i></th>
 							</tr>
@@ -38,18 +38,27 @@
 						<tbody id="cart_item_list">
 							<form action="{{route('cart.update')}}" method="POST">
 								@csrf
+								@php
+									$subtotal_cart = 0; // Inisialisasi subtotal
+									$total_items = 0; // Inisialisasi jumlah total barang
+								@endphp
 								@if(Helper::getAllProductFromCart())
 									@foreach(Helper::getAllProductFromCart() as $key=>$cart)
 										<tr>
 											@php
 											$photo=explode(',',$cart->product['photo']);
 											$photo = explode(',', $cart->product['photo']);
+											
 											$original_price = $cart->product['price']; // Harga asli produk
 											$discount = $cart->product['discount']; // Diskon produk
 											$price_after_discount = $original_price - ($original_price * $discount / 100); // Harga setelah diskon
-											$total_price = $price_after_discount * $cart->quantity; // Total harga (harga setelah diskon * kuantitas)
-										
+											$total_price = $price_after_discount * $cart->quantity;
+											$subtotal_cart += $total_price; 
+											$total_items += $cart->quantity;
 											@endphp
+
+										
+											
 											<td class="product-in-cart" >
 												<div class="product-image">
 													@if($cart->product->gambarProduk->isNotEmpty())
@@ -62,7 +71,7 @@
     											<div class="product-info">
 													<p class="product-name"><a href="{{route('product-detail',$cart->product['slug'])}}" target="_blank">{{$cart->product['title']}}</a></p>
 													<p class="product-des">{!!($cart->product['summary'])!!}</p>
-													<p>Rp{{number_format($cart->price,2)}}</p> 
+													<p>Rp{{number_format($price_after_discount,0, ',', '.')}}</p> 
 													{{-- <p>Rp{{ number_format($price_after_discount, 2) }}</p> --}}
 												</div>
 											</td>
@@ -89,18 +98,18 @@
 												</div>
 												<!--/ End Input Order -->
 											</td>
-											<td id="mob-info"class="total-amount cart_single_price" data-title="Total"><span class="money">Rp{{number_format($cart['amount'],2)}}</span></td>
+											{{-- <td id="mob-info"class="total-amount cart_single_price" data-title="Total"><span class="money">Rp{{number_format($cart['amount'],2)}}</span></td> --}}
 
-											{{-- <td id="mob-info" class="total-amount cart_single_price" data-title="Total">
-												<span class="money">Rp{{ number_format($total_price, 2) }}</span> 
-											</td> --}}
+											<td id="mob-info" class="total-amount cart_single_price" data-title="Total">
+												<span class="money">Rp{{ number_format($total_price, 0, ',', '.') }}</span> 
+											</td>
 											<td id="mob-info" class="action" data-title="Remove"><a href="{{route('cart-delete',$cart->id)}}"><i class="ti-trash remove-icon"></i></a></td>
 										</tr>
 									@endforeach
 									<tr>
 										
 										<td class="b-right" colspan="4">
-											<button class="btn float-right" type="submit">Update</button>
+											<button class="btn float-right" type="submit">Perbarui</button>
 										</td>
 									</tr>
 								@else
@@ -142,26 +151,27 @@
 							<div >
 								<div class="right">
 									<ul>
-										<li class="order_subtotal" data-price="{{Helper::totalCartPrice()}}">Cart Subtotal<span>Rp{{number_format(Helper::totalCartPrice(),2)}}</span></li>
+										<li class="order_subtotal" >Subtotal Keranjang<span>Rp{{number_format($subtotal_cart, 0, ',', '.')}}</span></li>
 
-										@if(session()->has('coupon'))
-										<li class="coupon_price" data-price="{{Session::get('coupon')['value']}}">You Save<span>Rp{{number_format(Session::get('coupon')['value'],2)}}</span></li>
-										@endif
 										@php
 											$total_amount=Helper::totalCartPrice();
 											if(session()->has('coupon')){
 												$total_amount=$total_amount-Session::get('coupon')['value'];
 											}
 										@endphp
-										@if(session()->has('coupon'))
-											<li class="last" id="order_total_price">You Pay<span>Rp{{number_format($total_amount,2)}}</span></li>
-										@else
-											<li class="last" id="order_total_price">You Pay<span>Rp{{number_format($total_amount,2)}}</span></li>
+										{{-- @if(session()->has('coupon'))
+										<li class="coupon_price" data-price="{{Session::get('coupon')['value']}}">You Save<span>Rp{{number_format(Session::get('coupon')['value'],2)}}</span></li>
 										@endif
+										
+										{{-- @if(session()->has('coupon'))
+											<li class="last" id="order_total_price">You Pay<span>Rp{{number_format($total_amount,2)}}</span></li>
+										@else --}}
+											<li class="last" id="order_total_price">Subtotal Bayar<span>Rp{{number_format($subtotal_cart,0, ',', '.')}}</span></li>
+										{{-- @endif --}}
 									</ul>
 									<div class="button5">
 										<a href="{{route('checkout')}}" class="bton">Checkout</a>
-										<a href="{{route('product-grids')}}" class="bton">Continue shopping</a>
+										<a href="{{route('product-grids')}}" class="bton">Lanjutkan Belanja</a>
 									</div>
 								</div>
 							</div>

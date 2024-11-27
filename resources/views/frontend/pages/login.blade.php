@@ -10,7 +10,7 @@
                 <div class="col-12">
                     <div class="bread-inner">
                         <ul class="bread-list">
-                            <li><a href="{{route('home')}}">Home<i class="ti-arrow-right"></i></a></li>
+                            <li><a href="{{route('home')}}">Beranda<i class="ti-arrow-right"></i></a></li>
                             <li class="active"><a href="javascript:void(0);">Login</a></li>
                         </ul>
                     </div>
@@ -47,7 +47,7 @@
                                         @error('password')
                                             <span class="text-danger" id="password-error">{{$message}}</span>
                                         @enderror
-                                        <div class="form-footer">
+                                        {{-- <div class="form-footer">
                                             <div class="checkbox">
                                                 <label class="checkbox-inline" for="remember">
                                                     <input name="remember" id="remember" type="checkbox">Remember me
@@ -56,7 +56,7 @@
                                             @if (Route::has('password.request'))
                                                 <a class="lost-pass" href="{{ route('password.reset') }}">Lost your password?</a>
                                             @endif
-                                        </div>
+                                        </div> --}}
                                     </div>
                                     
                                 </div>
@@ -64,7 +64,7 @@
                                     <div class="form-group login-btn">
                                         <button class="btn btn-facebook" type="submit">Login</button>
                                         {{-- <a href="{{route('register.form')}}" class="btn">Register</a> --}}
-                                        <p class="register-text">Don't have an account? <a href="{{route('register.form')}}" class="btn-register-link">Register</a></p>
+                                        <p class="register-text">Tidak punya akun? <a href="{{route('register.form')}}" class="btn-register-link">Register</a></p>
                                         <!-- OR
                                         <a href="{{route('login.redirect','facebook')}}" class="btn btn-facebook"><i class="ti-facebook"></i></a>
                                         <a href="{{route('login.redirect','github')}}" class="btn btn-github"><i class="ti-github"></i></a>

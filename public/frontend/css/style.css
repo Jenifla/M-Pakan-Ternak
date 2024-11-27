@@ -4137,7 +4137,7 @@
 	bottom: -1px;
 	height: 100%;
 	width: 3px;
-	background: #8C52FF;
+	background: #F7941D;
 }
 .main-sidebar .single-widget:last-child{
 	margin:0;
@@ -4174,13 +4174,13 @@
 	border: none;
 	font-size: 14px;
 	color: #fff;
-	background: #333;
+	background: #F7941D;
 	-webkit-transition: all 0.4s ease;
 	-moz-transition: all 0.4s ease;
 	transition: all 0.4s ease;
 }
 .main-sidebar .search .button:hover {
-	background:#8C52FF;
+	background:#ff2c2b;
 	color:#fff;
 }
 /* Category List */
@@ -4431,11 +4431,11 @@
 	color: #555;
 	border: none;
 	margin-bottom: 25px;
-	border-left: 3px solid #8C52FF;
+	border-left: 3px solid #ffa800;
 }
 .blog-single blockquote i {
 	font-size: 30px;
-	color: #8C52FF;
+	color: #ffa800;
 	position: absolute;
 	left: 20px;
 	top: 20px;

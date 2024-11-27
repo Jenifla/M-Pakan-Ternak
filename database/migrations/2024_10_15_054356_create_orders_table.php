@@ -27,8 +27,8 @@ class CreateOrdersTable extends Migration
             $table->foreign('shipping_id')->references('id')->on('shippings')->onDelete('SET NULL');
             $table->string('alasan');
             $table->timestamps('date_order');
-            $table->timestamps('date_packed');
-            $table->timestamps('date_sent');
+            $table->timestamps('date_shipped');
+            $table->timestamps('date_received');
             $table->timestamps('date_cancel');
             $table->timestamps();
         });

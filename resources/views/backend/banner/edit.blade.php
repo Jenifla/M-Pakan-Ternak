@@ -27,13 +27,14 @@
         <div class="form-group">
         <label for="inputPhoto" class="col-form-label">Photo <span class="text-danger">*</span></label>
         <div class="input-group">
-            {{-- <span class="input-group-btn">
-                <a id="lfm" data-input="thumbnail" data-preview="holder" class="btn btn-primary">
-                <i class="fa fa-picture-o"></i> Choose
-                </a>
-            </span> --}}
+            
           <input id="photos" class="form-control" type="file" name="photo" onchange="previewImages(event)">
         </div>
+        @if(isset($banner->photo) && !empty($banner->photo))
+        <div>
+            <img src="{{asset($banner->photo)}}" alt="Current Photo" style="max-width: 100px; max-height: 100px; margin-top: 10px;">
+        </div>
+        @endif
         <div id="holder" style="margin-top:15px;max-height:100px;"></div>
           @error('photo')
           <span class="text-danger">{{$message}}</span>

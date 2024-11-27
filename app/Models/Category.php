@@ -36,7 +36,8 @@ class Category extends Model
     }
     public static function getProductByCat($slug){
         // dd($slug);
-        return Category::with('products')->where('slug',$slug)->first();
+        return Category::with('products')->where('slug', $slug)->first()->products()->paginate(10);
+
         // return Product::where('cat_id',$id)->where('child_cat_id',null)->paginate(10);
     }
     public static function getProductBySubCat($slug){

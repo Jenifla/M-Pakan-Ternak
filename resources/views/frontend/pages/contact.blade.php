@@ -8,8 +8,8 @@
 				<div class="col-12">
 					<div class="bread-inner">
 						<ul class="bread-list">
-							<li><a href="{{route('home')}}">Home<i class="ti-arrow-right"></i></a></li>
-							<li class="active"><a href="javascript:void(0);">Contact</a></li>
+							<li><a href="{{route('home')}}">Beranda<i class="ti-arrow-right"></i></a></li>
+							<li class="active"><a href="javascript:void(0);">Kontak</a></li>
 						</ul>
 					</div>
 				</div>
@@ -97,7 +97,7 @@
 								<div class="single-info">
 									<i class="fa fa-phone"></i>
 									<div>
-									<h4 class="title">Telephone:</h4>
+									<h4 class="title">Telepon:</h4>
 									<ul>
 										<li>@foreach($settings as $data) {{$data->phone}} @endforeach</li>
 									</ul>

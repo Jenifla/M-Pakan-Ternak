@@ -132,13 +132,36 @@ class Helper{
         }
     }
     // Total amount cart
+    // public static function totalCartPrice($user_id=''){
+    //     if(Auth::check()){
+    //         if($user_id=="") $user_id=auth()->user()->id;
+    //         // return Cart::where('user_id',$user_id)->where('order_id',null)->sum('amount');
+    //         return Cart::where('user_id',$user_id)->where('order_id',null);
+    //     }
+    //     else{
+    //         return 0;
+    //     }
+    // }
     public static function totalCartPrice($user_id=''){
-        if(Auth::check()){
-            if($user_id=="") $user_id=auth()->user()->id;
-            // return Cart::where('user_id',$user_id)->where('order_id',null)->sum('amount');
-            return Cart::where('user_id',$user_id)->where('order_id',null)->sum('price');
-        }
-        else{
+        if (Auth::check()) {
+            if ($user_id == "") $user_id = auth()->user()->id;
+    
+            // Ambil semua produk dalam keranjang untuk pengguna tertentu
+            $cart_items = Cart::with('product')->where('user_id', $user_id)->where('order_id', null)->get();
+            
+            $total_price = 0;
+            
+            // Iterasi setiap item dalam keranjang untuk menghitung total harga
+            foreach ($cart_items as $item) {
+                $product = $item->product;
+                $original_price = $product->price; // Harga asli produk
+                $discount = $product->discount; // Diskon produk
+                $price_after_discount = $original_price - ($original_price * $discount / 100); // Harga setelah diskon
+                $total_price += $price_after_discount * $item->quantity; // Tambahkan total harga produk berdasarkan kuantitas
+            }
+    
+            return $total_price; // Kembalikan total harga keranjang
+        } else {
             return 0;
         }
     }

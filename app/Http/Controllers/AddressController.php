@@ -63,13 +63,16 @@ class AddressController extends Controller
         ]);
 
         // Cek apakah pengguna sudah memiliki alamat
-        $existingAddressCount = Address::where('user_id', $user_id)->count();
+        // Cek apakah pengguna sudah memiliki alamat
+        $existingDefaultAddress = Address::where('user_id', $user_id)->where('is_default', 1)->first();
 
-       // Menentukan apakah alamat pertama harus default atau tidak
-        if ($existingAddressCount == 0) {
-            $isDefault = 1; // Alamat pertama yang ditambahkan adalah default
+        // Menentukan apakah alamat baru harus default atau tidak
+        if ($existingDefaultAddress) {
+            // Jika sudah ada alamat default, alamat baru akan disimpan sebagai non-default
+            $isDefault = 0;
         } else {
-            $isDefault = 0; // Alamat selanjutnya non-default
+            // Jika belum ada alamat default, alamat baru menjadi default
+            $isDefault = 1;
         }
 
         // Membuat alamat baru menggunakan mass assignment

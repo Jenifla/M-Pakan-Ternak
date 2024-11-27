@@ -4,6 +4,7 @@ use App\Services\RajaOngkirService;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\ShippingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,11 +36,12 @@ Route::get('/','FrontendController@home')->name('home');
 // Frontend Routes
 Route::get('/home', 'FrontendController@index');
 Route::get('/account','FrontendController@account')->name('account');
-Route::get('/account-dash','FrontendController@accountdashboard')->name('account-dash');
-Route::get('/account-order','FrontendController@accountorder')->name('frontend.pages.account.order');
-Route::get('/account-order/show/{id}','FrontendController@orderShow')->name('frontend.pages.account.detailorder');
-Route::get('/account-address','FrontendController@accountaddress')->name('account-address');
-Route::get('/account-myaccount','FrontendController@accountdetail')->name('account-my');
+Route::get('/account-dash','FrontendController@accountdashboard')->name('account-dash')->middleware('user');
+Route::get('/account-order','FrontendController@accountorder')->name('frontend.pages.account.order')->middleware('user');
+Route::get('/account-order/show/{id}','FrontendController@orderShow')->name('frontend.pages.account.detailorder')->middleware('user');
+Route::get('/account-address','FrontendController@accountaddress')->name('account-address')->middleware('user');
+Route::get('/account-myaccount','FrontendController@accountdetail')->name('account-my')->middleware('user');
+Route::put('/account-update', 'FrontendController@accountUpdate')->name('account.update');
 Route::get('/about-us','FrontendController@aboutUs')->name('about-us');
 Route::get('/contact','FrontendController@contact')->name('contact');
 Route::post('/contact/message','MessageController@store')->name('contact.store');
@@ -64,12 +66,11 @@ Route::post('cart/order','OrderController@store')->name('cart.order');
 Route::get('order/pdf/{id}','OrderController@pdf')->name('order.pdf');
 Route::get('/income','OrderController@incomeChart')->name('product.order.income');
 // Route::get('/user/chart','AdminController@userPieChart')->name('user.piechart');
+Route::get('order/invoice/{id}','FrontendController@invoice')->name('order.invoice');
 Route::get('/product-grids','FrontendController@productGrids')->name('product-grids');
 Route::get('/product-lists','FrontendController@productLists')->name('product-lists');
 Route::match(['get','post'],'/filter','FrontendController@productFilter')->name('shop.filter');
-// Order Track
-Route::get('/product/track','OrderController@orderTrack')->name('order.track');
-Route::post('product/track/order','OrderController@productTrackOrder')->name('product.track.order');
+
 // Blog
 Route::get('/blog','FrontendController@blog')->name('blog');
 Route::get('/blog-detail/{slug}','FrontendController@blogDetail')->name('blog.detail');
@@ -81,9 +82,11 @@ Route::get('blog-tag/{slug}','FrontendController@blogByTag')->name('blog.tag');
 // Address
 Route::resource('/address','AddressController');
 Route::post('/address/{id}',[AddressController::class, 'setDefaultAddress'])->name('set-default');
-Route::post('/address/store', [AddressController::class, 'store'])->name('address.store');
+Route::post('/address-store', [AddressController::class, 'store'])->name('address.store');
 Route::get('/get-address/{id}', [AddressController::class, 'edit'])->name('address.get');
 Route::delete('/del-address/{id}', [AddressController::class, 'destroy'])->name('address.delete');
+
+Route::get('/get/shipping', [ShippingController::class, 'getShippingOptions']);
 
 Route::get('/provinces', [RajaOngkirService::class, 'getProvinces']);
 Route::get('/cities/{provinceId}', [RajaOngkirService::class, 'getCities']);
@@ -108,6 +111,11 @@ Route::post('/midtrans/token', 'PaymentController@generateToken')->name('midtran
 
 //order
 Route::get('/order',"FrontendController@orderIndex")->name('account.order.index');
+Route::post('/buy-again/{order}', 'OrderController@buyAgain')->name('buy.again');
+Route::put('/order/{orderId}/update', 'OrderController@updateOrder')->name('order.updatestatus');
+
+//Cancelation
+Route::post('/cancel', 'CancellationController@store')->name('cancel.order');
 
 // Backend section start
 
@@ -137,6 +145,11 @@ Route::group(['prefix'=>'/admin','middleware'=>['auth','admin']],function(){
     
     // Order
     Route::resource('/order','OrderController');
+    Route::put('/order/{orderId}/update-status', 'OrderController@updateStatus')->name('order.update.status');
+    Route::put('/order/{orderId}/update', 'CancellationController@updateStatus')->name('order.cancel.update');
+
+
+
     // Shipping
     Route::resource('/shipping','ShippingController');
     Route::post('/shipping/{id}','ShippingController@update')->name('shipping-update');

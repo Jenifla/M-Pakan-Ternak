@@ -112,6 +112,8 @@ class CartController extends Controller
         request()->session()->flash('success','Product has been added to cart.');
         return back();       
     } 
+
+    
     
     public function cartDelete(Request $request){
         $cart = Cart::find($request->id);

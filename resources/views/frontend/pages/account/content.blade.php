@@ -7,13 +7,15 @@
 <div >
     <div class="card">
         <div class="card-header">
-            <h3 class="mb-0">Hello Rosie!</h3>
+            <h3 class="mb-0">Halo {{ Auth::user()->name }}</h3>
         </div>
         <div class="card-body">
             <p>
-                From your account dashboard. you can easily check &amp; view your <a href="#">recent orders</a>,<br />
-                manage your <a href="#">shipping and billing addresses</a> and <a href="#">edit your password and account details.</a>
+                Dari dashboard akun Anda, Anda dapat dengan mudah memeriksa &amp; melihat <a href="#">pesanan terkini</a>,<br />
+                mengelola <a href="#">alamat pengiriman</a> dan <a href="#">mengedit kata sandi dan detail akun Anda.</a>
             </p>
+
+            
         </div>
     </div>
 </div>

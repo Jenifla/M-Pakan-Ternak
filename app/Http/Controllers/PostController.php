@@ -45,11 +45,11 @@ class PostController extends Controller
     {
         // return $request->all();
         $this->validate($request,[
-            'title'=>'string|required',
+            'title'=>'required|string',
             'quote'=>'string|nullable',
-            'summary'=>'string|required',
-            'description'=>'string|nullable',
-            'photo'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'summary'=>'nullable|string',
+            'description'=>'required|string',
+            'photo'=>'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'added_by'=>'nullable',
             'status'=>'required|in:active,inactive'
         ]);
@@ -126,11 +126,11 @@ class PostController extends Controller
         $post=Post::findOrFail($id);
          // return $request->all();
          $this->validate($request,[
-            'title'=>'string|required',
+            'title'=>'required|string',
             'quote'=>'string|nullable',
-            'summary'=>'string|required',
-            'description'=>'string|nullable',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'summary'=>'nullable|string',
+            'description'=>'required|string',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'added_by'=>'nullable',
             'status'=>'required|in:active,inactive'
         ]);

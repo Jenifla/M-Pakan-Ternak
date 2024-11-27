@@ -10,8 +10,8 @@
                 <div class="col-12">
                     <div class="bread-inner">
                         <ul class="bread-list">
-                            <li><a href="{{route('home')}}">Home<i class="ti-arrow-right"></i></a></li>
-                            <li class="active"><a href="javascript:void(0);">Blog Grid Sidebar</a></li>
+                            <li><a href="{{route('home')}}">Beranda<i class="ti-arrow-right"></i></a></li>
+                            <li class="active"><a href="javascript:void(0);">Artikel</a></li>
                         </ul>
                     </div>
                 </div>
@@ -41,7 +41,7 @@
                                         </p>
                                         <a href="{{route('blog.detail',$post->slug)}}" class="title">{{$post->title}}</a>
                                         <p>{!! html_entity_decode($post->summary) !!}</p>
-                                        <a href="{{route('blog.detail',$post->slug)}}" class="more-btn">Continue Reading</a>
+                                        <a href="{{route('blog.detail',$post->slug)}}" class="more-btn">Lanjutkan Membaca</a>
                                     </div>
                                 </div>
                                 <!-- End Single Blog  -->
@@ -59,7 +59,7 @@
                         <!-- Single Widget -->
                         <div class="single-widget search">
                             <form class="form" method="GET" action="{{route('blog.search')}}">
-                                <input type="text" placeholder="Search Here..." name="search">
+                                <input type="text" placeholder="Cari disini..." name="search">
                                 <button class="button" type="sumbit"><i class="fa fa-search"></i></button>
                             </form>
                         </div>
@@ -88,7 +88,7 @@
                         <!--/ End Single Widget -->
                         <!-- Single Widget -->
                         <div class="single-widget recent-post">
-                            <h3 class="title">Recent post</h3>
+                            <h3 class="title">Artikel Terbaru</h3>
                             @foreach($recent_posts as $post)
                                 <!-- Single Post -->
                                 <div class="single-post">

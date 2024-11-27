@@ -9,8 +9,8 @@
         @csrf 
         @method('PATCH')
         <div class="form-group">
-          <label for="inputTitle" class="col-form-label">Title <span class="text-danger">*</span></label>
-          <input id="inputTitle" type="text" name="title" placeholder="Enter title"  value="{{$product->title}}" class="form-control">
+          <label for="inputTitle" class="col-form-label">Name <span class="text-danger">*</span></label>
+          <input id="inputTitle" type="text" name="title" placeholder="Enter name produk"  value="{{$product->title}}" class="form-control">
           @error('title')
           <span class="text-danger">{{$message}}</span>
           @enderror
@@ -18,11 +18,12 @@
 
         <div class="form-group">
           <label for="summary" class="col-form-label">Summary <span class="text-danger">*</span></label>
-          <textarea class="form-control" id="summary" name="summary">{{$product->summary}}</textarea>
+          <textarea class="form-control" id="summary" name="summary">{{ old('summary', $product->summary) }}</textarea>
           @error('summary')
-          <span class="text-danger">{{$message}}</span>
+              <span class="text-danger">{{ $message }}</span>
           @enderror
-        </div>
+      </div>
+      
 
         <div class="form-group">
           <label for="description" class="col-form-label">Description</label>
@@ -32,13 +33,6 @@
           @enderror
         </div>
 
-
-        <div class="form-group">
-          <label for="is_featured">Is Featured</label><br>
-          <input type="checkbox" name='is_featured' id='is_featured' value='{{$product->is_featured}}' {{(($product->is_featured) ? 'checked' : '')}}> Yes                        
-        </div>
-              {{-- {{$categories}} --}}
-
         <div class="form-group">
           <label for="cat_id">Category <span class="text-danger">*</span></label>
           <select name="cat_id" id="cat_id" class="form-control">
@@ -47,6 +41,9 @@
                   <option value='{{$cat_data->id}}' {{(($product->cat_id==$cat_data->id)? 'selected' : '')}}>{{$cat_data->title}}</option>
               @endforeach
           </select>
+          @error('cat_id')
+          <span class="text-danger">{{$message}}</span>
+          @enderror
         </div>
         @php 
           $sub_cat_info=DB::table('categories')->select('title')->where('id',$product->child_cat_id)->get();
@@ -92,7 +89,7 @@
               <option value="">--Select Condition--</option>
               <option value="default" {{(($product->condition=='default')? 'selected':'')}}>Default</option>
               <option value="new" {{(($product->condition=='new')? 'selected':'')}}>New</option>
-              <option value="hot" {{(($product->condition=='hot')? 'selected':'')}}>Hot</option>
+              <option value="best seller" {{(($product->condition=='best seller')? 'selected':'')}}>Best Seller</option>
           </select>
         </div>
 
@@ -119,9 +116,18 @@
         <div id="holder" style="display: flex; flex-wrap: wrap; margin-top: 15px;">
           
         </div>
-          @error('photo')
-          <span class="text-danger">{{$message}}</span>
-          @enderror
+        @error('photo')
+        <span class="text-danger">{{$message}}</span>
+        @enderror
+        @if($errors->has('photo.*'))
+            <ul>
+                @foreach ($errors->get('photo.*') as $messages)
+                    @foreach ($messages as $message)
+                        <li class="text-danger">{{ $message }}</li>
+                    @endforeach
+                @endforeach
+            </ul>
+        @endif
         </div>
         
         <div class="form-group">

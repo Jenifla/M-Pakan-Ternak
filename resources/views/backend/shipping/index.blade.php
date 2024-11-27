@@ -9,7 +9,7 @@
          </div>
      </div>
     <div class="card-header py-3">
-      <h6 class="m-0 font-weight-bold text-primary float-left">Biaya Pengiriman</h6>
+      <h6 class="m-0 font-weight-bold text-primary float-left">Shipping Cost</h6>
       <a href="{{route('shipping.create')}}" class="btn btn-primary btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Add User"><i class="fas fa-plus"></i> Add Shipping</a>
     </div>
     <div class="card-body">
@@ -19,9 +19,9 @@
           <thead>
             <tr>
               <th>No</th>
-              <th>Wilayah</th>
-              <th>Status Biaya</th>
-              <th>Harga</th>
+              <th>Region</th>
+              <th>Cost Status</th>
+              <th>Price</th>
               <th>Status</th>
               <th>Action</th>
             </tr>
@@ -36,7 +36,7 @@
                 <tr>
                     <td>{{$counter++}}</td>
                     <td>{{$shipping->type}}</td>
-                    <td>{{(($shipping->status_biaya == 0) ? 'Tidak Diketahui' : 'Diketahui')}}</td>
+                    <td>{{(($shipping->status_biaya == 0) ? 'Unknown' : 'Known')}}</td>
 
                     <td>Rp {{$shipping->price}}</td>
                     <td>

@@ -6,31 +6,31 @@
 <div >
     <div class="card">
         <div class="card-header">
-            <h3 class="mb-0">Your Orders</h3>
+            <h3 class="mb-0">Pesanan Anda</h3>
         </div>
         <div class="card-body">
             <!-- Additional Navigation for Order Status -->
             <ul class="nav nav-tabs" id="orderStatusTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="all-orders-tab" data-bs-toggle="tab" href="#all-orders" role="tab" aria-controls="all-orders" aria-selected="true">All Orders</a>
+                    <a class="nav-link active" id="all-orders-tab" data-bs-toggle="tab" href="#all-orders" role="tab" aria-controls="all-orders" aria-selected="true">Semua</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="new-orders-tab" data-bs-toggle="tab" href="#new-orders" role="tab" aria-controls="new-orders" aria-selected="false">New</a>
+                    <a class="nav-link" id="new-orders-tab" data-bs-toggle="tab" href="#new-orders" role="tab" aria-controls="new-orders" aria-selected="false">Pesanan Baru</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="topay-orders-tab" data-bs-toggle="tab" href="#topay-orders" role="tab" aria-controls="topay-orders" aria-selected="false">To Pay</a>
+                    <a class="nav-link" id="topay-orders-tab" data-bs-toggle="tab" href="#topay-orders" role="tab" aria-controls="topay-orders" aria-selected="false">Belum Bayar</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="toship-orders-tab" data-bs-toggle="tab" href="#toship-orders" role="tab" aria-controls="toship-orders" aria-selected="false">To Ship</a>
+                    <a class="nav-link" id="toship-orders-tab" data-bs-toggle="tab" href="#toship-orders" role="tab" aria-controls="toship-orders" aria-selected="false">Dikemas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="toreceive-orders-tab" data-bs-toggle="tab" href="#toreceive-orders" role="tab" aria-controls="toreceive-orders" aria-selected="false">To Receive</a>
+                    <a class="nav-link" id="toreceive-orders-tab" data-bs-toggle="tab" href="#toreceive-orders" role="tab" aria-controls="toreceive-orders" aria-selected="false">Dikirim</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="completed-orders-tab" data-bs-toggle="tab" href="#completed-orders" role="tab" aria-controls="completed-orders" aria-selected="false">Completed</a>
+                    <a class="nav-link" id="completed-orders-tab" data-bs-toggle="tab" href="#completed-orders" role="tab" aria-controls="completed-orders" aria-selected="false">Selesai</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="cancelled-orders-tab" data-bs-toggle="tab" href="#cancelled-orders" role="tab" aria-controls="cancelled-orders" aria-selected="false">Cancelled</a>
+                    <a class="nav-link" id="cancelled-orders-tab" data-bs-toggle="tab" href="#cancelled-orders" role="tab" aria-controls="cancelled-orders" aria-selected="false">Pembatalan</a>
                 </li>
                 {{-- <li class="nav-item">
                     <a class="nav-link" id="processing-orders-tab" data-bs-toggle="tab" href="#processing-orders" role="tab" aria-controls="processing-orders" aria-selected="false">Return Refund</a>
@@ -56,38 +56,50 @@
                                         {{-- <span>Your order is under verification <strong></strong></span> --}}
                                     
                                             @if($order->status=='new')
-                                            <span>Your order is under verification <strong></strong></span>
+                                                <span>Pesanan Anda sedang diverifikasi <strong></strong></span>
                                             @elseif($order->status=='to pay')
-                                            <span>Please complete your payment before <strong>28-12-2024</strong></span>
+                                                <span>Harap selesaikan pembayaran sebelum <strong>{{ date('d-m-Y H:i:s', strtotime($order->paymentDeadline)) }}</strong></span>
                                             @elseif($order->status=='to ship')
-                                            <span>Order will be shipped out by <strong>28-12-2024</strong></span>
+                                                <span>Pesanan akan dikirim sebelum <strong>{{ date('d-m-Y', strtotime($order->shippedDeadline)) }}</strong></span>
                                             @elseif($order->status=='to receive')
-                                            <span>Order will be Receive out by <strong>28-12-2024</strong></span>
+                                                <span>Pesanan sedang dalam perjalanan ke alamat tujuan <strong></strong></span>
                                             @elseif($order->status=='completed')
-                                            <span>Order Receive at <strong>28-12-2024</strong></span>
+                                                <span>Pesanan diterima pada <strong>{{ date('d-m-Y', strtotime($order->date_received)) }}</strong></span>
                                             @elseif($order->status=='cancel')
-                                            <span>Order Cancelled at <strong>28-12-2024</strong></span>
+                                                <span>Pesanan dibatalkan pada<strong>{{ date('d-m-Y', strtotime($order->date_cancel)) }}</strong></span>
                                             @elseif($order->status=='rejected')
-                                            <span>Order Rejected at <strong>28-12-2024</strong></span>
+                                                <span>Pesanan ditolak pada <strong>{{ date('d-m-Y', strtotime($order->date_cancel)) }}</strong></span>
+                                            @elseif($order->cancel && $order->cancel->status_pembatalan == 'pending')
+                                                <span>Pending, Pembatalan sedang diajukan</span>
+                                            @elseif($order->cancel && $order->cancel->status_pembatalan == 'disetujui')
+                                                <span class="text-success">Pembatalan Disetujui</span>
+                                            @elseif($order->cancel && $order->cancel->status_pembatalan == 'ditolak')
+                                                <span>Pembatalan Ditolak. Pesanan akan diproses lebih lanjut dan akan dikirim sebelum<strong>{{ date('d-m-Y', strtotime($order->shippedDeadline)) }}</strong>.</span>    
                                             @else
-                                            <span class="badge new-badge">{{$order->status}}</span>
+                                                <span class="badge new-badge">{{$order->status}}</span>
                                             @endif
 
                                     {{-- <span class="badge new-badge">New</span> --}}
                                             @if($order->status=='new')
-                                            <span class="badge new-badge">New</span>
+                                            <span class="badge new-badge">Baru</span>
                                             @elseif($order->status=='to pay')
-                                            <span class="badge custom-badge">To Pay</span>
+                                            <span class="badge custom-badge">Belum Bayar</span>
                                             @elseif($order->status=='to ship')
-                                            <span class="badge ship-badge">To Ship</span>
+                                            <span class="badge ship-badge">Dikemas</span>
                                             @elseif($order->status=='to receive')
-                                            <span class="badge ship-badge">To Receive</span>
+                                            <span class="badge ship-badge">Dikirim</span>
                                             @elseif($order->status=='completed')
-                                            <span class="badge complated-badge">Completed</span>
+                                            <span class="badge complated-badge">Selesai</span>
                                             @elseif($order->status=='cancel')
-                                            <span class="badge new-badge">Cancel</span>
+                                            <span class="badge new-badge">Dibatalkan</span>
                                             @elseif($order->status=='rejected')
-                                            <span class="badge new-badge">Rejected</span>
+                                            <span class="badge new-badge">Ditolak</span>
+                                            @elseif($order->cancel && $order->cancel->status_pembatalan == 'pending')
+                                            <span class="badge new-badge">Pending</span>
+                                            @elseif($order->cancel && $order->cancel->status_pembatalan == 'disetujui')
+                                                <span class="badge new-badge">Disetujui</span>
+                                            @elseif($order->cancel && $order->cancel->status_pembatalan == 'ditolak')
+                                            <span class="badge ship-badge">Dikemas</span>      
                                             @else
                                             <span class="badge new-badge">{{$order->status}}</span>
                                             @endif
@@ -97,6 +109,11 @@
                                  <!-- Loop untuk setiap item di dalam cart -->
                                  <div class="info-product">
                                     @foreach($order->cart as $cart)
+                                    @php
+                                    $original_price = $cart->product['price']; // Harga asli produk
+                                    $discount = $cart->product['discount'] ?? 0; // Diskon produk
+                                    $price_after_discount = $original_price - ($original_price * $discount / 100); // Harga setelah diskon
+                                    @endphp
                                     <div class="prdct">
                                         @if($cart->product->gambarProduk->isNotEmpty())
                                             <img src="{{ asset($cart->product->gambarProduk->first()->gambar) }}" alt="Product Image" class="me-3" style="width: 80px; height: 80px; object-fit: cover; border-radius:9px; margin-right:10px;">
@@ -105,7 +122,7 @@
                                         @endif
                                         <div>
                                             <h6 class="mb-1">{{ $cart->product->title }}</h6>
-                                            <p class="mb-0 text-muted">Rp {{ number_format($cart->price, 0, ',', '.') }}</p>
+                                            <p class="mb-0 text-muted">Rp {{ number_format($price_after_discount, 0, ',', '.') }}</p>
                                             <p class="mb-0">x{{ $cart->quantity }}</p>
                                         </div>
                                     </div>
@@ -122,26 +139,26 @@
                                     </div>
                                     <div class="btn-container" >
                                             @if($order->status=='new')
-                                            <a href="#" class="btn-contact-seller">Contact Seller</a>
-                                            <a href="#" class="btn-cancel-order">Cancel Order</a>
+                                            <a href="#" class="btn-contact-seller">Hubungi Penjual</a>
+                                            <a href="#" class="btn-cancel-order">Batalkan Pesanan</a>
                                             @elseif($order->status=='to pay')
-                                            <a href="#" class="btn-contact-seller pay-now" data-order-id="{{ $order->id }}">Pay Now</a>
-                                            <a href="#" class="btn-cancel-order">Cancel Order</a>
+                                            <a href="#" class="btn-contact-seller pay-now" data-order-id="{{ $order->id }}">Bayar Sekarang</a>
+                                            <a href="#" class="btn-cancel-order">Batalkan Pesanan</a>
                                             @elseif($order->status=='to ship')
-                                            <a href="#" class="btn-contact-seller">Contact Seller</a>
-                                            <a href="#" class="btn-cancel-order">Cancel Order</a>
+                                            <a href="#" class="btn-contact-seller">Hubungi Penjual</a>
+                                            <a href="#" class="btn-cancel-order">Batalkan Pesanan</a>
                                             @elseif($order->status=='to receive')
-                                            <a href="#" class="btn-contact-seller">Order Received</a>
-                                            <a href="#" class="btn-cancel-order">Contact Seller</a>
+                                            <a href="#" class="btn-contact-seller">Pesanan Diterima</a>
+                                            <a href="#" class="btn-cancel-order">Hubungi Penjual</a>
                                             @elseif($order->status=='completed')
-                                            <a href="#" class="btn-contact-seller">Review</a>
-                                            <a href="#" class="btn-cancel-order">Contact Seller</a>
+                                            <a href="#" class="btn-contact-seller">Beli Lagi</a>
+                                            <a href="#" class="btn-cancel-order">Hubungi Penjual</a>
                                             @elseif($order->status=='cancel')
-                                            <a href="#" class="btn-contact-seller">Buy</a>
-                                            <a href="#" class="btn-cancel-order">Contact Seller</a>
+                                            <a href="#" class="btn-contact-seller">Beli Lagi</a>
+                                            <a href="#" class="btn-cancel-order">Hubungi Penjual</a>
                                             @elseif($order->status=='rejected')
-                                            <a href="#" class="btn-contact-seller">Buy</a>
-                                            <a href="#" class="btn-cancel-order">Contact Seller</a>
+                                            <a href="#" class="btn-contact-seller">Beli Lagi</a>
+                                            <a href="#" class="btn-cancel-order">Hubungi Penjual</a>
                                             @else
                                             <span class="badge new-badge">{{$order->status}}</span>
                                             @endif
@@ -154,7 +171,7 @@
                         </a>
                         @endforeach
                     @else
-                        <h6 class="text-center">No new orders found</h6>
+                        <h6 class="text-center">Tidak ada pesanan yang ditemukan</h6>
                     @endif
                 </div>
                 {{-- <div class="tab-pane fade show active" id="all-orders" role="tabpanel" aria-labelledby="all-orders-tab">
@@ -257,15 +274,20 @@
                                     </div>
                                     <div>
                                     
-                                        <span>Your order is under verification <strong></strong></span>
+                                        <span>Pesanan Anda sedang diverifikasi<strong></strong></span>
                                     
-                                    <span class="badge new-badge">New</span>
+                                    <span class="badge new-badge">Baru</span>
                                     </div>
                                 </div>
                                 <!-- Product Details -->
                                  <!-- Loop untuk setiap item di dalam cart -->
                                  <div class="info-product">
                                     @foreach($order->cart as $cart)
+                                    @php
+                                    $original_price = $cart->product['price']; // Harga asli produk
+                                    $discount = $cart->product['discount'] ?? 0; // Diskon produk
+                                    $price_after_discount = $original_price - ($original_price * $discount / 100); // Harga setelah diskon
+                                    @endphp
                                     <div class="prdct">
                                         @if($cart->product->gambarProduk->isNotEmpty())
                                             <img src="{{ asset($cart->product->gambarProduk->first()->gambar) }}" alt="Product Image" class="me-3" style="width: 80px; height: 80px; object-fit: cover; border-radius:9px; margin-right:10px;">
@@ -274,7 +296,7 @@
                                         @endif
                                         <div>
                                             <h6 class="mb-1">{{ $cart->product->title }}</h6>
-                                            <p class="mb-0 text-muted">Rp {{ number_format($cart->price, 0, ',', '.') }}</p>
+                                            <p class="mb-0 text-muted">Rp {{ number_format($price_after_discount, 0, ',', '.') }}</p>
                                             <p class="mb-0">x{{ $cart->quantity }}</p>
                                         </div>
                                     </div>
@@ -290,16 +312,43 @@
                                         <strong class="order-total-amount">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</strong>
                                     </div>
                                     <div class="btn-container" >
-                                        <a href="#" class="btn-contact-seller">Contact Seller</a>
-                                        <a href="#" class="btn-cancel-order">Cancel Order</a>
+                                        <a href="https://wa.me/62894567890?text=Hello+I+would+like+to+contact+you+about+my+order" class="btn-contact-seller">Hubungi Penjual</a>
+                                        {{-- <button class="btn-contact-seller" >
+                                            Hubungi Penjual
+                                        </button> --}}
+                                        {{-- <a href="#" class="btn-cancel-order">Cancel Order</a> --}}
+                                         <!-- Tombol untuk Cancel Order -->
+                                         <button type="button" class="btn-cancel-order" onclick="document.getElementById('form-alasan-{{ $order->id }}').style.display = 'block';">
+                                            Batalkan Pesanan
+                                        </button>
+                                       
+                                       
+
                                     </div>
                                 </div>
+                                <form action="{{ route('order.updatestatus', $order->id) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="status" value="cancel">
+                            
+                                   
+                            
+                                    <!-- Form Alasan (Tersembunyi Secara Default) -->
+                                    <div id="form-alasan-{{ $order->id }}" style="display: none; margin-top: 10px;">
+                                        <label for="alasan-textarea-{{ $order->id }}">Alasan Pembatalan:</label>
+                                        <textarea name="alasan" id="alasan-textarea-{{ $order->id }}" class="form-control" rows="3" required></textarea>
+                                        <button type="submit" class="btn mt-2">Ajukan Pembatalan</button>
+                                        <button type="button" class="btn mt-2" onclick="document.getElementById('form-alasan-{{ $order->id }}').style.display = 'none';">
+                                            Batal
+                                        </button>
+                                    </div>
+                                </form>
                                 
                             </div>
                         </a>
                         @endforeach
                     @else
-                        <h6 class="text-center">No new orders found</h6>
+                        <h6 class="text-center">Tidak ada pesanan baru yang ditemukan</h6>
                     @endif
                 </div>
 
@@ -318,15 +367,20 @@
                                     </div>
                                     <div>
                                     
-                                        <span>Please complete your payment before <strong>28-12-2024</strong></span>
+                                        <span>Harap selesaikan pembayaran sebelum <strong>{{ date('d-m-Y H:i:s', strtotime($order->paymentDeadline)) }}</strong></span>
                                     
-                                    <span class="badge custom-badge">To Pay</span>
+                                    <span class="badge custom-badge">Belum Bayar</span>
                                     </div>
                                 </div>
                                 <!-- Product Details -->
                                  <!-- Loop untuk setiap item di dalam cart -->
                                  <div class="info-product">
                                     @foreach($order->cart as $cart)
+                                    @php
+                                    $original_price = $cart->product['price']; // Harga asli produk
+                                    $discount = $cart->product['discount'] ?? 0; // Diskon produk
+                                    $price_after_discount = $original_price - ($original_price * $discount / 100); // Harga setelah diskon
+                                    @endphp
                                     <div class="prdct">
                                         @if($cart->product->gambarProduk->isNotEmpty())
                                             <img src="{{ asset($cart->product->gambarProduk->first()->gambar) }}" alt="Product Image" class="me-3" style="width: 80px; height: 80px; object-fit: cover; border-radius:9px; margin-right:10px;">
@@ -335,7 +389,7 @@
                                         @endif
                                         <div>
                                             <h6 class="mb-1">{{ $cart->product->title }}</h6>
-                                            <p class="mb-0 text-muted">Rp {{ number_format($cart->price, 0, ',', '.') }}</p>
+                                            <p class="mb-0 text-muted">Rp {{ number_format($price_after_discount, 0, ',', '.') }}</p>
                                             <p class="mb-0">x{{ $cart->quantity }}</p>
                                         </div>
                                     </div>
@@ -351,16 +405,37 @@
                                         <strong class="order-total-amount">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</strong>
                                     </div>
                                     <div class="btn-container">
-                                        <a href="#" class="btn-contact-seller pay-now" data-order-id="{{ $order->id }}">Pay Now</a>
-                                        <a href="#" class="btn-cancel-order">Cancel Order</a>
+                                        <a href="#" class="btn-contact-seller pay-now" data-order-id="{{ $order->id }}">Bayar Sekarang</a>
+
+                                        {{-- <a href="#" class="btn-cancel-order">Cancel Order</a> --}}
+                                        <button type="button" class="btn-cancel-order" onclick="document.getElementById('form-alasan-{{ $order->id }}').style.display = 'block';">
+                                            Batalkan Pesanan
+                                        </button>
                                     </div>
                                 </div>
+                                <form action="{{ route('order.updatestatus', $order->id) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="status" value="cancel">
+                            
+                                   
+                            
+                                    <!-- Form Alasan (Tersembunyi Secara Default) -->
+                                    <div id="form-alasan-{{ $order->id }}" style="display: none; margin-top: 10px;">
+                                        <label for="alasan-textarea-{{ $order->id }}">Alasan Pembatalan</label>
+                                        <textarea name="alasan" id="alasan-textarea-{{ $order->id }}" class="form-control" rows="3" required></textarea>
+                                        <button type="submit" class="btn mt-2">Ajukan Pembatalan</button>
+                                        <button type="button" class="btn mt-2" onclick="document.getElementById('form-alasan-{{ $order->id }}').style.display = 'none';">
+                                            Batal
+                                        </button>
+                                    </div>
+                                </form>
                                 
                             </div>
                         </a>
                         @endforeach
                     @else
-                        <h6 class="text-center">No new orders found</h6>
+                        <h6 class="text-center">Tidak ada pesanan belum bayar yang ditemukan</h6>
                     @endif
                 </div>
                 <!-- To Pay Orders Tab -->
@@ -450,15 +525,43 @@
                                     </div>
                                     <div>
                                     
-                                        <span>Order will be shipped out by <strong>28-12-2024</strong></span>
+                                        {{-- <span>Order will be shipped out by <strong>28-12-2024</strong></span>
                                     
-                                    <span class="badge ship-badge">To Ship</span>
+                                    <span class="badge ship-badge">To Ship</span> --}}
+                                    {{-- @if($order->cancel && $order->cancel->status_pembatalan == 'pending')
+                                        <span>Pending, Pembatalan sedang diajukan</span>
+                                        <span class="badge new-badge">Pending</span>
+                                    @else
+                                        <span>Order will be shipped out by <strong>28-12-2024</strong></span>
+                                        <span class="badge ship-badge">To Ship</span>
+                                    @endif --}}
+
+                                   
+                                    @if($order->cancel && $order->cancel->status_pembatalan == 'pending')
+                                        <span>Pending, Pembatalan sedang diajukan</span>
+                                        <span class="badge new-badge">Pending</span>
+                                    @elseif($order->cancel && $order->cancel->status_pembatalan == 'disetujui')
+                                        <span class="text-success">Pembatalan Disetujui</span>
+                                        <span class="badge new-badge">Disetujui</span>
+                                    @elseif($order->cancel && $order->cancel->status_pembatalan == 'ditolak')
+                                    {{-- <span class="text-danger">Pembatalan Ditolak. Pesanan akan diproses lebih lanjut dan akan dikirim pada tanggal <strong>23-08-2024</strong>.</span> --}}
+                                    <span>Pembatalan Ditolak. Pesanan akan diproses lebih lanjut dan akan dikirim sebelum<strong>{{ date('d-m-Y', strtotime($order->shippedDeadline)) }}</strong>.</span>
+                                    <span class="badge ship-badge">Dikemas</span>      
+                                    @else
+                                        <span>Pesanan akan dikirim sebelum <strong>{{ date('d-m-Y', strtotime($order->shippedDeadline)) }}</strong></span>
+                                        <span class="badge ship-badge">Dikemas</span>
+                                    @endif
                                     </div>
                                 </div>
                                 <!-- Product Details -->
                                  <!-- Loop untuk setiap item di dalam cart -->
                                  <div class="info-product">
                                     @foreach($order->cart as $cart)
+                                    @php
+                                    $original_price = $cart->product['price']; // Harga asli produk
+                                    $discount = $cart->product['discount'] ?? 0; // Diskon produk
+                                    $price_after_discount = $original_price - ($original_price * $discount / 100); // Harga setelah diskon
+                                    @endphp
                                     <div class="prdct">
                                         @if($cart->product->gambarProduk->isNotEmpty())
                                             <img src="{{ asset($cart->product->gambarProduk->first()->gambar) }}" alt="Product Image" class="me-3" style="width: 80px; height: 80px; object-fit: cover; border-radius:9px; margin-right:10px;">
@@ -467,7 +570,7 @@
                                         @endif
                                         <div>
                                             <h6 class="mb-1">{{ $cart->product->title }}</h6>
-                                            <p class="mb-0 text-muted">Rp {{ number_format($cart->price, 0, ',', '.') }}</p>
+                                            <p class="mb-0 text-muted">Rp {{ number_format($price_after_discount, 0, ',', '.') }}</p>
                                             <p class="mb-0">x{{ $cart->quantity }}</p>
                                         </div>
                                     </div>
@@ -483,16 +586,38 @@
                                         <strong class="order-total-amount">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</strong>
                                     </div>
                                     <div class="btn-container">
-                                        <a href="#" class="btn-contact-seller">Contact Seller</a>
-                                        <a href="#" class="btn-cancel-order">Cancel Order</a>
+                                        <a href="https://wa.me/62894567890?text=Hello+I+would+like+to+contact+you+about+my+order" class="btn-contact-seller"> Hubungi Penjual</a>
+                                        {{-- <button class="btn-contact-seller" >
+                                            Hubungi Penjual
+                                        </button> --}}
+                                        {{-- <a href="#" class="btn-cancel-order">Cancel Order</a> --}}
+                                        <button type="button" class="btn-cancel-order" onclick="document.getElementById('form-alasan-{{ $order->id }}').style.display = 'block';">
+                                            Batalkan Pesanan
+                                        </button>
                                     </div>
                                 </div>
+                                <form action="{{ route('cancel.order') }}" method="POST">
+                                    @csrf
+                                    @method('POST')
+                                    <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                   
+                            
+                                    <!-- Form Alasan (Tersembunyi Secara Default) -->
+                                    <div id="form-alasan-{{ $order->id }}" style="display: none; margin-top: 10px;">
+                                        <label for="alasan-textarea-{{ $order->id }}">Alasan Pembatalan:</label>
+                                        <textarea name="alasan" id="alasan-textarea-{{ $order->id }}" class="form-control" rows="3" required></textarea>
+                                        <button type="submit" class="btn mt-2">Ajukan Pembatalan</button>
+                                        <button type="button" class="btn mt-2" onclick="document.getElementById('form-alasan-{{ $order->id }}').style.display = 'none';">
+                                            Batal
+                                        </button>
+                                    </div>
+                                </form>
                                 
                             </div>
                         </a>
                         @endforeach
                     @else
-                        <h6 class="text-center">No orders to ship found</h6>
+                        <h6 class="text-center">Tidak ada pesanan untuk dikirim yang ditemukan</h6>
                     @endif
                 </div>
                 {{-- <div class="tab-pane fade" id="toship-orders" role="tabpanel" aria-labelledby="toship-orders-tab">
@@ -545,15 +670,20 @@
                                     </div>
                                     <div>
                                     
-                                        <span>Order will be Receive out by <strong>28-12-2024</strong></span>
+                                        <span>Pesanan sedang dalam perjalanan ke alamat tujuan<strong></strong></span>
                                     
-                                    <span class="badge ship-badge">To Receive</span>
+                                    <span class="badge ship-badge">Dikirim</span>
                                     </div>
                                 </div>
                                 <!-- Product Details -->
                                  <!-- Loop untuk setiap item di dalam cart -->
                                  <div class="info-product">
                                     @foreach($order->cart as $cart)
+                                    @php
+                                    $original_price = $cart->product['price']; // Harga asli produk
+                                    $discount = $cart->product['discount'] ?? 0; // Diskon produk
+                                    $price_after_discount = $original_price - ($original_price * $discount / 100); // Harga setelah diskon
+                                    @endphp
                                     <div class="prdct">
                                         @if($cart->product->gambarProduk->isNotEmpty())
                                             <img src="{{ asset($cart->product->gambarProduk->first()->gambar) }}" alt="Product Image" class="me-3" style="width: 80px; height: 80px; object-fit: cover; border-radius:9px; margin-right:10px;">
@@ -562,7 +692,7 @@
                                         @endif
                                         <div>
                                             <h6 class="mb-1">{{ $cart->product->title }}</h6>
-                                            <p class="mb-0 text-muted">Rp {{ number_format($cart->price, 0, ',', '.') }}</p>
+                                            <p class="mb-0 text-muted">Rp {{ number_format($price_after_discount, 0, ',', '.') }}</p>
                                             <p class="mb-0">x{{ $cart->quantity }}</p>
                                         </div>
                                     </div>
@@ -578,8 +708,20 @@
                                         <strong class="order-total-amount">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</strong>
                                     </div>
                                     <div class="btn-container">
-                                        <a href="#" class="btn-contact-seller">Order Received</a>
-                                        <a href="#" class="btn-cancel-order">Contact Seller</a>
+                                        {{-- <a href="#" class="btn-contact-seller">Order Received</a> --}}
+                                        <form action="{{ route('order.updatestatus', $order->id) }}" method="POST" style="display: inline;">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="status" value="completed">
+                                            <button type="submit" class="btn-contact-seller" title="Received" >Pesanan Diterima</button>
+                                        </form>
+                                        {{-- <button class="btn-cancel-order" >
+                                            Contact Seller
+                                        </button> --}}
+                                        {{-- <button class="btn-cancel-order" onclick="window.open('https://wa.me/62894567890?text=Hello%20I%20would%20like%20to%20contact%20you%20about%20my%20order', '_blank')">
+                                            Contact Seller
+                                        </button> --}}
+                                        <a href="https://wa.me/62894567890?text=Hello+I+would+like+to+contact+you+about+my+order" class="btn-cancel-order">Hubungi Penjual</a>
                                     </div>
                                 </div>
                                 
@@ -587,7 +729,7 @@
                         </a>
                         @endforeach
                     @else
-                        <h6 class="text-center">No orders to receive found</h6>
+                        <h6 class="text-center">Tidak ditemukan pesanan untuk diterima</h6>
                     @endif
                 </div>
 
@@ -607,15 +749,20 @@
                                     </div>
                                     <div>
                                     
-                                        <span>Order Receive at <strong>28-12-2024</strong></span>
+                                        <span>Pesanan diterima pada<strong>{{ date('d-m-Y', strtotime($order->date_received)) }}</strong></span>
                                     
-                                    <span class="badge complated-badge">Completed</span>
+                                    <span class="badge complated-badge">Selesai</span>
                                     </div>
                                 </div>
                                 <!-- Product Details -->
                                  <!-- Loop untuk setiap item di dalam cart -->
                                  <div class="info-product">
                                     @foreach($order->cart as $cart)
+                                    @php
+                                    $original_price = $cart->product['price']; // Harga asli produk
+                                    $discount = $cart->product['discount'] ?? 0; // Diskon produk
+                                    $price_after_discount = $original_price - ($original_price * $discount / 100); // Harga setelah diskon
+                                    @endphp
                                     <div class="prdct">
                                         @if($cart->product->gambarProduk->isNotEmpty())
                                             <img src="{{ asset($cart->product->gambarProduk->first()->gambar) }}" alt="Product Image" class="me-3" style="width: 80px; height: 80px; object-fit: cover; border-radius:9px; margin-right:10px;">
@@ -624,7 +771,7 @@
                                         @endif
                                         <div>
                                             <h6 class="mb-1">{{ $cart->product->title }}</h6>
-                                            <p class="mb-0 text-muted">Rp {{ number_format($cart->price, 0, ',', '.') }}</p>
+                                            <p class="mb-0 text-muted">Rp {{ number_format($price_after_discount, 0, ',', '.') }}</p>
                                             <p class="mb-0">x{{ $cart->quantity }}</p>
                                         </div>
                                     </div>
@@ -640,8 +787,15 @@
                                         <strong class="order-total-amount">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</strong>
                                     </div>
                                     <div class="btn-container">
-                                        <a href="#" class="btn-contact-seller">Review</a>
-                                        <a href="#" class="btn-cancel-order">Contact Seller</a>
+                                        <form action="{{route('buy.again', $order->id)}}" method="POST">
+                                            @csrf 
+                                            <button type="submit" class="btn-contact-seller">Beli Lagi</button>
+                                        </form>
+                                        {{-- <a href="#" class="btn-contact-seller">Buy</a> --}}
+                                        <a href="https://wa.me/62894567890?text=Hello+I+would+like+to+contact+you+about+my+order" class="btn-cancel-order">Hubungi Penjual</a>
+                                        {{-- <button class="btn-cancel-order" >
+                                            Hubungi Penjual
+                                        </button> --}}
                                     </div>
                                 </div>
                                 
@@ -649,12 +803,12 @@
                         </a>
                         @endforeach
                     @else
-                        <h6 class="text-center">No complated orders found</h6>
+                        <h6 class="text-center">Tidak ditemukan pesanan yang telah selesai</h6>
                     @endif
                 </div>
 
                 <!-- Cencelled Orders Tab -->
-                <div class="tab-pane fade" id="cancelled-orders" role="tabpanel" aria-labelledby="cancelled-orders-tab">
+                <div class="tab-pane fade" id="cancelled-orders" role="tabpanel" aria-labelledby="cancelled-orders-tab"> 
                     @if(count($orders->where('status', 'cancel')) > 0)
                         @foreach($orders->where('status', 'cancel') as $order)
                         <a href="{{route('frontend.pages.account.detailorder',$order->id)}}" class="order-link">
@@ -669,15 +823,20 @@
                                     </div>
                                     <div>
                                     
-                                        <span>Order Cancelled at <strong>28-12-2024</strong></span>
+                                        <span>Pesanan dibatalkan pada <strong>{{ date('d-m-Y', strtotime($order->date_cancel)) }}</strong></span>
                                     
-                                    <span class="badge new-badge">Cancel</span>
+                                    <span class="badge new-badge">Dibatalkan</span>
                                     </div>
                                 </div>
                                 <!-- Product Details -->
-                                 <!-- Loop untuk setiap item di dalam cart -->
-                                 <div class="info-product">
+                                <!-- Loop untuk setiap item di dalam cart -->
+                                <div class="info-product">
                                     @foreach($order->cart as $cart)
+                                    @php
+                                    $original_price = $cart->product['price']; // Harga asli produk
+                                    $discount = $cart->product['discount'] ?? 0; // Diskon produk
+                                    $price_after_discount = $original_price - ($original_price * $discount / 100); // Harga setelah diskon
+                                    @endphp
                                     <div class="prdct">
                                         @if($cart->product->gambarProduk->isNotEmpty())
                                             <img src="{{ asset($cart->product->gambarProduk->first()->gambar) }}" alt="Product Image" class="me-3" style="width: 80px; height: 80px; object-fit: cover; border-radius:9px; margin-right:10px;">
@@ -686,7 +845,7 @@
                                         @endif
                                         <div>
                                             <h6 class="mb-1">{{ $cart->product->title }}</h6>
-                                            <p class="mb-0 text-muted">Rp {{ number_format($cart->price, 0, ',', '.') }}</p>
+                                            <p class="mb-0 text-muted">Rp {{ number_format($price_after_discount, 0, ',', '.') }}</p>
                                             <p class="mb-0">x{{ $cart->quantity }}</p>
                                         </div>
                                     </div>
@@ -702,8 +861,15 @@
                                         <strong class="order-total-amount">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</strong>
                                     </div>
                                     <div class="btn-container">
-                                        <a href="#" class="btn-contact-seller">Buy</a>
-                                        <a href="#" class="btn-cancel-order">Contact Seller</a>
+                                        <form action="{{route('buy.again', $order->id)}}" method="POST">
+                                            @csrf 
+                                            <button type="submit" class="btn-contact-seller">Beli Lagi</button>
+                                        </form>
+                                        {{-- <a href="#" class="btn-contact-seller">Buy</a> --}}
+                                        {{-- <a href="#" class="btn-cancel-order">Contact Seller</a> --}}
+                                        <a href="https://wa.me/62894567890?text=Hello+I+would+like+to+contact+you+about+my+order" class="btn-cancel-order" >
+                                            Hubungi Penjual
+                                        </a>
                                     </div>
                                 </div>
                                 
@@ -711,14 +877,90 @@
                         </a>
                         @endforeach
                     @else
-                        <h6 class="text-center">No cancelled orders found</h6>
+                        <h6 class="text-center">Tidak ditemukan pesanan yang dibatalkan</h6>
                     @endif
+                        
                 </div>
 
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal Popup -->
+{{-- <div class="modal fade" id="cancelOrderModal" tabindex="-1" role="dialog" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+    <div class="modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelOrderModalLabel">Cancel Order</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form Alasan -->
+                <form id="resonForm">
+                    <div class="form-group">
+                        <label for="ala">Reason:</label>
+                        <textarea id="ala" class="form-control" required></textarea>
+                    </div>
+                    <button type="submit" class="subb">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> --}}
+{{-- <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelOrderModalLabel">Cancel Order</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="reasonForm">
+                    <div class="form-group">
+                        <label for="cancelReason">Reason for Cancellation</label>
+                        <textarea class="form-control" id="cancelReason" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Submit Reason</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> --}}
+
+{{-- <script>
+   $(document).ready(function () {
+    var currentForm; // To store the form that triggered the modal
+
+    // Event listener for Cancel Order button
+    $('.btn-cancel-order').click(function () {
+        currentForm = $(this).closest('form'); // Get the form related to this button
+        $('#cancelOrderModal').modal('show'); // Show the modal
+    });
+
+    // Handle form submission inside the modal
+    $('#reasonForm').on('submit', function (e) {
+        e.preventDefault(); // Prevent default modal form submission
+        var reason = $('#cancelReason').val().trim(); // Get the entered reason
+
+        if (reason === "") {
+            alert("Reason is required!");
+            return;
+        }
+
+        // Fill the hidden input in the actual form
+        currentForm.find('input[name="alasan"]').val(reason);
+
+        // Submit the original form
+        currentForm.submit();
+    });
+});
+
+</script> --}}
 <script>
     document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(function(tabElement) {
   tabElement.addEventListener('click', function(event) {
@@ -775,10 +1017,19 @@
     });
 });
 </script>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{{-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script> --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 @endsection
 @push('styles')
 <style>
+    .modal-sm{
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1050; /* Pastikan modal berada di atas elemen lain */
+    }
     .order-link {
     text-decoration: none; /* Hilangkan underline */
     color: inherit; /* Warna teks sesuai dengan tema */
@@ -886,8 +1137,9 @@
     background-color: #ff6f00; /* Warna tombol 'Contact Seller' */
     color: #fff;
     font-size: 14px; /* Ukuran font tombol */
-    padding: 5px 15px; /* Padding atas-bawah 4px, kiri-kanan 12px */
+    padding: 10px 15px; /* Padding atas-bawah 4px, kiri-kanan 12px */
     border-radius: 20px;
+    border: none;
     /* margin-right: 8px; Jarak kanan */
 }
 
@@ -897,10 +1149,11 @@
 
 .order-total-container .btn-container .btn-cancel-order {
     font-size: 14px; /* Ukuran font tombol */
-    padding: 5px 15px; /* Padding atas-bawah 4px, kiri-kanan 12px */
+    padding: 10px 15px; /* Padding atas-bawah 4px, kiri-kanan 12px */
     border: 1px solid #ff6f00; /* Warna border tombol 'Cancel Order' */
     color: #6c757d; /* Warna teks tombol 'Cancel Order' */
     border-radius: 20px;
+    background-color: transparent;
 }
 
 .order-total-container .btn-container .btn-cancel-order:hover {

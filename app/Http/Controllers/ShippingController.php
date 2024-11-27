@@ -19,6 +19,28 @@ class ShippingController extends Controller
         return view('backend.shipping.index')->with('shippings',$shipping);
     }
 
+
+    public function getShippingOptions(Request $request)
+    {
+        $kabupaten = $request->query('kabupaten');
+        if (!$kabupaten) {
+            return response()->json(['error' => 'Kabupaten parameter is required'], 400); // Bad Request jika tidak ada kabupaten
+        }
+
+        // Cari shipping dengan status_biaya = 1 terlebih dahulu
+        $shippingOptions = Shipping::where('type', $kabupaten)
+            ->where('status_biaya', 1)
+            ->get();
+
+        // Jika tidak ditemukan, cari dengan status_biaya = 0
+        if ($shippingOptions->isEmpty()) {
+            $shippingOptions = Shipping::where('status_biaya', 0)
+            ->get();
+        }
+
+        return response()->json($shippingOptions);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -38,7 +60,7 @@ class ShippingController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
-            'type'=>'string|required',
+            'type'=>'required|string',
             'price'=>'nullable|numeric',
             'status'=>'required|in:active,inactive',
             'status_biaya'=>'required|boolean'
@@ -93,7 +115,7 @@ class ShippingController extends Controller
     {
         $shipping=Shipping::find($id);
         $this->validate($request,[
-            'type'=>'string|required',
+            'type'=>'required|string',
             'price'=>'nullable|numeric',
             'status'=>'required|in:active,inactive',
             'status_biaya'=>'required|boolean'

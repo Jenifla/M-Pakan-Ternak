@@ -7,7 +7,27 @@
 <div>
 <div class="card">
     <div class="card-header">
-        <h5>Order Details</h5>
+        <h5>Detail Pesanan  <a href="{{route('order.invoice',$order->id)}}" 
+            style="
+                display: inline-block;
+                padding: 7px 17px;
+                font-size: 13px;
+                font-weight: bold;
+                color: #fff;
+                background-color: #F7941D;
+                border: 1px solid #F7941D;
+                border-radius: 20px;
+                text-decoration: none;
+                text-align: center;
+                transition: background-color 0.3s ease;
+            " 
+            class="float-right"
+            onmouseover="this.style.backgroundColor='#F7941D'" 
+            onmouseout="this.style.backgroundColor='#F7941D'">
+            Cetak Invoice
+         </a>
+         
+        </h5>
     </div>
     <div class="card-body">
         @if($order)
@@ -16,19 +36,19 @@
               <span class="status-dot"> Order ID: <strong>{{ $order->order_number }}</strong></span>
               {{-- <span class="status-text">With courier en route</span> --}}
               @if($order->status=='new')
-                <span class="badge new-badge">New</span>
+                <span class="badge new-badge">Baru</span>
                 @elseif($order->status=='to pay')
-                <span class="badge custom-badge">To Pay</span>
+                <span class="badge custom-badge">Belum Bayar</span>
                 @elseif($order->status=='to ship')
-                <span class="badge ship-badge">To Ship</span>
+                <span class="badge ship-badge">Dikemas</span>
                 @elseif($order->status=='to receive')
-                <span class="badge ship-badge">To Receive</span>
+                <span class="badge ship-badge">Dikirim</span>
                 @elseif($order->status=='completed')
-                <span class="badge complated-badge">Completed</span>
+                <span class="badge complated-badge">Selesai</span>
                 @elseif($order->status=='cancel')
-                <span class="badge new-badge">Cancel</span>
+                <span class="badge new-badge">Dibatalkan</span>
                 @elseif($order->status=='rejected')
-                <span class="badge new-badge">Rejected</span>
+                <span class="badge new-badge">Ditolak</span>
                 @else
                 <span class="badge new-badge">{{$order->status}}</span>
                 @endif
@@ -39,29 +59,29 @@
                 <div class="icon-li">
                   <i class="ti ti-receipt"></i>
                 </div>
-                <p>Order made</p>
+                <p>Pesanan Dibuat</p>
                 <span>{{ $order->date_order }}</span>
               </div>
               <div class="step {{ in_array($order->status, ['to ship',  'to receive', 'completed']) ? 'active' : '' }}">
                 <div class="icon-li">
                     <i class="ti ti-money"></i>
                 </div>
-                <p>Order paid</p>
-                <span>{{ $order->date_order }}</span>
+                <p>Pesanan Dibayarkan</p>
+                <span>{{ $order->payment->date_payment }}</span>
               </div>
-              <div class="step {{ in_array($order->status, ['to ship',  'to receive', 'completed']) ? 'active' : '' }}">
+              <div class="step {{ in_array($order->status, [ 'to receive', 'completed']) ? 'active' : '' }}">
                 <div class="icon-li">
                   <i class="fa fa-truck"></i>
                 </div>
-                <p>Shipped</p>
-                <span>{{ $order->date_order}}</span>
+                <p>Pesanan Dikirimkan</p>
+                <span>{{ $order->date_shipped}}</span>
               </div>
-              <div class="step {{ in_array($order->status, ['to receive', 'completed']) ? 'active' : '' }}">
+              <div class="step {{ in_array($order->status, ['completed']) ? 'active' : '' }}">
                 <div class="icon-li">
                   <i class="fa fa-check-circle"></i>
                 </div>
-                <p>Complete</p>
-                <span>{{ $order->date_order }}</span>
+                <p>Pesanan Selesai</p>
+                <span>{{ $order->date_received }}</span>
               </div>
             </div>
             @endif
@@ -74,7 +94,7 @@
               <div class="col-lg-6 col-lx-4">
                 <div class="order-info">
                 <div class="orderan">
-                  <h4 class="text-left pb-4">Customer & Order Info</h4>
+                  <h4 class="text-left pb-4">Informasi Pembeli & Pesanan</h4>
                   <table class="table table-borderless">
                         <tr class="">
                             <td>Nama</td>
@@ -107,12 +127,12 @@
                         <tr>
                             <!-- <td>Payment Method</td>
                             <td> : @if($order->payment->method_payment=='cod') Cash on Delivery @else Online @endif</td> -->
-                            <td>Payment Method</td>
+                            <td>Metode Pembayaran</td>
                             <td> : 
                                 @if($order->payment->method_payment == 'cod')
-                                    Cash on Delivery
+                                    Bayar Di Tempat
                                 @elseif($order->payment->method_payment == 'online payment')
-                                    Online Payment/Transfer Bank
+                                    Pembayaran Online/Transfer Bank
                                 @endif
                             </td>
     
@@ -122,12 +142,12 @@
                             <td> : {{$order->payment->status}}</td>
                         </tr> -->
                         <tr>
-                          <td>Payment Status</td>
+                          <td>Status Pembayaran</td>
                           <td> : 
                               @if($order->payment->status == 'paid')
-                                  <span class="badge badge-success">Paid</span>
+                                  <span class="badge badge-success">Terbayar</span>
                               @elseif($order->payment->status == 'unpaid')
-                                  <span class="badge badge-danger">Unpaid</span>
+                                  <span class="badge badge-danger">Belum Bayar</span>
                               @else
                                   {{$order->payment_status}}
                               @endif
@@ -146,7 +166,7 @@
                   <h6>{{ $order->address->full_nama }}</h6>
                     <p>{{ $order->address->kelurahan }}, {{ $order->address->detail_alamat }}<br>
                         {{ $order->address->kecamatan }}, {{ $order->address->kabupaten }}, {{ $order->address->provinsi }}, {{ $order->address->kode_pos }}</p>
-                    <p><strong>Phone Number:</strong>{{ $order->address->no_hp }}</p>
+                    <p><strong>Nomor Telepon:</strong>{{ $order->address->no_hp }}</p>
                 </div>
                 </div>
               </div>
@@ -221,10 +241,23 @@
             </tr>
         </tbody>
         </table> --}}
-        <h5 class="text-left p-3">Order Items</h5>
+        <h5 class="text-left p-3">Item Pesanan</h5>
         <div class="item-product">
+            @php
+            $subtotal_cart = 0; // Inisialisasi subtotal
+            $total_items = 0; // Inisialisasi jumlah total barang
+            @endphp
             
         @foreach($order->cart as $cart)
+
+            @php
+            $original_price = $cart->product['price']; // Harga asli produk
+            $discount = $cart->product['discount'] ?? 0; // Diskon produk
+            $price_after_discount = $original_price - ($original_price * $discount / 100); // Harga setelah diskon
+            $total_price = $price_after_discount * $cart->quantity;
+            $subtotal_cart += $total_price; 
+            $total_items += $cart->quantity;
+            @endphp
         <div class="info-product">
                 <div class="prdct">
                     @if($cart->product->gambarProduk->isNotEmpty())
@@ -235,42 +268,48 @@
                     <div>
                         <h6 class="one-line-text">{{ $cart->product->title }}</h6>
                         <p class="one-text">{{strip_tags($cart->product->summary)}}</p>
-                        <p class="text-price">Rp {{ number_format($cart->price, 0, ',', '.') }}</p>
+                        <p class="text-price">Rp {{ number_format($price_after_discount, 0, ',', '.') }}</p>
                         <p class="text-price">x{{ $cart->quantity }}</p>
                     </div>
                 </div>
                 <div class="price">
-                    <h6 class="mb-0 ">Rp {{ number_format($cart->price, 0, ',', '.') }}</h6>
+                    <h6 class="mb-0 ">Rp {{ number_format($price_after_discount, 0, ',', '.') }}</h6>
                         <p class="mb-0">x{{ $cart->quantity }}</p>
                 </div>
             
         </div>
         @endforeach
         </div>
-        <h6 class="text-left pb-3">Order Summary</h6>
+        <h6 class="text-left pb-3">Ringkasan Pesanan</h6>
         <div class="info-total">
             <div class="label">
-                <a class="text-center">Subtotal Order</a>
+                <a class="text-center">Subtotal Pesanan</a>
                 
             </div>
             <div class="info-price">
-                <a class="mb-0">Rp{{ $cart->amount }}</a>
+                <a class="mb-0">Rp{{ number_format($subtotal_cart,2) }}</a>
             </div>
         
         </div>
         <div class="info-total">
             <div class="label">
-                <a class="mb-0">Shipping</a>
+                <a class="mb-0">Biaya Pengiriman</a>
                 
             </div>
             <div class="info-price">
-                <a class="mb-0">Rp {{$order->shipping->price}}</a>
+                <a class="mb-0">Rp 
+                    @if ($order->shipping->status_biaya == 0)
+                        {{ $order->ongkir, 0, ',', '.' }}
+                    @else
+                        {{ $order->shipping->price, 0, ',', '.' }}
+                    @endif
+                </a>
             </div>
         
         </div>
         <div class="info-total">
             <div class="label">
-                <a class="mb-0">Total Amount</a>
+                <a class="mb-0">Total Pesanan</a>
                 
             </div>
             <div class="info-price">
@@ -308,7 +347,7 @@
         @endif
     
     </div>
-    <button class=" btn">Back to Orders</button>
+    <button class=" btn">Kembali</button>
 </div>
 </div>
 @endsection

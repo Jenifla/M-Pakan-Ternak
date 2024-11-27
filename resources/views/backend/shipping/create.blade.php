@@ -3,23 +3,23 @@
 @section('main-content')
 
 <div class="card">
-    <h5 class="card-header">Tambah Biaya Pengiriman</h5>
+    <h5 class="card-header">Add Shipping Cost</h5>
     <div class="card-body">
       <form method="post" action="{{route('shipping.store')}}">
         {{csrf_field()}}
         <div class="form-group">
-          <label for="type" class="col-form-label">Wilayah <span class="text-danger">*</span></label>
-        <input id="type" type="text" name="type" placeholder="Enter District"  value="{{old('type')}}" class="form-control">
+          <label for="type" class="col-form-label">Region <span class="text-danger">*</span></label>
+        <input id="type" type="text" name="type" placeholder="Enter Region"  value="{{old('type')}}" class="form-control">
         @error('type')
-        <span class="text-danger">{{$message}}</span>
+        <span class="text-danger">This field is required.</span>
         @enderror
         </div>
 
         <div class="form-group">
-          <label for="status_biaya" class="col-form-label">Status Biaya<span class="text-danger">*</span></label>
+          <label for="status_biaya" class="col-form-label">Cost Status<span class="text-danger">*</span></label>
           <select name="status_biaya" class="form-control">
-              <option value="1">Diketahui</option>
-              <option value="0">Belum Diketahui</option>
+              <option value="1">Known</option>
+              <option value="0">Unknown</option>
           </select>
           @error('status_biaya')
           <span class="text-danger">{{$message}}</span>
@@ -27,7 +27,7 @@
         </div>  
 
         <div class="form-group">
-          <label for="price" class="col-form-label">Harga <span class="text-danger">*</span></label>
+          <label for="price" class="col-form-label">Price <span class="text-danger">*</span></label>
         <input id="price" type="number" name="price" placeholder="Enter price"  value="{{old('price')}}" class="form-control">
         @error('price')
         <span class="text-danger">{{$message}}</span>

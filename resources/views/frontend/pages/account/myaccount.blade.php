@@ -6,34 +6,40 @@
 <div >
     <div class="card">
         <div class="card-header">
-            <h5>Account Details</h5>
+            <h5>Detail Akun</h5>
         </div>
         <div class="card-body">
-            <p>Already have an account? <a href="page-login.html">Log in instead!</a></p>
-            <form method="post" name="enq">
+            {{-- <p>Already have an account? <a href="page-login.html">Log in instead!</a></p> --}}
+            <form action="{{ route('account.update') }}" method="POST" >
+                @csrf
+                @method('PUT')
                 <div class="row">
                     <div class="form-group col-md-12">
-                        <label>Full Name <span class="required">*</span></label>
-                        <input required="" class="form-control" name="dname" type="text" />
+                        <label>Nama Lengkap <span class="text-danger">*</span></label>
+                        <input style="padding: 10px 15px;" class="form-control" name="name" type="text" value="{{ old('name', $user->name) }}" required />
                     </div>
                     <div class="form-group col-md-12">
-                        <label>Email Address <span class="required">*</span></label>
-                        <input required="" class="form-control" name="email" type="email" />
+                        <label>Alamat Email <span class="text-danger">*</span></label>
+                        <input style="padding: 10px 15px;" class="form-control" name="email" type="email" value="{{ old('email', $user->email) }}" required />
                     </div>
                     <div class="form-group col-md-12">
-                        <label>Current Password <span class="required">*</span></label>
-                        <input required="" class="form-control" name="password" type="password" />
+                        <label>Nomor Telepon <span class="text-danger">*</span></label>
+                        <input style="padding: 10px 15px;" class="form-control" name="no_hp" type="text" value="{{ old('no_hp', $user->no_hp) }}" required/>
+                    </div>
+                    {{-- <div class="form-group col-md-12">
+                        <label>Password Saat ini<span class="required">*</span></label>
+                        <input  class="form-control" name="password" type="password" value="{{ old('password', $user->password) }}"/>
+                    </div> --}}
+                    <div class="form-group col-md-12">
+                        <label>Password Baru</label>
+                        <input style="padding: 10px 15px;" class="form-control" name="npassword" type="password" placeholder="Kosongkan jika tidak ingin mengubah password"/>
                     </div>
                     <div class="form-group col-md-12">
-                        <label>New Password <span class="required">*</span></label>
-                        <input required="" class="form-control" name="npassword" type="password" />
-                    </div>
-                    <div class="form-group col-md-12">
-                        <label>Confirm Password <span class="required">*</span></label>
-                        <input required="" class="form-control" name="cpassword" type="password" />
+                        <label>Konfirmasi Password</label>
+                        <input style="padding: 10px 15px;" class="form-control" name="npassword_confirmation" type="password" placeholder="Kosongkan jika tidak ingin mengubah password"/>
                     </div>
                     <div class="col-md-12">
-                        <button type="submit" class="btn btn-fill-out submit font-weight-bold" name="submit" value="Submit">Save Change</button>
+                        <button type="submit" class="btn btn-fill-out submit font-weight-bold" name="submit" value="Submit">Simpan Perubahan</button>
                     </div>
                 </div>
             </form>

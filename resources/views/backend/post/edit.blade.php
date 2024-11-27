@@ -3,7 +3,7 @@
 @section('main-content')
 
 <div class="card">
-    <h5 class="card-header">Edit Post</h5>
+    <h5 class="card-header">Edit Blog</h5>
     <div class="card-body">
       <form method="post" action="{{route('post.update',$post->id)}}" enctype="multipart/form-data">
         @csrf 
@@ -25,7 +25,7 @@
         </div>
 
         <div class="form-group">
-          <label for="summary" class="col-form-label">Summary <span class="text-danger">*</span></label>
+          <label for="summary" class="col-form-label">Summary </label>
           <textarea class="form-control" id="summary" name="summary">{{$post->summary}}</textarea>
           @error('summary')
           <span class="text-danger">{{$message}}</span>
@@ -33,7 +33,7 @@
         </div>
 
         <div class="form-group">
-          <label for="description" class="col-form-label">Description</label>
+          <label for="description" class="col-form-label">Description <span class="text-danger">*</span></label>
           <textarea class="form-control" id="description" name="description">{{$post->description}}</textarea>
           @error('description')
           <span class="text-danger">{{$message}}</span>

@@ -10,7 +10,7 @@
                 <div class="col-12">
                     <div class="bread-inner">
                         <ul class="bread-list">
-                            <li><a href="{{route('home')}}">Home<i class="ti-arrow-right"></i></a></li>
+                            <li><a href="{{route('home')}}">Beranda<i class="ti-arrow-right"></i></a></li>
                             <li class="active"><a href="javascript:void(0);">Register</a></li>
                         </ul>
                     </div>
@@ -33,7 +33,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
-                                        <label>Name<span>*</span></label>
+                                        <label>Nama<span>*</span></label>
                                         <input type="text" name="name" placeholder="" required="required" value="{{old('name')}}">
                                         @error('name')
                                             <span class="text-danger">{{$message}}</span>
@@ -51,6 +51,15 @@
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
+                                        <label>No Hp<span>*</span></label>
+                                        <input type="text" name="no_hp" placeholder="62xxxxxxxxxxxx" required="required" value="{{old('no_hp')}}">
+                                        @error('no_hp')
+                                            <span class="text-danger">{{$message}}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
                                         <label>Password<span>*</span></label>
                                         <input type="password" name="password" placeholder="" required="required" value="{{old('password')}}">
                                         @error('password')
@@ -60,7 +69,7 @@
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
-                                        <label>Confirm Password<span>*</span></label>
+                                        <label>Konfirmasi Password<span>*</span></label>
                                         <input type="password" name="password_confirmation" placeholder="" required="required" value="{{old('password_confirmation')}}">
                                         @error('password_confirmation')
                                             <span class="text-danger">{{$message}}</span>
@@ -71,7 +80,7 @@
                                     <div class="form-group login-btn">
                                         <button class="btn" type="submit">Register</button>
                                         {{-- <a href="{{route('login.form')}}" class="text">Back to Login</a> --}}
-                                        <p class="login-text">Back to <a href="{{route('login.form')}}" class="btn-login-link">Login</a></p>
+                                        <p class="login-text">Kembali ke <a href="{{route('login.form')}}" class="btn-login-link">Login</a></p>
                                         <!-- OR
                                         <a href="{{route('login.redirect','facebook')}}" class="btn btn-facebook"><i class="ti-facebook"></i></a>
                                         <a href="{{route('login.redirect','github')}}" class="btn btn-github"><i class="ti-github"></i></a>

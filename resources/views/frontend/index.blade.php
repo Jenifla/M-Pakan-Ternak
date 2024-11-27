@@ -24,11 +24,11 @@
         </div>
         <a class="carousel-control-prev" href="#Gslider" role="button" data-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
+        <span class="sr-only">Sebelumnya</span>
         </a>
         <a class="carousel-control-next" href="#Gslider" role="button" data-slide="next">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
+        <span class="sr-only">Selanjutnya</span>
         </a>
     </section>
 @endif
@@ -155,7 +155,7 @@
                                                     <span class="out-of-stock">Stok Habis</span>
                                                 @elseif($product->condition == 'new')
                                                     <span class="new">Baru</span>
-                                                @elseif($product->condition == 'hot')
+                                                @elseif($product->condition == 'best seller')
                                                     <span class="hot">Terlaris</span>
                                                 @else
                                                     <span class="price-dec">{{$product->discount}}% Off</span>
@@ -164,7 +164,7 @@
                                             <div class="button-head">
                                                 
                                                 <div class="product-action-2">
-                                                    <a title="Add to cart" href="{{route('add-to-cart', $product->slug)}}">Add to cart</a>
+                                                    <a title="Add to cart" href="{{route('add-to-cart', $product->slug)}}">Masukkan Keranjang</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -241,7 +241,7 @@
                                 onmouseover="this.src='{{ asset('images/hoverkambing.png') }}'"
                                 onmouseout="this.src='{{ asset('images/kambing.png') }}'">
                                 <div class="content">
-                                <a href="{{route('product-grids')}}" class="title-animal">Pakan Kambing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                                <a href="{{route('product-sub-cat',['pakan-ternak','pakan-kambing'])}}" class="title-animal">Pakan Kambing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
                                 </div>
                         </div>
                         <!-- End Single Animal  -->
@@ -256,7 +256,7 @@
                                 onmouseover="this.src='{{ asset('images/hoverdomba.png') }}'"
                                 onmouseout="this.src='{{ asset('images/domba.png') }}'">
                             <div class="content">
-                                <a href="{{route('product-grids')}}" class="title-animal">Pakan Domba&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                                <a href="{{route('product-sub-cat',['pakan-ternak','pakan-domba'])}}" class="title-animal">Pakan Domba&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
                             </div>
                         </div>
                         <!-- End Single Animal  -->
@@ -270,7 +270,7 @@
                                 onmouseover="this.src='{{ asset('images/hoversapi.png') }}'"
                                 onmouseout="this.src='{{ asset('images/sapi.png') }}'">
                             <div class="content">
-                                <a href="{{route('product-grids')}}" class="title-animal">Pakan Sapi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                                <a href="{{route('product-sub-cat',['pakan-ternak','pakan-sapi'])}}" class="title-animal">Pakan Sapi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
                             </div>
                         </div>
                         <!-- End Single Animal  -->
@@ -294,7 +294,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="owl-carousel popular-slider">
-                    @foreach($product_lists as $product)
+                    @foreach($product_most as $product)
                         @if($product->condition=='best seller')
                             <!-- Start Single Product -->
                         <div class="single-product">
@@ -318,18 +318,18 @@
                                         
                                     </div> --}}
                                     <div class="product-action-2">
-                                        <a href="{{route('add-to-cart',$product->slug)}}">Add to cart</a>
+                                        <a href="{{route('add-to-cart',$product->slug)}}">Masukkan Keranjang</a>
                                     </div>
                                 </div>
                             </div>
                             <div class="product-content">
                                 <h3><a href="{{route('product-detail',$product->slug)}}">{{$product->title}}</a></h3>
                                 <div class="product-price">
-                                    <span class="old">${{number_format($product->price,2)}}</span>
+                                    <span class="old">Rp{{number_format($product->price, 0, ',', '.')}}</span>
                                     @php
                                     $after_discount=($product->price-($product->price*$product->discount)/100)
                                     @endphp
-                                    <span>${{number_format($after_discount,2)}}</span>
+                                    <span>Rp{{number_format($after_discount, 0, ',', '.')}}</span>
                                 </div>
                             </div>
                         </div>
@@ -387,7 +387,7 @@
                                 <img src="{{$post->photo}}" alt="{{$post->photo}}">
                             
                             <div class="blog-meta">
-                                <span class="author"><a href="javascript:void(0);"><i class="fa fa-user"></i>By {{$post->author_info['name']}}</a><a href="javascript:void(0);"><i class="fa fa-calendar"></i>{{$post->created_at->format('M d, Y')}}</a></span>
+                                <span class="author"><a href="javascript:void(0);"><i class="fa fa-user"></i> {{$post->author_info['name']}}</a><a href="javascript:void(0);"><i class="fa fa-calendar"></i>{{$post->created_at->format('M d, Y')}}</a></span>
                             </div>
                             <div class="content">
                                 {{-- <p class="date">{{$post->created_at->format('d M , Y. D')}}</p> --}}

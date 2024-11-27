@@ -11,7 +11,7 @@
                 <div class="col-12">
                     <div class="bread-inner">
                         <ul class="bread-list">
-                            <li><a href="{{route('home')}}">Home<i class="ti-arrow-right"></i></a></li>
+                            <li><a href="{{route('home')}}">Beranda<i class="ti-arrow-right"></i></a></li>
                             <li class="active"><a href="javascript:void(0)">Checkout</a></li>
                         </ul>
                     </div>
@@ -30,8 +30,8 @@
 
                         <div class="col-lg-8 col-12">
                             <div class="checkout-form">
-                                <h2>Complete Your Purchase</h2>
-                                <p>Just a few more steps to complete your purchase securely!</p>
+                                <h2>Selesaikan Pembelian Anda</h2>
+                                <p>Tinggal beberapa langkah lagi untuk menyelesaikan pembelian Anda dengan aman!</p>
                                 <!-- Form -->
                                 @if($user->addresses->isEmpty())
                                 <div class="row">
@@ -161,7 +161,7 @@
                                     <div class="col-lg-6 col-md-6 col-12">
                                         <div class="form-group">
                                             <label>Jenis Alamat<span>*</span></label>
-                                            <select name="jenis-alamat" id="jenis-alamat" required>
+                                            <select name="jenis_alamat" id="jenis-alamat" required>
                                                 <option value="">- Pilih Jenis Alamat -</option>
                                                 <option value="Rumah" {{ old('jenis_alamat') == 'Rumah' ? 'selected' : '' }}>Rumah</option>
                                                 <option value="Kantor" {{ old('jenis_alamat') == 'Kantor' ? 'selected' : '' }}>Kantor</option>
@@ -173,18 +173,19 @@
                                 @else
                                 @foreach($user->addresses as $address)
                                 @if($address->is_default)
-                                    <div class="address-card">
+                                    <div class="address-card" data-kabupaten="{{ $address->kabupaten }}">
                                         <div class="address">
-                                            <a><i class="ti-pencil"></i></a>
+                                            <a href="{{ route('account-address') }}"><i class="ti-pencil"></i></a>
                                             <h3>{{ $address->full_nama }}</h3>
                                             <p>{{ $address->kelurahan }}, {{ $address->detail_alamat }}<br>
                                                 {{ $address->kecamatan }}, {{ $address->kabupaten }}, {{ $address->provinsi }}, {{ $address->kode_pos }}</p>
-                                            <p><strong>Phone Number:</strong> {{ $address->no_hp }}</p>
+                                            <p><strong>Nomor Telepon:</strong> {{ $address->no_hp }}</p>
                                         </div>
                                         <input type="hidden" name="address_id" value="{{ $address->id }}">
                                     </div>
                                 @endif
                             @endforeach
+
                         @endif
                             </div>
                         </div>
@@ -192,13 +193,13 @@
                             <div class="order-details">
                                 <!-- Order Widget -->
                                 <div class="single-widget">
-                                    <h2>CART TOTAL</h2>
+                                    <h2>TOTAL KERANJANG</h2>
                                     <div class="content">
                                         <ul>
-										    <li class="order_subtotal" data-price="{{Helper::totalCartPrice()}}">Cart Subtotal<span>Rp{{number_format(Helper::totalCartPrice(),2)}}</span></li>
+										    <li class="order_subtotal" data-price="{{Helper::totalCartPrice()}}">Subtotal Keranjang<span>Rp{{number_format(Helper::totalCartPrice(),2)}}</span></li>
                                             <li class="shipping">
-                                                Shipping Cost
-                                                @if(count(Helper::shipping())>0 && Helper::cartCount()>0)
+                                                Biaya Pengiriman
+                                                {{-- @if(count(Helper::shipping())>0 && Helper::cartCount()>0)
                                                     <select name="shipping" class="nice-select" required>
                                                         <option value="">Select your address</option>
                                                         @foreach(Helper::shipping() as $shipping)
@@ -207,7 +208,11 @@
                                                     </select>
                                                 @else 
                                                     <span>Free</span>
-                                                @endif
+                                                @endif --}}
+                                                <select id="shipping-select" name="shipping" class="nice-select" required>
+                                                    <option value="">- Pilih Pengiriman -</option>
+                                                    <!-- Opsi pengiriman akan dimuat secara dinamis melalui JavaScript -->
+                                                </select>
                                                 {{-- <select name="courier" class="nice-select" required>
                                                     <option value="">Select your address</option>
                                                     
@@ -232,9 +237,9 @@
                                                 }
                                             @endphp
                                             @if(session('coupon'))
-                                                <li class="last"  id="order_total_price">Total<span>Rp{{number_format($total_amount,2)}}</span></li>
+                                                <li class="last"  id="order_total_price">Total<span>Rp{{number_format($total_amount,0, ',', '.')}}</span></li>
                                             @else
-                                                <li class="last"  id="order_total_price">Total<span>Rp{{number_format($total_amount,2)}}</span></li>
+                                                <li class="last"  id="order_total_price">Total<span>Rp{{number_format($total_amount,0, ',', '.')}}</span></li>
                                             @endif
                                         </ul>
                                     </div>
@@ -242,14 +247,14 @@
                                 <!--/ End Order Widget -->
                                 <!-- Order Widget -->
                                 <div class="single-widget">
-                                    <h2>Payment Methods</h2>
+                                    <h2>Metode Pembayaran</h2>
                                     <div class="content">
                                     <div class="checkbox">
                                         
                                         <form-group>
-                                            <input name="payment_method"  type="radio" value="cod" required> <label> Cash On Delivery</label><br>
+                                            <input name="payment_method"  type="radio" value="cod" required> <label>Bayar Di Tempat</label><br>
                                             <!-- <input name="payment_method"  type="radio" value="paypal"> <label> PayPal</label><br> -->
-                                            <input name="payment_method"  type="radio" value="online payment" required> <label> Online Payment/Transfer Bank</label><br>
+                                            <input name="payment_method"  type="radio" value="online payment" required> <label> Pembayaran Online/Transfer</label><br>
                                         </form-group>
                                     </div>
                                 </div>
@@ -261,7 +266,7 @@
                                 <div class="single-widget get-button">
                                     <div class="content">
                                         <div class="button">
-                                            <button type="submit" class="bton">proceed to checkout</button>
+                                            <button type="submit" class="bton">Proses Ke Checkout</button>
                                         </div>
                                     </div>
                                 </div>
@@ -385,7 +390,7 @@
 			document.getElementById(box).style.display=vis;
 		}
 	</script>
-	<script>
+	{{-- <script>
 		$(document).ready(function(){
 			$('.shipping select[name=shipping]').change(function(){
 				let cost = parseFloat( $(this).find('option:selected').data('price') ) || 0;
@@ -396,8 +401,27 @@
 			});
 
 		});
+	</script> --}}
 
-	</script>
+    {{-- <script>
+        document.getElementById('shipping-select').addEventListener('change', function () {
+        const selectedOption = this.options[this.selectedIndex];
+        const shippingPrice = selectedOption.getAttribute('data-price') 
+            ? parseFloat(selectedOption.getAttribute('data-price')) 
+            : 0;
+
+        // Ambil subtotal cart dari atribut data-price
+        const cartSubtotalElement = document.querySelector('.order_subtotal');
+        const cartSubtotal = parseFloat(cartSubtotalElement.getAttribute('data-price'));
+
+        // Hitung total keseluruhan
+        const grandTotal = cartSubtotal + shippingPrice;
+
+        // Perbarui elemen total
+        const cartTotalElement = document.querySelector('#order_total_price span');
+        cartTotalElement.textContent = `Rp${grandTotal.toLocaleString('id-ID')}`;
+    });
+    </script> --}}
 
 <script>
     $(document).ready(function() {
@@ -419,6 +443,12 @@ integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="ano
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         $('#select-provinsi').niceSelect();
+        const defaultAddressCard = document.querySelector('.address-card[data-kabupaten]');
+        if (defaultAddressCard) {
+            const kabupatenNama = defaultAddressCard.getAttribute('data-kabupaten');
+            console.log(`Kabupaten dari data : `, kabupatenNama)
+            loadShippingOptions(kabupatenNama); // Panggil fungsi dengan kabupaten yang diambil
+        }
     // Load Provinsi
     fetch('/wilayah/provinsi.json')
         .then(response => response.json())
@@ -482,6 +512,8 @@ integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="ano
         console.log(`Kabupaten Nama : `, kabupatenNama)
         loadKecamatan(kabupatenId);
         resetDropdowns(['select-kecamatan', 'select-kelurahan']);
+        // Load shipping options
+        loadShippingOptions(kabupatenNama);
     });
 
     // Function to load Kecamatan
@@ -503,6 +535,126 @@ integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="ano
             })
             .catch(error => console.error('Error loading kecamatan:', error));
     }
+
+    function toTitleCase(str) {
+    return str
+        .toLowerCase() // Ubah semua huruf ke kecil
+        .split(' ') // Pisahkan string menjadi array berdasarkan spasi
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Ubah huruf pertama tiap kata menjadi besar
+        .join(' '); // Gabungkan kembali array menjadi string
+    }
+
+    function normalizeString(str) {
+        return toTitleCase(
+            str
+                .replace(/Kab\.|Kota|\/|,/gi, '') // Hilangkan "KAB.", "KOTA", dan tanda baca
+                .trim() // Hilangkan spasi di awal/akhir
+        );
+    }
+
+    function formatRupiah(number) {
+    return `Rp${number.toLocaleString('id-ID')}`;
+    }
+
+
+    // Function to load shipping options
+    function loadShippingOptions(kabupatenNama) {
+        const normalizedKabupaten = normalizeString(kabupatenNama);
+        console.log("kabupaten untuk shipp: ", normalizedKabupaten)
+        console.log("loadShippingOptions telah dipanggil dengan kabupaten: ", kabupatenNama);
+        fetch('/get/shipping?kabupaten=' + encodeURIComponent(normalizedKabupaten)) // Ensure the query is formatted properly
+        .then(function(response) {
+            if (!response.ok) {
+                // If response is not OK, log more details about the error
+                return response.text().then(text => {
+                    console.error('HTTP Error:', response.status, response.statusText);
+                    console.error('Response body:', text);
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                });
+            }
+            return response.json(); // If OK, parse JSON data
+        })
+        .then(function(data) {
+                console.log("data shipp: ", data)
+                const shippingSelect = document.getElementById('shipping-select');
+                shippingSelect.innerHTML = ''; // Reset opsi
+                // if (data.length > 0) {
+                //     data.forEach(shipping => {
+                //         const option = document.createElement('option');
+                //         option.value = shipping.id;
+                //         option.setAttribute('data-price', shipping.price); 
+                //         option.textContent = `${shipping.type}: Rp${shipping.price.toLocaleString('id-ID') ?? 'Belum Diketahui'}`;
+                //         shippingSelect.appendChild(option);
+                //     });
+                //     $(shippingSelect).niceSelect('update');
+                //     // shippingSelect.disabled = false;
+                // } else {
+                //     const noOption = document.createElement('option');
+                //     noOption.value = '';
+                //     noOption.textContent = 'Pengiriman tidak tersedia';
+                //     shippingSelect.appendChild(noOption);
+                // }
+                if (data.length === 1) {
+                    // Jika hanya ada satu opsi, pilih otomatis
+                    const shipping = data[0];
+                    const shippingPrice = shipping.price !== null ? shipping.price : 0; // Gunakan 0 jika null
+                    console.log("shippingPrice: ", shippingPrice)
+                    const shippingText = shipping.price !== null ? `Rp${shippingPrice}` : 'Belum Diketahui';
+                    const option = document.createElement('option');
+                    option.value = shipping.id;
+                    option.textContent = `${shipping.type}: ${shippingText}`;
+                    option.setAttribute('data-price', shipping.price);
+                    shippingSelect.appendChild(option);
+                    
+                    // Pilih opsi ini
+                    shippingSelect.selectedIndex = 0;
+
+                    // Trigger perubahan otomatis untuk menghitung total
+                    updateTotalPrice(shipping.price);
+                    $(shippingSelect).niceSelect('update');
+                } else if (data.length > 1) {
+                    // Jika ada beberapa opsi, tambahkan ke dropdown
+                    data.forEach(shipping => {
+                        const option = document.createElement('option');
+                        option.value = shipping.id;
+                        option.textContent = `${shipping.type}: Rp${shipping.price}`;
+                        option.setAttribute('data-price', shipping.price);
+                        shippingSelect.appendChild(option);
+                    });
+                    $(shippingSelect).niceSelect('update');
+                } else {
+                    // Jika tidak ada opsi pengiriman
+                    const noOption = document.createElement('option');
+                    noOption.value = '';
+                    noOption.textContent = 'Pengiriman tidak tersedia';
+                    shippingSelect.appendChild(noOption);
+                }
+                console.log('Shipping options loaded:', data);
+            })
+            .catch(error => console.error('Error loading shipping options:', error));
+    }
+
+    // Fungsi untuk memperbarui total harga
+    function updateTotalPrice(shippingPrice = 0) {
+        const cartSubtotalElement = document.querySelector('.order_subtotal');
+        const cartSubtotal = parseFloat(cartSubtotalElement.getAttribute('data-price'));
+        
+        let shipping = parseFloat(shippingPrice); // Ubah shippingPrice ke angka
+        if (isNaN(shipping)) {
+            shipping = 0; // Jika tidak bisa dikonversi menjadi angka, set ke 0
+        }
+        console.log(' cartSubtotal :', cartSubtotal);
+        console.log(' shippingPrice dari update :', shipping);
+        
+
+        // Hitung total keseluruhan
+        const grandTotal = cartSubtotal + shipping;
+
+        // Perbarui elemen total
+        const cartTotalElement = document.querySelector('#order_total_price span');
+        cartTotalElement.textContent = `Rp${grandTotal}`;
+    }
+
 
     // Event listener for Kecamatan change
     $('#select-kecamatan').on('change', function () {
@@ -551,6 +703,18 @@ integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="ano
             });
         }
 });
+
+// document.getElementById('shipping-select').addEventListener('change', function () {
+//         const selectedOption = this.options[this.selectedIndex];
+//         const shippingPrice = selectedOption.getAttribute('data-price') 
+//             ? parseFloat(selectedOption.getAttribute('data-price')) 
+//             : 0;
+
+//         // Perbarui total dengan biaya pengiriman baru
+//         updateTotalPrice(shippingPrice);
+//     });
+
+    
 
 </script>
 

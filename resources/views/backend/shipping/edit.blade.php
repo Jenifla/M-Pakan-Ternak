@@ -3,16 +3,16 @@
 @section('main-content')
 
 <div class="card">
-    <h5 class="card-header">Edit Shipping</h5>
+    <h5 class="card-header">Edit Shipping Cost</h5>
     <div class="card-body">
       <form method="post" action="{{route('shipping-update',$shipping->id)}}">
         @csrf 
         @method('POST')
         <div class="form-group">
-          <label for="type" class="col-form-label">Wilayah <span class="text-danger">*</span></label>
-        <input id="type" type="text" name="type" placeholder="Enter District"  value="{{$shipping->type}}" class="form-control">
+          <label for="type" class="col-form-label">Region <span class="text-danger">*</span></label>
+        <input id="type" type="text" name="type" placeholder="Enter Region"  value="{{$shipping->type}}" class="form-control">
         @error('type')
-        <span class="text-danger">{{$message}}</span>
+        <span class="text-danger">This field is required.</span>
         @enderror
         </div> 
         {{-- <div class="form-group">
@@ -20,10 +20,10 @@
           <input type="checkbox" name='gratis_ongkir' id='gratis_ongkir' value='{{$shipping->gratis_ongkir}}' {{(($shipping->gratis_ongkir) ? 'checked' : '')}}> Yes                        
         </div>     --}}
         <div class="form-group">
-          <label for="status_biaya" class="col-form-label">Status Biaya<span class="text-danger">*</span></label>
+          <label for="status_biaya" class="col-form-label">Cost Status<span class="text-danger">*</span></label>
           <select name="status_biaya" class="form-control">
-            <option value="1" {{(($shipping->status_biaya=='1') ? 'selected' : '')}}>Diketahui</option>
-            <option value="0" {{(($shipping->status_biaya=='0') ? 'selected' : '')}}>Belum Diketahui</option>
+            <option value="1" {{(($shipping->status_biaya=='1') ? 'selected' : '')}}>Known</option>
+            <option value="0" {{(($shipping->status_biaya=='0') ? 'selected' : '')}}>Uknown</option>
           </select>
           @error('status_biaya')
           <span class="text-danger">{{$message}}</span>
@@ -31,7 +31,7 @@
         </div>
       
         <div class="form-group">
-          <label for="price" class="col-form-label">Biaya <span class="text-danger">*</span></label>
+          <label for="price" class="col-form-label">Price <span class="text-danger">*</span></label>
         <input id="price" type="number" name="price" placeholder="Enter price"  value="{{$shipping->price}}" class="form-control">
         @error('price')
         <span class="text-danger">{{$message}}</span>

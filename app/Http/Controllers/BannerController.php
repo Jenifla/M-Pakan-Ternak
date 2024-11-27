@@ -38,12 +38,28 @@ class BannerController extends Controller
     {
         // return $request->all();
         $this->validate($request,[
-            'title'=>'string|required|max:50',
+            'title'=>'required|string|max:50',
             'description'=>'string|nullable',
-            'photo'=>'string|required',
+            'photo'=>'required|image|mimes:jpeg,png,jpg|max:2048',
             'status'=>'required|in:active,inactive',
         ]);
         $data=$request->all();
+        if ($request->hasFile('photo')) {
+            // Ambil file foto yang diupload
+            $photo = $request->file('photo');
+            
+            // Tentukan path tujuan untuk menyimpan foto
+            $destinationPath = public_path('images/');
+            
+            // Buat nama file yang unik
+            $fileName = time() . '_' . $photo->getClientOriginalName();
+            
+            // Pindahkan file ke folder public/category/
+            $photo->move($destinationPath, $fileName);
+            
+            // Simpan path relatif dari foto ke dalam data
+            $data['photo'] = 'images/' . $fileName;
+        }
         $slug=Str::slug($request->title);
         $count=Banner::where('slug',$slug)->count();
         if($count>0){
@@ -95,9 +111,9 @@ class BannerController extends Controller
     {
         $banner=Banner::findOrFail($id);
         $this->validate($request,[
-            'title'=>'string|required|max:50',
+            'title'=>'required|string|max:50',
             'description'=>'string|nullable',
-            'photo'=>'string|required',
+            'photo'=>'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'status'=>'required|in:active,inactive',
         ]);
         $data=$request->all();
@@ -108,6 +124,25 @@ class BannerController extends Controller
         // }
         // $data['slug']=$slug;
         // return $slug;
+        if ($request->hasFile('photo')) {
+            // Ambil file foto yang diupload
+            $photo = $request->file('photo');
+            
+            // Tentukan path tujuan untuk menyimpan foto
+            $destinationPath = public_path('images/');
+            
+            // Buat nama file yang unik
+            $fileName = time() . '_' . $photo->getClientOriginalName();
+            
+            // Pindahkan file ke folder public/category/
+            $photo->move($destinationPath, $fileName);
+            
+            // Simpan path relatif dari foto ke dalam data
+            $data['photo'] = 'images/' . $fileName;
+        }else {
+            // Jika tidak ada file gambar yang diunggah, gunakan gambar  yang lama
+            $data['photo'] = $banner->photo;
+        }
         $status=$banner->fill($data)->save();
         if($status){
             request()->session()->flash('success','Banner has been updated successfully');

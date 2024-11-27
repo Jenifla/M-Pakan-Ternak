@@ -16,7 +16,7 @@
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <label>Full Name<span>*</span></label>
+                                    <label>Nama Lengkap<span>*</span></label>
                                     <input type="text" name="full_nama" placeholder="" value="{{ old('full_nama', $address->full_nama) }}" required>
                                     @error('full_nama')
                                         <span class='text-danger'>{{$message}}</span>
@@ -25,7 +25,7 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <label>Phone Number <span>*</span></label>
+                                    <label>Nomor Telepon <span>*</span></label>
                                     <input type="text" name="no_hp" placeholder="" value="{{ old('no_hp', $address->no_hp) }}" required>
                                     @error('no_hp')
                                         <span class='text-danger'>{{$message}}</span>
@@ -34,8 +34,8 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <label for="select-provinsi">Provinsi <span>*</span></label>
-                                    <select id="select-provinsi" name="provinsi" required>
+                                    <label for="pilih-provinsi">Provinsi <span>*</span></label>
+                                    <select id="pilih-provinsi" name="provinsi" required>
                                         <option value="{{ $address->provinsi }}" selected>{{ $address->provinsi }}</option>
                                         <!-- Additional options for provinces -->
                                     </select>
@@ -48,7 +48,7 @@
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
                                     <label>Kabupaten <span>*</span></label>
-                                    <select id="select-kabupaten" name="kabupaten" required>
+                                    <select id="pilih-kabupaten" name="kabupaten" required>
                                         <option value="{{ $address->kabupaten }}" selected>{{ $address->kabupaten }}</option>
                                         <!-- Additional options for kabupaten -->
                                     </select>
@@ -63,7 +63,7 @@
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
                                     <label>Kecamatan <span>*</span></label>
-                                    <select id="select-kecamatan" name="kecamatan" required>
+                                    <select id="pilih-kecamatan" name="kecamatan" required>
                                         <option value="{{ $address->kecamatan }}" selected>{{ $address->kecamatan }}</option>
                                         <!-- Additional options for kecamatan -->
                                     </select>
@@ -78,7 +78,7 @@
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
                                     <label>Kelurahan <span>*</span></label>
-                                    <select id="select-kelurahan" name="kelurahan" required>
+                                    <select id="pilih-kelurahan" name="kelurahan" required>
                                         <option value="{{ $address->kelurahan }}" selected>{{ $address->kelurahan }}</option>
                                         <!-- Additional options for kelurahan -->
                                     </select>
@@ -90,7 +90,7 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <label>Postal Code</label>
+                                    <label>Kode Pos<span>*</span></label>
                                     <input type="text" name="kode_pos" value="{{ old('kode_pos', $address->kode_pos) }}">
                                     @error('kode_pos')
                                         <span class='text-danger'>{{$message}}</span>
@@ -121,7 +121,7 @@
                     <div class="single-widget get-button">
                         <div class="content">
                             <div class="button">
-                                <button type="submit" class="btn-add">Update Address</button>
+                                <button type="submit" class="btn-add">Perbarui Alamat</button>
                             </div>
                         </div>
                     </div>
@@ -131,4 +131,142 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        $('#pilih-provinsi').niceSelect();
+    // Load Provinsi
+    fetch('/wilayah/provinsi.json')
+        .then(response => response.json())
+        .then(data => {
+            const provinsiSelect = document.getElementById('pilih-provinsi');
+            data.forEach(provinsi => {
+                const option = document.createElement('option');
+                option.value = provinsi.id;
+                option.textContent = provinsi.nama;
+                console.log(`Menambahkan Provinsi: ${provinsi.nama} dengan ID: ${provinsi.id}`);
+                provinsiSelect.appendChild(option);
+            });
+            console.log('Provinsi loaded:', data);
+            // Memperbarui tampilan nice select
+            if (typeof $.fn.niceSelect === 'function') {
+                $(provinsiSelect).niceSelect('update');
+            }
+        })
+        .catch(error => console.error('Error loading provinsi:', error));
+
+    // Event listener for Provinsi change
+    $('#pilih-provinsi').on('change', function () {
+        const provinsiId = $(this).val();
+        console.log(`Provinsi Id : `, provinsiId)
+        const provinsiNama = $(this).find("option:selected").text();
+        $('#provinsi-nama').val(provinsiNama); 
+        console.log(`Provinsi Nama : `, provinsiNama)
+        loadKabupaten(provinsiId);
+        resetDropdowns(['pilih-kabupaten', 'pilih-kecamatan', 'pilih-kelurahan']); // Reset dropdown di bawahnya
+        // $('#select-kecamatan').prop('disabled', true); // Nonaktifkan dropdown kecamatan
+        // $('#select-kelurahan').prop('disabled', true); // Nonaktifkan dropdown kelurahan
+    });
+
+    // Function to load Kabupaten
+    function loadKabupaten(provinsiId) {
+        fetch(`/wilayah/kabupaten/${provinsiId}.json`)
+            .then(response => response.json())
+            .then(data => {
+                const kabupatenSelect = document.getElementById('pilih-kabupaten');
+                kabupatenSelect.innerHTML = '<option value="">- Pilih Kabupaten -</option>'; // Reset opsi
+                data.forEach(kabupaten => {
+                    const option = document.createElement('option');
+                    option.value = kabupaten.id;
+                    option.textContent = kabupaten.nama;
+                    console.log(`Menambahkan Kabupaten: ${kabupaten.nama} dengan ID: ${kabupaten.id}`);
+                    kabupatenSelect.appendChild(option);
+                });
+                kabupatenSelect.disabled = false; // Enable kabupaten dropdown
+                console.log('Kabupaten loaded:', data);
+                $(kabupatenSelect).niceSelect('update');
+            })
+            .catch(error => console.error('Error loading kabupaten:', error));
+    }
+
+    // Event listener for Kabupaten change
+    $('#pilih-kabupaten').on('change', function () {
+        const kabupatenId = $(this).val();
+        console.log(`Kabupaten Id : `, kabupatenId)
+        const kabupatenNama = $(this).find("option:selected").text();
+        $('#kabupaten-nama').val(kabupatenNama);
+        console.log(`Kabupaten Nama : `, kabupatenNama)
+        loadKecamatan(kabupatenId);
+        resetDropdowns(['pilih-kecamatan', 'pilih-kelurahan']);
+    });
+
+    // Function to load Kecamatan
+    function loadKecamatan(kabupatenId) {
+        fetch(`/wilayah/kecamatan/${kabupatenId}.json`)
+            .then(response => response.json())
+            .then(data => {
+                const kecamatanSelect = document.getElementById('pilih-kecamatan');
+                kecamatanSelect.innerHTML = '<option value="">- Pilih Kecamatan -</option>'; // Reset opsi
+                data.forEach(kecamatan => {
+                    const option = document.createElement('option');
+                    option.value = kecamatan.id;
+                    option.textContent = kecamatan.nama;
+                    kecamatanSelect.appendChild(option);
+                });
+                kecamatanSelect.disabled = false; // Enable kecamatan dropdown
+                console.log('Kecamatan loaded:', data);
+                $(kecamatanSelect).niceSelect('update');
+            })
+            .catch(error => console.error('Error loading kecamatan:', error));
+    }
+
+    // Event listener for Kecamatan change
+    $('#pilih-kecamatan').on('change', function () {
+        const kecamatanId = $(this).val();
+        console.log(`Kecamatan Id : `, kecamatanId)
+        const kecamatanNama = $(this).find("option:selected").text();
+        $('#kecamatan-nama').val(kecamatanNama);
+        console.log(`Kecamatan Nama : `, kecamatanNama)
+        loadKelurahan(kecamatanId);
+        resetDropdowns(['pilih-kelurahan']);
+    });
+
+    // Function to load Kelurahan
+    function loadKelurahan(kecamatanId) {
+        fetch(`/wilayah/kelurahan/${kecamatanId}.json`)
+            .then(response => response.json())
+            .then(data => {
+                const kelurahanSelect = document.getElementById('pilih-kelurahan');
+                kelurahanSelect.innerHTML = '<option value="">- Pilih Kelurahan -</option>'; // Reset opsi
+                data.forEach(kelurahan => {
+                    const option = document.createElement('option');
+                    option.value = kelurahan.id;
+                    option.textContent = kelurahan.nama;
+                    kelurahanSelect.appendChild(option);
+                });
+                kelurahanSelect.disabled = false; // Enable kelurahan dropdown
+                console.log('Kelurahan loaded:', data);
+                $(kelurahanSelect).niceSelect('update');
+            })
+            .catch(error => console.error('Error loading kelurahan:', error));
+    }
+
+    $('#pilih-kelurahan').on('change', function () {
+        const kelurahanNama = $(this).find("option:selected").text();
+        $('#kelurahan-nama').val(kelurahanNama);
+        console.log(`Kelurahan Nama : `, kelurahanNama)
+    });
+
+    // Fungsi untuk mereset dropdown
+    function resetDropdowns(dropdownIds) {
+            dropdownIds.forEach(id => {
+                const selectElement = document.getElementById(id);
+                selectElement.innerHTML = '<option value="">- Pilih -</option>'; // Reset opsi
+                selectElement.disabled = true; // Menonaktifkan dropdown
+                $(selectElement).niceSelect('update'); // Memperbarui nice select
+            });
+        }
+});
+
+</script>
 @endsection
