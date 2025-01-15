@@ -1,4 +1,15 @@
 <div class="card-body">
+    <div class="d-flex justify-content-end  mb-3">
+        <!-- Form pencarian -->
+        <form method="GET" action="{{ route('admin.orders', ['tab' => 'new']) }}">
+            <div class="input-group">
+                <input type="text" class="form-control" name="search" placeholder="Search" value="{{ request()->get('search') }}">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+      </div>
 <div class="table-responsive">
     @if(count($newOrders)>0)
     <table class="table table-bordered table-hover" id="neworder-dataTable" width="100%" cellspacing="0">
@@ -8,36 +19,12 @@
           <th>Product</th>
           <th>Address</th>
           <th>Payment Method</th>
-          {{-- <th>Shipping Cost</th> --}}
           <th>Total</th>
           <th>Status</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
-          {{-- <tr>
-            <td>1</td>
-            <td>#1234</td>
-            <td>Kaliya Sayong</td>
-            <td>Keroncom, No.12 Blok Q, Laguna, Pertama, ID 23421</td>
-            <td>COD</td>
-            <td>Rp 35.000,00</td>
-            <td>Rp190.000,00</td>
-            <td>
-                
-                  <span class="badge badge-primary">NEW</span>
-                
-            </td>
-            <td>
-                <a href="" class="btn btn-warning btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="view" data-placement="bottom"><i class="fas fa-eye"></i></a>
-                <a href="" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
-                <form method="POST" action="">
-                  @csrf 
-                  @method('delete')
-                      <button class="btn btn-danger btn-sm dltBtn"  style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
-                </form>
-            </td>
-        </tr>   --}}
         @foreach($newOrders as $order)  
             <tr>
                 <td>{{$order->order_number}}</td>
@@ -57,20 +44,12 @@
                 </td>
                 <td>{{$order->address->detail_alamat}}, {{$order->address->kode_pos}}, {{$order->address->kelurahan}}, {{$order->address->kecamatan}}, {{$order->address->kabupaten}}, {{$order->address->provinsi}}</td>
                 <td>{{$order->payment->method_payment}}</td>
-                {{-- <td>@foreach($shipping_charge as $data) Rp {{number_format($data,2)}} @endforeach</td> --}}
-                <td>Rp{{number_format($order->total_amount,2)}}</td>
+                <td>Rp{{number_format($order->total_amount, 0, ',', '.')}}</td>
                 <td>
                   <span class="badge badge-warning">NEW</span>
                 </td>
                 <td>
                     <a href="{{route('order.show',$order->id)}}" class="btn btn-warning btn-sm float-left mr-1 mb-2" style="height:30px; width:100px;border-radius:20px" data-toggle="tooltip" title="view" data-placement="bottom">View Details</i></a>
-                    {{-- <a href="{{route('order.edit',$order->id)}}" class="btn btn-primary btn-sm float-left mr-1 mb-2" style="height:30px; width:80px;border-radius:20px" data-toggle="tooltip" title="accept" data-placement="bottom">Accepted</a> --}}
-                    {{-- <form action="{{ route('order.update.status', $order->id) }}" method="POST" style="display: inline;">
-                      @csrf
-                      @method('PUT')
-                      <input type="hidden" name="status" value="to pay">
-                      <button type="submit" class="btn btn-primary btn-sm float-left mr-1 mb-2" style="height:30px; width:80px; border-radius:20px" data-toggle="tooltip" title="Accept" data-placement="bottom">Accepted</button>
-                  </form> --}}
                   @if($order->shipping->status_biaya == 0)
                       <!-- Jika admin harus menginputkan ongkir -->
                       <form action="{{ route('order.update.status', $order->id) }}" method="POST" style="display: inline;">
@@ -95,25 +74,6 @@
                   </form>
                   @endif
 
-
-                  {{-- <form id="rejectForm" action="{{ route('order.update.status', $order->id) }}" method="POST" style="display: inline;">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" name="status" value="rejected">
-                
-                    <!-- Tombol Rejected -->
-                    <button type="button" class="btn btn-danger btn-sm float-left mr-1 mb-2" style="height:30px; width:80px; border-radius:20px" data-toggle="tooltip" title="Reject" data-placement="bottom" id="rejectBtn">
-                        Rejected
-                    </button>
-                
-                    <!-- Form alasan akan muncul setelah tombol diklik -->
-                    <div id="reasonForm" style="display: none;">
-                        <label for="alasan">Reason for rejection:</label>
-                        <textarea name="alasan" id="alasan" class="form-control" required></textarea>
-                        <button type="submit" class="btn btn-primary mt-2">Submit</button>
-                    </div>
-                </form> --}}
-
                 <form action="{{ route('order.update.status', $order->id) }}" method="POST">
                     @csrf
                     @method('PUT')
@@ -123,25 +83,21 @@
                         Rejected
                     </button>
                 </form>
-
-                  
-                    {{-- <form method="POST" action="{{route('order.destroy',[$order->id])}}">
-                      @csrf 
-                      @method('PUT')
-                          <button class="btn btn-danger btn-sm dltBtn" data-id={{$order->id}} style="height:30px; width:80px;border-radius:20px" data-toggle="tooltip" data-placement="bottom" title="Delete">Rejected</button>
-                    </form> --}}
                 </td>
             </tr>  
         @endforeach
       </tbody>
-    </table>
-    {{-- <span style="float:right">{{$orders->links()}}</span> --}}
-    
-    <div class="mt-3">
-      {{ $newOrders->links() }} <!-- This generates the pagination links -->
-  </div>
+    </table>    
+    <div class="pagination-container d-flex justify-content-between align-items-center">
+        <span>
+            Showing {{ $newOrders->firstItem() }} to {{ $newOrders->lastItem() }} of {{ $newOrders->total() }} entries
+        </span>
+        <div>
+            {{ $newOrders->links('pagination::bootstrap-4') }}
+        </div>
+      </div>
     @else
-      <h6 class="text-center">No orders found!!! Please order some products</h6>
+      <h6 class="text-center">No orders found!!!</h6>
     @endif
   </div>
 </div>
@@ -203,74 +159,6 @@
 
 <!-- Page level custom scripts -->
 <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>
-<script>
-    
-    $('#neworder-dataTable').DataTable( {
-          "columnDefs":[
-              {
-                  "orderable":false,
-                  "targets":[5]
-              }
-          ]
-      } );
-
-      // Sweet alert
-
-      function deleteData(id){
-          
-      }
-</script>
-{{-- <script>
-  $(document).ready(function() {
-    // Ketika tombol Rejected diklik
-    $('#rejectBtn').click(function() {
-        // Menampilkan form alasan
-        $('#reasonForm').show();
-        // Menyembunyikan tombol Rejected
-        $(this).hide();
-    });
-  });
-</script> --}}
-
-{{-- <script>
-    $(document).ready(function(){
-      $.ajaxSetup({
-          headers: {
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          }
-      });
-        $('.dltBtn').click(function(e){
-          var form=$(this).closest('form');
-            var dataID=$(this).data('id');
-            var status= 'accepted',
-            // alert(dataID);
-            e.preventDefault();
-            form.submit();
-        })
-    })
-
-    $('#acceptOrder').on('click', function() {
-    var orderId = $(this).data('order-id');
-
-    $.ajax({
-        url: '/order/' + orderId + '/update-status',
-        method: 'PUT',
-        data: {
-            _token: '{{ csrf_token() }}',
-            status: 'accepted',
-        },
-        success: function(response) {
-            alert('Order status updated successfully!');
-            // Perbarui UI jika perlu
-            location.reload(); // Optional: reload halaman untuk menampilkan status terbaru
-        },
-        error: function(xhr, status, error) {
-            alert('There was an error updating the order status.');
-        }
-    });
-});
-
-</script> --}}
 
 <script>
   $(document).ready(function () {

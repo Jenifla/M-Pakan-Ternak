@@ -28,11 +28,7 @@
         <div class="form-group">
         <label for="inputPhoto" class="col-form-label">Photo <span class="text-danger">*</span></label>
         <div class="input-group">
-            {{-- <span class="input-group-btn">
-                <a id="lfm" data-input="thumbnail" data-preview="holder" class="btn btn-primary">
-                <i class="fa fa-picture-o"></i> Choose
-                </a>
-            </span> --}}
+            
           <input id="photos" class="form-control" type="file" name="photo" onchange="previewImages(event)">
         </div>
         <div id="holder" style="margin-top:15px;max-height:100px;"></div>
@@ -57,7 +53,7 @@
         </div>
       </form>
     </div>
-</div><!-- Visit 'codeastro' for more projects -->
+</div>
 
 @endsection
 
@@ -68,7 +64,7 @@
 <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
 <script src="{{asset('backend/summernote/summernote.min.js')}}"></script>
 <script>
-    // $('#lfm').filemanager('image');
+    
 
     $(document).ready(function() {
     $('#description').summernote({

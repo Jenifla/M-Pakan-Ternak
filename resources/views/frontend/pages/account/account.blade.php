@@ -1,6 +1,6 @@
 @extends('frontend.layouts.master')
 
-@section('title','PT. Agro Apis Palacio || Account Page')
+@section('title','PT. Agro Apis Palacio || Akun Page')
 
 @section('main-content')
     <!-- Breadcrumbs -->
@@ -169,111 +169,14 @@
                 
                 </form>
             </div>
-            {{-- <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save Address</button>
-            </div> --}}
         </div>
     </div>
 </div>
 <!-- End Modal -->
 
-
-
-
-
-{{-- <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Data dummy untuk simulasi detail order
-    const orderDetailsData = {
-        '1357': {
-            orderNumber: '#1357',
-            date: 'March 15, 2023',
-            status: 'Processing',
-            total: '$125.00',
-            items: [
-                { name: 'Product A', quantity: 2, price: '$50.00' },
-                { name: 'Product B', quantity: 1, price: '$25.00' },
-            ],
-            address: '123 Feed Street, Farmtown, Country'
-        },
-        '2468': {
-            orderNumber: '#2468',
-            date: 'June 29, 2023',
-            status: 'Completed',
-            total: '$364.00',
-            items: [
-                { name: 'Product C', quantity: 3, price: '$100.00' },
-                { name: 'Product D', quantity: 2, price: '$32.00' },
-            ],
-            address: '456 Supply Road, Barnsville, Country'
-        }
-    };
-
-    // Event listener untuk tombol "View"
-    document.querySelectorAll('.view-order').forEach(button => {
-        button.addEventListener('click', function () {
-            const orderId = this.getAttribute('data-order-id');
-            const orderData = orderDetailsData[orderId];
-
-            // Isi detail order di dalam konten #order-details
-            const orderDetailsContent = `
-                <h4>Order Details for ${orderData.orderNumber}</h4>
-                <p><strong>Order Date:</strong> ${orderData.date}</p>
-                <p><strong>Status:</strong> ${orderData.status}</p>
-                <p><strong>Total:</strong> ${orderData.total}</p>
-                <h5>Items:</h5>
-                <ul>
-                    ${orderData.items.map(item => `<li>${item.name} - ${item.quantity} x ${item.price}</li>`).join('')}
-                </ul>
-                <h5>Shipping Address:</h5>
-                <p>${orderData.address}</p>
-                <button class="btn btn-small back-to-orders">Back to Orders</button>
-            `;
-
-            // Masukkan konten detail ke dalam tab #order-details dan aktifkan tab
-            document.getElementById('order-details').innerHTML = orderDetailsContent;
-            document.querySelector('#orderStatusTab .nav-link.active').classList.remove('active');
-            document.getElementById('order-details').classList.add('show', 'active');
-
-            // Event listener untuk tombol "Back to Orders"
-            document.querySelector('.back-to-orders').addEventListener('click', function () {
-                document.getElementById('order-details').classList.remove('show', 'active');
-                document.querySelector('#orderStatusTab .nav-link.active').classList.add('show', 'active');
-            });
-        });
-    });
-});
-
-</script> --}}
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
-{{-- <script>
-    const form = document.querySelector('form');
-form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(form);
-
-    fetch("{{ route('address.store') }}", {
-        method: "POST",
-        body: formData,
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Data berhasil dikirim:', data);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-});
-
-    </script> --}}
     <script>
         $(document).ready(function() {
       
@@ -323,42 +226,6 @@ form.addEventListener('submit', function(e) {
             });
         });
     </script>
-    {{-- <script>
-        // Optionally add your JS here for handling form submission, etc.
-        document.getElementById('saveAddressBtn').addEventListener('click', function() {
-            const recipientName = document.getElementById('recipientName').value;
-            const addressLine = document.getElementById('addressLine').value;
-            const phoneNumber = document.getElementById('phoneNumber').value;
-
-            // Handle the address saving logic here
-            console.log('Address saved:', {
-                recipientName,
-                addressLine,
-                phoneNumber
-            });
-
-            // Close the modal after saving
-            $('#addAddressModal').modal('hide');
-        });
-    </script> --}}
-
-{{-- <script>
-    document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(function(tabElement) {
-  tabElement.addEventListener('click', function(event) {
-    event.preventDefault();
-    var tabTrigger = new bootstrap.Tab(tabElement);
-    tabTrigger.show();
-  });
-});
-</script> --}}
-{{-- <script src="{{asset('frontend/js/nice-select/js/jquery.nice-select.min.js')}}"></script>
-	<script src="{{ asset('frontend/js/select2/js/select2.min.js') }}"></script>
-	<script>
-		$(document).ready(function() { $("select.select2").select2(); });
-  		$('select.nice-select').niceSelect();
-	</script> --}}
-
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -392,8 +259,6 @@ form.addEventListener('submit', function(e) {
         console.log(`Provinsi Nama : `, provinsiNama)
         loadKabupaten(provinsiId);
         resetDropdowns(['select-kabupaten', 'select-kecamatan', 'select-kelurahan']); // Reset dropdown di bawahnya
-        // $('#select-kecamatan').prop('disabled', true); // Nonaktifkan dropdown kecamatan
-        // $('#select-kelurahan').prop('disabled', true); // Nonaktifkan dropdown kelurahan
     });
 
     // Function to load Kabupaten
@@ -506,10 +371,6 @@ form.addEventListener('submit', function(e) {
         margin-bottom: 150px;
     }
 
-    /* .container{
-        margin-left: 50px;
-        margin-right: 50px;
-    } */
 
     .dashboard-menu .nav-link {
     display: block;

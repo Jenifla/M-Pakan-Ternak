@@ -1,7 +1,7 @@
 @extends('backend.layouts.master')
 
 @section('main-content')
- <!-- DataTales Example -->
+ 
  <div class="card shadow mb-4">
      <div class="row">
          <div class="col-md-12">
@@ -13,6 +13,17 @@
       <a href="{{route('banner.create')}}" class="btn btn-primary btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Add User"><i class="fas fa-plus"></i> Add Banner</a>
     </div>
     <div class="card-body">
+      <div class="d-flex justify-content-end  mb-3">
+        <!-- Form pencarian -->
+        <form method="GET" action="{{route('banner.index')}}">
+            <div class="input-group">
+                <input type="text" class="form-control" name="search" placeholder="Search" value="{{  request('search') }}">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+      </div>
       <div class="table-responsive">
         @if(count($banners)>0)
         <table class="table table-bordered table-hover" id="banner-dataTable" width="100%" cellspacing="0">
@@ -26,13 +37,9 @@
             </tr>
           </thead>
           <tbody>
-            @php 
-                $counter = 1; 
-            @endphp
-
-            @foreach($banners as $banner)   
+            @foreach($banners as $index => $banner)   
                 <tr>
-                    <td>{{$counter++}}</td>
+                    <td>{{$banners->firstItem() + $index}}</td>
                     <td>{{$banner->title}}</td>
                     <td>
                         @if($banner->photo)
@@ -56,33 +63,22 @@
                               <button class="btn btn-danger btn-sm dltBtn" data-id={{$banner->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
                         </form>
                     </td>
-                    {{-- Delete Modal --}}
-                    {{-- <div class="modal fade" id="delModal{{$user->id}}" tabindex="-1" role="dialog" aria-labelledby="#delModal{{$user->id}}Label" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                          <div class="modal-content"><!-- Visit 'codeastro' for more projects -->
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="#delModal{{$user->id}}Label">Delete user</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                              </button>
-                            </div>
-                            <div class="modal-body">
-                              <form method="post" action="{{ route('banners.destroy',$user->id) }}">
-                                @csrf 
-                                @method('delete')
-                                <button type="submit" class="btn btn-danger" style="margin:auto; text-align:center">Parmanent delete user</button>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
-                    </div> --}}
+                    
                 </tr>  
             @endforeach
           </tbody>
         </table>
-        <span style="float:right">{{$banners->links()}}</span>
+        <div class="pagination-container d-flex justify-content-between align-items-center">
+          <span>
+              Showing {{ $banners->firstItem() }} to {{ $banners->lastItem() }} of {{ $banners->total() }} entries
+          </span>
+          <div>
+              {{ $banners->links('pagination::bootstrap-4') }}
+          </div>
+        </div>
+        
         @else
-          <h6 class="text-center">No banners found!!! Please create banner</h6>
+          <h6 class="text-center">No banners found!!!</h6>
         @endif
       </div>
     </div>
@@ -93,9 +89,6 @@
   <link href="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
   <style>
-      div.dataTables_wrapper div.dataTables_paginate{
-          display: block;
-      }
       .zoom {
         transition: transform .2s; 
       }
@@ -116,16 +109,6 @@
   <!-- Page level custom scripts -->
   <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>
   <script>
-      
-      $('#banner-dataTable').DataTable( {
-            "debug": true,
-            "columnDefs":[
-                {
-                    "orderable":false,
-                    "targets":[2,3,4]
-                }
-            ]
-        } );
 
         // Sweet alert
 

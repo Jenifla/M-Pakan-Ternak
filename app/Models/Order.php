@@ -20,10 +20,7 @@ class Order extends Model
         }
         return 0;
     }
-    // public function cart(){
-    //     return $this->hasMany(Cart::class);
-    // }
-    // Order.php
+    
     public function cart()
     {
         return $this->hasMany(Cart::class, 'order_id');
@@ -48,6 +45,11 @@ class Order extends Model
     public function cancel()
     {
         return $this->hasOne(Cancellation::class);
+    }
+
+    public function refund()
+    {
+        return $this->hasOne(Refund::class); // Relasi satu ke satu dengan Refund
     }
 
     public function user()

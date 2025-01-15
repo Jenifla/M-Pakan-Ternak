@@ -13,6 +13,17 @@
       <a href="{{route('product.create')}}" class="btn btn-primary btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Add User"><i class="fas fa-plus"></i> Add Product</a>
     </div>
     <div class="card-body">
+          <div class="d-flex justify-content-end  mb-3">
+            <!-- Form pencarian -->
+            <form method="GET" action="{{route('product.index')}}">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="search" placeholder="Search" value="{{ request()->get('search') }}">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
+          </div>
       <div class="table-responsive">
         @if(count($products)>0)
         <table class="table table-bordered table-hover" id="product-dataTable" width="100%" cellspacing="0">
@@ -32,19 +43,14 @@
             </tr>
           </thead>
           <tbody>
-
-            @php 
-                $counter = 1; 
-            @endphp
-            @foreach($products as $product)
+            @foreach($products as $index => $product)
               @php
               $sub_cat_info=DB::table('categories')->select('title')->where('id',$product->child_cat_id)->get();
               // dd($sub_cat_info);
-              $brands=DB::table('brands')->select('title')->where('id',$product->brand_id)->get();
               
               @endphp
                 <tr>
-                    <td>{{$counter++}}</td>
+                    <td>{{$products->firstItem() + $index}}</td>
                     <td>{{$product->title}}</td>
                     <td>{{$product->cat_info['title']}}
                       <sub>
@@ -52,7 +58,7 @@
                       </sub>
                     </td>
                     
-                    <td>Rp {{$product->price}}</td>
+                    <td>Rp{{number_format($product->price, 0, ',', '.')}}</td>
                     <td>{{$product->weight}}</td>
                     <td>  {{$product->discount}}%</td>
                     
@@ -73,9 +79,6 @@
                           <img src="{{asset('backend/img/thumbnail-default.jpg')}}" class="img-fluid" style="max-width:80px" alt="avatar.png">
                       @endif
                       @endforeach
-                            
-                            {{-- <img src="{{$photo[0]}}" class="img-fluid zoom" style="max-width:80px" alt="{{$product->photo}}"> --}}
-                        
                     </td>
                     <td>
                         @if($product->status=='active')
@@ -96,22 +99,27 @@
             @endforeach
           </tbody>
         </table>
-        {{-- <span style="float:right">{{$products->links()}}</span> --}}
+        <div class="pagination-container d-flex justify-content-between align-items-center">
+          <span>
+              Showing {{ $products->firstItem() }} to {{ $products->lastItem() }} of {{ $products->total() }} entries
+          </span>
+          <div>
+              {{ $products->links('pagination::bootstrap-4') }}
+          </div>
+        </div>
         @else
-          <h6 class="text-center">No Products found!!! Please create Product</h6>
+          <h6 class="text-center">No Products found!!!</h6>
         @endif
       </div>
     </div>
-</div><!-- Visit 'codeastro' for more projects -->
+</div>
 @endsection
 
 @push('styles')
   <link href="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
   <style>
-      div.dataTables_wrapper div.dataTables_paginate{
-          display: block;
-      }
+     
       .zoom {
         transition: transform .2s; /* Animation */
       }
@@ -132,18 +140,6 @@
   <!-- Page level custom scripts -->
   <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>
   <script>
-
-      $('#product-dataTable').DataTable( {
-        "scrollX": false,
-            "columnDefs":[
-                {
-                    "orderable":false,
-                    "targets":[8,9,10]
-                }
-            ]
-        } );
-
-        // Sweet alert
 
         function deleteData(id){
 

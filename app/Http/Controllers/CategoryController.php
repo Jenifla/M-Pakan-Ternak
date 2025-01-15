@@ -13,9 +13,10 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $category=Category::getAllCategory();
+        $search = $request->get('search');
+        $category=Category::getAllCategory($search);
         // return $category;
         return view('backend.category.index')->with('categories',$category);
     }
@@ -122,84 +123,62 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function update(Request $request, $id)
-    // {
-    //     // return $request->all();
-    //     $category=Category::findOrFail($id);
-    //     $this->validate($request,[
-    //         'title'=>'string|required',
-    //         'photo'=>'string|nullable',
-    //         'status'=>'required|in:active,inactive',
-    //         'is_parent'=>'sometimes|in:1',
-    //         'parent_id'=>'nullable|exists:categories,id',
-    //     ]);
-    //     $data= $request->all();
-    //     $data['is_parent']=$request->input('is_parent',0);
-    //     // return $data;
-    //     $status=$category->fill($data)->save();
-    //     if($status){
-    //         request()->session()->flash('success','Category updated successfully');
-    //     }
-    //     else{
-    //         request()->session()->flash('error','Error occurred, Please try again!');
-    //     }
-    //     return redirect()->route('category.index');
-    // }
+    
 
     public function update(Request $request, $id)
-{
-    // Mencari kategori berdasarkan ID
-    $category = Category::findOrFail($id);
+    {
+        // Mencari kategori berdasarkan ID
+        $category = Category::findOrFail($id);
 
-    // Validasi input
-    $this->validate($request, [
-        'title' => 'required|string',
-        'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        'status' => 'required|in:active,inactive',
-        'is_parent' => 'sometimes|in:1',
-        'parent_id' => 'nullable|exists:categories,id',
-    ]);
+        // Validasi input
+        $this->validate($request, [
+            'title' => 'required|string',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'status' => 'required|in:active,inactive',
+            'is_parent' => 'sometimes|in:1',
+            'parent_id' => 'nullable|exists:categories,id',
+        ]);
 
-    // Ambil semua data dari request
-    $data = $request->all();
+        // Ambil semua data dari request
+        $data = $request->all();
 
-    // Tentukan nilai 'is_parent' jika ada
-    $data['is_parent'] = $request->input('is_parent', 0);
+        // Tentukan nilai 'is_parent' jika ada
+        $data['is_parent'] = $request->input('is_parent', 0);
 
-    // Jika ada foto baru yang diupload, simpan foto baru
-    if ($request->hasFile('photo')) {
-        // Ambil file foto yang diupload
-        $photo = $request->file('photo');
-        
-        // Tentukan path tujuan untuk menyimpan foto
-        $destinationPath = public_path('images/category');
-        
-        // Buat nama file yang unik
-        $fileName = time() . '_' . $photo->getClientOriginalName();
-        
-        // Pindahkan file ke folder public/category/
-        $photo->move($destinationPath, $fileName);
-        
-        // Simpan path relatif dari foto ke dalam data
-        $data['photo'] = 'images/category/' . $fileName;
-    }else {
-        // Jika tidak ada file gambar yang diunggah, gunakan gambar  yang lama
-        $data['photo'] = $category->photo;
+        // Jika ada foto baru yang diupload, simpan foto baru
+        if ($request->hasFile('photo')) {
+            // Ambil file foto yang diupload
+            $photo = $request->file('photo');
+            
+            // Tentukan path tujuan untuk menyimpan foto
+            $destinationPath = public_path('images/category');
+            
+            // Buat nama file yang unik
+            $fileName = time() . '_' . $photo->getClientOriginalName();
+            
+            // Pindahkan file ke folder public/category/
+            $photo->move($destinationPath, $fileName);
+            
+            // Simpan path relatif dari foto ke dalam data
+            $data['photo'] = 'images/category/' . $fileName;
+        }else {
+            // Jika tidak ada file gambar yang diunggah, gunakan gambar  yang lama
+            $data['photo'] = $category->photo;
+        }
+
+        // Update data kategori
+        $status = $category->fill($data)->save();
+
+        // Menampilkan pesan sukses atau error
+        if ($status) {
+            request()->session()->flash('success', 'Category updated successfully');
+        } else {
+            request()->session()->flash('error', 'Error occurred, Please try again!');
+        }
+
+        // Redirect ke halaman index kategori
+        return redirect()->route('category.index');
     }
-
-    // Update data kategori
-    $status = $category->fill($data)->save();
-
-    // Menampilkan pesan sukses atau error
-    if ($status) {
-        request()->session()->flash('success', 'Category updated successfully');
-    } else {
-        request()->session()->flash('error', 'Error occurred, Please try again!');
-    }
-
-    // Redirect ke halaman index kategori
-    return redirect()->route('category.index');
-}
 
 
     /**
@@ -239,15 +218,4 @@ class CategoryController extends Controller
             return response()->json(['status'=>true,'msg'=>'','data'=>$child_cat]);
         }
     }
-
-    // public function cari(Request $request) {
-    //     $query = $request->get('search'); // Ambil kata kunci pencarian dari request
-    //     $categories = Category::query();
-    
-    //     if ($query) {
-    //         $categories->where('title', 'LIKE', "%{$query}%"); // Filter berdasarkan judul
-    //     }
-    
-    //     return datatables()->of($categories)->make(true); // Mengembalikan data dalam format JSON
-    // }
 }

@@ -31,13 +31,13 @@ class CartController extends Controller
     public function addToCart(Request $request){
         // dd($request->all());
         if (empty($request->slug)) {
-            request()->session()->flash('error','Invalid Products');
+            request()->session()->flash('error','Produk Tidak Valid');
             return back();
         }        
         $product = Product::where('slug', $request->slug)->first();
         // return $product;
         if (empty($product)) {
-            request()->session()->flash('error','Invalid Products');
+            request()->session()->flash('error','Produk Tidak Valid');
             return back();
         }
 
@@ -48,7 +48,7 @@ class CartController extends Controller
             $already_cart->quantity = $already_cart->quantity + 1;
             $already_cart->amount = $product->price+ $already_cart->amount;
             // return $already_cart->quantity;
-            if ($already_cart->product->stock < $already_cart->quantity || $already_cart->product->stock <= 0) return back()->with('error','Stock not sufficient!.');
+            if ($already_cart->product->stock < $already_cart->quantity || $already_cart->product->stock <= 0) return back()->with('error','Stok tidak cukup!.');
             $already_cart->save();
             
         }else{
@@ -56,14 +56,14 @@ class CartController extends Controller
             $cart = new Cart;
             $cart->user_id = auth()->user()->id;
             $cart->product_id = $product->id;
-            $cart->price = ($product->price-($product->price*$product->discount)/100);
+            //$price = ($product->price-($product->price*$product->discount)/100);
             $cart->quantity = 1;
-            $cart->amount=$cart->price*$cart->quantity;
-            if ($cart->product->stock < $cart->quantity || $cart->product->stock <= 0) return back()->with('error','Stock not sufficient!.');
+            //$cart->amount=$price*$cart->quantity;
+            if ($cart->product->stock < $cart->quantity || $cart->product->stock <= 0) return back()->with('error','Stok tidak cukup!.');
             $cart->save();
             
         }
-        request()->session()->flash('success','Product has been added to cart');
+        request()->session()->flash('success','Produk telah ditambahkan ke keranjang');
         return back();       
     }  
 
@@ -77,10 +77,10 @@ class CartController extends Controller
 
         $product = Product::where('slug', $request->slug)->first();
         if($product->stock <$request->quant[1]){
-            return back()->with('error','Out of stock, You can add other products.');
+            return back()->with('error','Stok tidak cukup!.');
         }
         if ( ($request->quant[1] < 1) || empty($product) ) {
-            request()->session()->flash('error','Invalid Products');
+            request()->session()->flash('error','Produk Tidak Valid');
             return back();
         }    
 
@@ -93,7 +93,7 @@ class CartController extends Controller
             // $already_cart->price = ($product->price * $request->quant[1]) + $already_cart->price ;
             $already_cart->amount = ($product->price * $request->quant[1])+ $already_cart->amount;
 
-            if ($already_cart->product->stock < $already_cart->quantity || $already_cart->product->stock <= 0) return back()->with('error','Stock not sufficient!.');
+            if ($already_cart->product->stock < $already_cart->quantity || $already_cart->product->stock <= 0) return back()->with('error','Stok tidak cukup!.');
 
             $already_cart->save();
             
@@ -102,14 +102,14 @@ class CartController extends Controller
             $cart = new Cart;
             $cart->user_id = auth()->user()->id;
             $cart->product_id = $product->id;
-            $cart->price = ($product->price-($product->price*$product->discount)/100);
+            //$price = ($product->price-($product->price*$product->discount)/100);
             $cart->quantity = $request->quant[1];
-            $cart->amount=($product->price * $request->quant[1]);
-            if ($cart->product->stock < $cart->quantity || $cart->product->stock <= 0) return back()->with('error','Stock not sufficient!.');
+            //$cart->amount=($price * $request->quant[1]);
+            if ($cart->product->stock < $cart->quantity || $cart->product->stock <= 0) return back()->with('error','Stok tidak cukup!.');
             // return $cart;
             $cart->save();
         }
-        request()->session()->flash('success','Product has been added to cart.');
+        request()->session()->flash('success','Produk telah ditambahkan ke keranjang');
         return back();       
     } 
 
@@ -119,10 +119,10 @@ class CartController extends Controller
         $cart = Cart::find($request->id);
         if ($cart) {
             $cart->delete();
-            request()->session()->flash('success','Cart removed successfully');
+            request()->session()->flash('success','Produk Keranjang berhasil dihapus');
             return back();  
         }
-        request()->session()->flash('error','Error please try again');
+        request()->session()->flash('error','Kesalahan, silakan coba lagi');
         return back();       
     }     
 
@@ -140,110 +140,31 @@ class CartController extends Controller
                 // return $cart;
                 if($quant > 0 && $cart) {
                     // return $quant;
-
-                    if($cart->product->stock < $quant){
-                        request()->session()->flash('error','Out of stock');
+                    if ($cart->product->stock <= 0) {
+                        // Jika stok produk = 0
+                        $productName = $cart->product->title; 
+                        request()->session()->flash('error', 'Stok produk "' . $productName . '" habis. Silakan hapus produk dari keranjang.');
+                        return back();
+                    } elseif ($cart->product->stock < $quant) {
+                        // Jika stok produk < kuantitas yang diminta
+                        $productName = $cart->product->title; 
+                        request()->session()->flash('error', 'Stok produk "' . $productName . '" tidak mencukupi.');
                         return back();
                     }
+                    
                     $cart->quantity = ($cart->product->stock > $quant) ? $quant  : $cart->product->stock;
                     // return $cart;
-                    
-                    if ($cart->product->stock <=0) continue;
-                    $after_price=($cart->product->price-($cart->product->price*$cart->product->discount)/100);
-                    $cart->amount = $after_price * $quant;
-                    // return $cart->price;
                     $cart->save();
-                    $success = 'Cart updated successfully!';
+                    $success = 'Keranjang berhasil diperbarui!';
                 }else{
-                    $error[] = 'Cart Invalid!';
+                    $error[] = 'Keranjang Tidak Valid!';
                 }
             }
             return back()->with($error)->with('success', $success);
         }else{
-            return back()->with('Cart Invalid!');
+            return back()->with('Keranjang Tidak Valid!');
         }    
     }
-
-    // public function addToCart(Request $request){
-    //     // return $request->all();
-    //     if(Auth::check()){
-    //         $qty=$request->quantity;
-    //         $this->product=$this->product->find($request->pro_id);
-    //         if($this->product->stock < $qty){
-    //             return response(['status'=>false,'msg'=>'Out of stock','data'=>null]);
-    //         }
-    //         if(!$this->product){
-    //             return response(['status'=>false,'msg'=>'Product not found','data'=>null]);
-    //         }
-    //         // $session_id=session('cart')['session_id'];
-    //         // if(empty($session_id)){
-    //         //     $session_id=Str::random(30);
-    //         //     // dd($session_id);
-    //         //     session()->put('session_id',$session_id);
-    //         // }
-    //         $current_item=array(
-    //             'user_id'=>auth()->user()->id,
-    //             'id'=>$this->product->id,
-    //             // 'session_id'=>$session_id,
-    //             'title'=>$this->product->title,
-    //             'summary'=>$this->product->summary,
-    //             'link'=>route('product-detail',$this->product->slug),
-    //             'price'=>$this->product->price,
-    //             'photo'=>$this->product->photo,
-    //         );
-            
-    //         $price=$this->product->price;
-    //         if($this->product->discount){
-    //             $price=($price-($price*$this->product->discount)/100);
-    //         }
-    //         $current_item['price']=$price;
-
-    //         $cart=session('cart') ? session('cart') : null;
-
-    //         if($cart){
-    //             // if anyone alreay order products
-    //             $index=null;
-    //             foreach($cart as $key=>$value){
-    //                 if($value['id']==$this->product->id){
-    //                     $index=$key;
-    //                 break;
-    //                 }
-    //             }
-    //             if($index!==null){
-    //                 $cart[$index]['quantity']=$qty;
-    //                 $cart[$index]['amount']=ceil($qty*$price);
-    //                 if($cart[$index]['quantity']<=0){
-    //                     unset($cart[$index]);
-    //                 }
-    //             }
-    //             else{
-    //                 $current_item['quantity']=$qty;
-    //                 $current_item['amount']=ceil($qty*$price);
-    //                 $cart[]=$current_item;
-    //             }
-    //         }
-    //         else{
-    //             $current_item['quantity']=$qty;
-    //             $current_item['amount']=ceil($qty*$price);
-    //             $cart[]=$current_item;
-    //         }
-
-    //         session()->put('cart',$cart);
-    //         return response(['status'=>true,'msg'=>'Cart successfully updated','data'=>$cart]);
-    //     }
-    //     else{
-    //         return response(['status'=>false,'msg'=>'You need to login first','data'=>null]);
-    //     }
-    // }
-
-    // public function removeCart(Request $request){
-    //     $index=$request->index;
-    //     // return $index;
-    //     $cart=session('cart');
-    //     unset($cart[$index]);
-    //     session()->put('cart',$cart);
-    //     return redirect()->back()->with('success','Successfully remove item');
-    // }
 
     public function checkout(Request $request){
         $user = auth()->user();
@@ -261,73 +182,4 @@ class CartController extends Controller
         return view('frontend.pages.checkout', compact('provinces', 'cities', 'user'));
     }
 
-    public function getCities(Request $request)
-    {
-        $provinceId = $request->provinceId;
-        // dd($provinceId);
-        // Ambil kota berdasarkan provinsi
-        $response = $this->rajaOngkir->getCities($provinceId);
-        $cities = $response['rajaongkir']['results'];
-
-        return response()->json($cities);
-    }
-
-    // public function calculateShippingCost(Request $request)
-    // {
-    //     // Ambil ID kota asal (misalnya, ID kota asal tetap 501 atau ID kota pengguna)
-    //     $origin = 251; // ID kota asal
-
-    //     // Ambil ID kota tujuan dari form input
-    //     $destination = $request->destination; // ID kota tujuan yang dipilih pengguna
-
-    //     // Ambil berat barang dari data produk di keranjang
-    //     $cartItems = $request->cart_items; // Anggap cart_items adalah array produk di keranjang
-
-    //     $weight = 0;
-    //     foreach ($cartItems as $item) {
-    //         // Mengambil berat dari data produk yang ada di keranjang
-    //         $product = Product::find($item['product_id']); // Temukan produk berdasarkan ID
-    //         $weight += $product->weight * $item['quantity']; // Tambahkan berat produk * kuantitas
-    //     }
-
-    //     // Set default courier sebagai POS
-    //     $courier = 'pos';
-
-    //     // Hitung ongkos kirim
-    //     $cost = $this->rajaOngkir->getShippingCost($origin, $destination, $weight, $courier);
-
-    //     // Kembalikan ongkos kirim dalam bentuk response JSON
-    //     return response()->json($cost);
-    // }
-
-    public function calculateShippingCost(Request $request)
-    {
-        // Ambil data dari request
-        $origin = $request->input('origin');        // Kota asal
-        $destination = $request->input('destination');  // Kota tujuan
-        $weight = $request->input('weight');        // Berat barang
-        $courier = $request->input('courier');      // Nama kurir
-
-        // Validasi input (optional, tergantung kebutuhan)
-        $validated = $request->validate([
-            'origin' => 'required|integer',
-            'destination' => 'required|integer',
-            'weight' => 'required|integer',
-            'courier' => 'required|string',
-        ]);
-
-        try {
-            // Panggil service untuk mendapatkan ongkos kirim
-            $shippingCost = $this->rajaOngkir->getShippingCost($origin, $destination, $weight, $courier);
-
-            // Kembalikan hasil ongkos kirim dalam response JSON
-            return response()->json($shippingCost);
-        } catch (\Exception $e) {
-            // Tangani error jika ada
-            return response()->json([
-                'error' => 'Gagal mendapatkan ongkos kirim',
-                'message' => $e->getMessage(),
-            ], 500);
-        }
-    }
 }

@@ -5,7 +5,7 @@
 <div class="card">
     <h5 class="card-header">Edit User</h5>
     <div class="card-body">
-      <form method="post" action="{{route('users.update',$user->id)}}">
+      <form method="post" action="{{route('users.update',$user->id)}}" enctype="multipart/form-data">
         @csrf 
         @method('PATCH')
         <div class="form-group">
@@ -24,13 +24,13 @@
           @enderror
         </div>
 
-        {{-- <div class="form-group">
-            <label for="inputPassword" class="col-form-label">Password</label>
-          <input id="inputPassword" type="password" name="password" placeholder="Enter password"  value="{{$user->password}}" class="form-control">
-          @error('password')
-          <span class="text-danger">{{$message}}</span>
-          @enderror
-        </div> --}}
+        <div class="form-group">
+          <label for="inputNohp" class="col-form-label">No Hp</label>
+        <input id="inputHohp" type="text" name="no_hp" placeholder="Enter no hp"  value="{{$user->no_hp}}" class="form-control">
+        @error('no_hp')
+        <span class="text-danger">{{$message}}</span>
+        @enderror
+      </div>
 
         <div class="form-group">
         <label for="inputPhoto" class="col-form-label">Photo</label>

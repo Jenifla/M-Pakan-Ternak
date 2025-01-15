@@ -15,6 +15,11 @@ class Cancellation extends Model
         return $this->belongsTo(Order::class,'order_id');
     }
 
+    public function refund()
+    {
+        return $this->hasOne(Refund::class); // Relasi satu ke satu dengan Refund
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

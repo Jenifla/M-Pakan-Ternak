@@ -1,5 +1,7 @@
 @extends('frontend.layouts.master')
 
+@section('title','PT. Agro Apis Palacio || Kontak')
+
 @section('main-content')
 	<!-- Breadcrumbs -->
 	<div class="breadcrumbs">
@@ -25,62 +27,13 @@
 					<div class="row">
 						<div class="col-lg-6 col-12">
 							<div >
-								{{-- <div class="title">
-									@php
-										$settings=DB::table('settings')->get();
-									@endphp
-									<h4>Jangan ragu untuk menghubungi kami jika Anda memerlukan bantuan.</h4>
-									<h3>Write us a message @auth @else<span style="font-size:12px;" class="text-danger">[You need to login first]</span>@endauth</h3>
-								</div> --}}
-								{{-- <form class="form-contact form contact_form" method="post" action="{{route('contact.store')}}" id="contactForm" novalidate="novalidate">
-									@csrf
-									<div class="row">
-										<div class="col-lg-6 col-12">
-											<div class="form-group">
-												<label>Your Name<span>*</span></label>
-												<input name="name" id="name" type="text" placeholder="Enter your name">
-											</div>
-										</div>
-										<div class="col-lg-6 col-12">
-											<div class="form-group">
-												<label>Your Subjects<span>*</span></label>
-												<input name="subject" type="text" id="subject" placeholder="Enter Subject">
-											</div>
-										</div>
-										<div class="col-lg-6 col-12">
-											<div class="form-group">
-												<label>Your Email<span>*</span></label>
-												<input name="email" type="email" id="email" placeholder="Enter email address">
-											</div>	
-										</div>
-										<div class="col-lg-6 col-12">
-											<div class="form-group">
-												<label>Your Phone<span>*</span></label>
-												<input id="phone" name="phone" type="number" placeholder="Enter your phone">
-											</div>	
-										</div>
-										<div class="col-12">
-											<div class="form-group message">
-												<label>your message<span>*</span></label>
-												<textarea name="message" id="message" cols="30" rows="9" placeholder="Enter Message"></textarea>
-											</div>
-										</div>
-										<div class="col-12">
-											<div class="form-group button">
-												<button type="submit" class="btn ">Send Message</button>
-											</div>
-										</div>
-									</div>
-								</form> --}}
+								
 								<img src="{{ asset('images/us.png') }}" alt="us">
 							</div>
 						</div>
 						<div class="col-lg-6 col-12">
 							<div class="single-head">
 								<div class="title">
-									@php
-										$settings=DB::table('settings')->get();
-									@endphp
 									<h4>Jangan ragu untuk menghubungi kami jika Anda memerlukan bantuan.</h4>
 									<p>Kami siap membantu Anda dengan segala pertanyaan atau kebutuhan yang Anda miliki. Tim kami akan segera merespon setiap pesan yang Anda kirimkan dan siap memberikan solusi terbaik.</p>
 								</div>
@@ -90,7 +43,7 @@
 									<div>
 									<h4 class="title">Alamat:</h4>
 									<ul>
-										<li>@foreach($settings as $data) {{$data->address}} @endforeach</li>
+										<li>Dsn Singget RT 04 RW 02 Randuagung, Desa Sukomoro, Kec. Sukomoro, Magetan, Jawa Timur</li>
 									</ul>
 									</div>
 								</div>
@@ -99,7 +52,7 @@
 									<div>
 									<h4 class="title">Telepon:</h4>
 									<ul>
-										<li>@foreach($settings as $data) {{$data->phone}} @endforeach</li>
+										<li>+62 821-3197-3213</li>
 									</ul>
 									</div>
 								</div>
@@ -108,15 +61,15 @@
 									<div>
 									<h4 class="title">Email:</h4>
 									<ul>
-										<li><a href="mailto:info@yourwebsite.com">@foreach($settings as $data) {{$data->email}} @endforeach</a></li>
+										<li><a href="mailto:info@yourwebsite.com">pakanmagetan@gmail.com</a></li>
 									</ul>
 									</div>
 								</div>
 								
 								<div class="single-info">
-									<i class="fa fa-facebook-f"></i>
-									<i class="fa fa-whatsapp"></i>
-									<i class="fa fa-instagram"></i>
+									<a href="https://www.facebook.com/pakaninstanapis/"><i class="fa fa-facebook-f"></i></a>
+									<a href="https://wa.me/{{ $admin->no_hp }}?text=Halo%2C%20saya%20tertarik%20dengan%20produk%20anda"><i class="fa fa-whatsapp"></i></a>
+									<a href="https://www.instagram.com/pakaninstanapis/?igsh=eTIycm12cDVsdXE0"><i class="fa fa-instagram"></i></a>
 								</div>
 							</div>
 						</div>

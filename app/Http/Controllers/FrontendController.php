@@ -48,31 +48,36 @@ class FrontendController extends Controller
     public function accountdashboard(){
         return view('frontend.pages.account.content');
     }
-    // public function accountorder(){
-    //     $orders=Order::orderBy('id','DESC')->where('user_id',auth()->user()->id)->paginate(10);
-    //     return view('frontend.pages.account.order')->with('orders',$orders);
-    // }
+    
     public function accountorder()
     {
         // Mengambil data order dengan relasi carts dan product menggunakan eager loading
-        $orders = Order::with(['cart.product.gambarProduk', 'cancel'])
+        $orders = Order::with(['cart.product.gambarProduk', 'refund', 'cancel'])
                         ->where('user_id', auth()->user()->id)
                         ->orderBy('id', 'DESC')
                         ->get();
+        $orderCounts = [
+            'all' => Order::where('user_id', Auth::id())->count(), // Total jumlah pesanan untuk user yang login
+            'new' => Order::where('user_id', Auth::id())->where('status', 'new')->count(), // Pesanan Baru untuk user yang login
+            'topay' => Order::where('user_id', Auth::id())->where('status', 'to pay')->count(), // Belum Bayar untuk user yang login
+            'toship' => Order::where('user_id', Auth::id())->where('status', 'to ship')->count(), // Dikemas untuk user yang login
+            'toreceive' => Order::where('user_id', Auth::id())->where('status', 'to receive')->count(), // Dikirim untuk user yang login
+            'completed' => Order::where('user_id', Auth::id())->where('status', 'completed')->count(), // Selesai untuk user yang login
+            'cancelled' => Order::where('user_id', Auth::id())->where('status', 'cancel')->count(), // Pembatalan untuk user yang login
+        ];
+
+        $admin = User::where('role', 'admin')
+        ->where('status', 'active')
+        ->first();
+                        
         foreach ($orders as $order) {
             $order->paymentDeadline = date('Y-m-d H:i:s', strtotime($order->updated_at . ' + 24 hours'));
             $order->shippedDeadline = date('Y-m-d', strtotime($order->updated_at . ' + 3 days'));
         }
 
-        return view('frontend.pages.account.order', compact('orders'));
+        return view('frontend.pages.account.order', compact('orders', 'orderCounts', 'admin'));
     }
 
-    // public function orderShow($id)
-    // {
-    //     $order=Order::find($id);
-    //     // return $order;
-    //     return view('frontend.pages.account.detailorder')->with('order',$order);
-    // }
     public function orderShow($id)
     {
         $order=Order::with(['payment', 'user', 'cart.product.gambarProduk'])->find($id);
@@ -127,13 +132,19 @@ class FrontendController extends Controller
     }
 
     public function contact(){
-        return view('frontend.pages.contact');
+        $admin = User::where('role', 'admin')
+        ->where('status', 'active')
+        ->first();
+        return view('frontend.pages.contact')->with('admin',$admin);
     }
 
     public function productDetail($slug){
+        $admin = User::where('role', 'admin')
+        ->where('status', 'active')
+        ->first();
         $product_detail= Product::getProductBySlug($slug);
         // dd($product_detail);
-        return view('frontend.pages.product_detail')->with('product_detail',$product_detail);
+        return view('frontend.pages.product_detail')->with('product_detail',$product_detail)->with('admin',$admin);
     }
 
     // Order
@@ -165,10 +176,6 @@ class FrontendController extends Controller
 
         if(!empty($_GET['price'])){
             $price=explode('-',$_GET['price']);
-            // return $price;
-            // if(isset($price[0]) && is_numeric($price[0])) $price[0]=floor(Helper::base_amount($price[0]));
-            // if(isset($price[1]) && is_numeric($price[1])) $price[1]=ceil(Helper::base_amount($price[1]));
-            
             $products->whereBetween('price',$price);
         }
 
@@ -208,10 +215,6 @@ class FrontendController extends Controller
 
         if(!empty($_GET['price'])){
             $price=explode('-',$_GET['price']);
-            // return $price;
-            // if(isset($price[0]) && is_numeric($price[0])) $price[0]=floor(Helper::base_amount($price[0]));
-            // if(isset($price[1]) && is_numeric($price[1])) $price[1]=ceil(Helper::base_amount($price[1]));
-            
             $products->whereBetween('price',$price);
         }
 
@@ -403,49 +406,19 @@ class FrontendController extends Controller
         $data= $request->all();
         if(Auth::attempt(['email' => $data['email'], 'password' => $data['password'],'status'=>'active'])){
             Session::put('user',$data['email']);
-            request()->session()->flash('success','Logged in successfully!');
+            request()->session()->flash('success','Login Berhasil!');
             return redirect()->route('home');
         }
         else{
-            request()->session()->flash('error','Invalid email and password pleas try again!');
+            request()->session()->flash('error','Email dan kata sandi tidak valid, silakan coba lagi!');
             return redirect()->back();
         }
     }
 
-//     public function loginSubmit(Request $request)
-// {
-//     $data = $request->all();
-
-//     // Lakukan permintaan login ke API yang mengelola JWT
-//     $response = Http::post('http://127.0.0.1:8000/api/auth/login', [
-//         'email' => $data['email'],
-//         'password' => $data['password'],
-//     ]);
-
-//     // Cek apakah login berhasil
-//     if ($response->successful()) {
-//         $responseData = $response->json();
-
-//         // Ambil token dari response
-//         $token = $responseData['access_token'];
-
-//         // Simpan token di localStorage pada client-side, dan juga simpan informasi pengguna di session
-//         Session::put('user', $data['email']); // Simpan email di session
-//         Session::put('jwt_token', $token);    // Simpan JWT token di session
-
-//         request()->session()->flash('success', 'Logged in successfully!');
-//         return redirect()->route('home');
-//     } else {
-//         // Jika login gagal, tampilkan pesan kesalahan
-//         request()->session()->flash('error', 'Invalid email and password, please try again!');
-//         return redirect()->back();
-//     }
-// }
-
     public function logout(){
         Session::forget('user');
         Auth::logout();
-        request()->session()->flash('success','Logged out successfully');
+        request()->session()->flash('success','Logout Berhasil');
         return back();
     }
 
@@ -465,11 +438,11 @@ class FrontendController extends Controller
         $check=$this->create($data);
         Session::put('user',$data['email']);
         if($check){
-            request()->session()->flash('success','Registered successfully');
+            request()->session()->flash('success','Register Berhasil!');
             return redirect()->route('home');
         }
         else{
-            request()->session()->flash('error','Please try again!');
+            request()->session()->flash('error','Silakan coba lagi!');
             return back();
         }
     }

@@ -30,29 +30,6 @@
         loginStatus.style.display = 'block';
     }
 </script>
-{{-- <script>
-    let token = localStorage.getItem('access_token');
-    if (token) {
-        // Buat request ke backend untuk cek token
-        fetch('/api/user', {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + token,
-                'Accept': 'application/json',
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data) {
-                document.getElementById('login-status').innerHTML = '<p>You are logged in!</p>';
-            }
-        })
-        .catch(error => {
-            console.log('Error:', error);
-        });
-    } else {
-        document.getElementById('login-status').innerHTML = '<p>You are not logged in.</p>';
-    }
-</script> --}}
+
 
 @endsection

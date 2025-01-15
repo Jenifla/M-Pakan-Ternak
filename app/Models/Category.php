@@ -11,9 +11,18 @@ class Category extends Model
     public function parent_info(){
         return $this->hasOne('App\Models\Category','id','parent_id');
     }
-    public static function getAllCategory(){
-        return  Category::orderBy('id','DESC')->with('parent_info')->paginate(10);
+    
+    public static function getAllCategory($search = null)
+    {
+        $query = Category::orderBy('id', 'DESC')->with('parent_info');
+
+        if (!empty($search)) {
+            $query->where('title', 'like', "%$search%"); 
+        }
+
+        return $query->paginate(10)->appends(['search' => $search]);
     }
+
 
     public static function shiftChild($cat_id){
         return Category::whereIn('id',$cat_id)->update(['is_parent'=>1]);

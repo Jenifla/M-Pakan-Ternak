@@ -1,6 +1,6 @@
 @extends('frontend.pages.account.account')
 
-@section('title','Account Uset || Dashboard')
+@section('title','Akun User || Detail Akun')
 
 @section('account-content')
 <div >
@@ -9,7 +9,6 @@
             <h5>Detail Akun</h5>
         </div>
         <div class="card-body">
-            {{-- <p>Already have an account? <a href="page-login.html">Log in instead!</a></p> --}}
             <form action="{{ route('account.update') }}" method="POST" >
                 @csrf
                 @method('PUT')
@@ -26,10 +25,6 @@
                         <label>Nomor Telepon <span class="text-danger">*</span></label>
                         <input style="padding: 10px 15px;" class="form-control" name="no_hp" type="text" value="{{ old('no_hp', $user->no_hp) }}" required/>
                     </div>
-                    {{-- <div class="form-group col-md-12">
-                        <label>Password Saat ini<span class="required">*</span></label>
-                        <input  class="form-control" name="password" type="password" value="{{ old('password', $user->password) }}"/>
-                    </div> --}}
                     <div class="form-group col-md-12">
                         <label>Password Baru</label>
                         <input style="padding: 10px 15px;" class="form-control" name="npassword" type="password" placeholder="Kosongkan jika tidak ingin mengubah password"/>

@@ -16,20 +16,11 @@
           @enderror
         </div>
 
-        {{-- <div class="form-group">
-          <label for="summary" class="col-form-label">Summary</label>
-          <textarea class="form-control" id="summary" name="summary">{{$category->summary}}</textarea>
-          @error('summary')
-          <span class="text-danger">{{$message}}</span>
-          @enderror
-        </div> --}}
-
         <div class="form-group">
-          <label for="is_parent">Is Parent</label><br>
+          <label for="is_parent">Main Category</label><br>
           <input type="checkbox" name='is_parent' id='is_parent' value='{{$category->is_parent}}' {{(($category->is_parent==1)? 'checked' : '')}}> Yes                        
         </div>
-        {{-- {{$parent_cats}} --}}
-        {{-- {{$category}} --}}
+        
 
       <div class="form-group {{(($category->is_parent==1) ? 'd-none' : '')}}" id='parent_cat_div'>
           <label for="parent_id">Parent Category</label>
@@ -45,11 +36,7 @@
         <div class="form-group">
           <label for="inputPhoto" class="col-form-label">Photo</label>
           <div class="input-group">
-              {{-- <span class="input-group-btn">
-                  <a id="lfm" data-input="thumbnail" data-preview="holder" class="btn btn-primary">
-                  <i class="fa fa-picture-o"></i> Choose
-                  </a>
-              </span> --}}
+            
           <input id="photos" class="form-control" type="file" name="photo" onchange="previewImages(event)">
         </div>
         @if(isset($category->photo) && !empty($category->photo))
@@ -89,7 +76,7 @@
 <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
 <script src="{{asset('backend/summernote/summernote.min.js')}}"></script>
 <script>
-    // $('#lfm').filemanager('image');
+   
 
     $(document).ready(function() {
     $('#summary').summernote({

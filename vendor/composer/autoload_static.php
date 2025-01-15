@@ -661,6 +661,7 @@ class ComposerStaticInit38b8c6fa0cd5358d98abdb0e01dc7373
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
         'App\\Rules\\MatchOldPassword' => __DIR__ . '/../..' . '/app/Rules/MatchOldPassword.php',
         'App\\Services\\RajaOngkirService' => __DIR__ . '/../..' . '/app/Services/RajaOngkirService.php',
+        'App\\Services\\WhatsAppService' => __DIR__ . '/../..' . '/app/Services/WhatsAppService.php',
         'App\\User' => __DIR__ . '/../..' . '/app/User.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Barryvdh\\DomPDF\\Facade' => __DIR__ . '/..' . '/barryvdh/laravel-dompdf/src/Facade.php',

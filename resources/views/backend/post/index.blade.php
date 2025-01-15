@@ -13,6 +13,17 @@
       <a href="{{route('post.create')}}" class="btn btn-primary btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Add User"><i class="fas fa-plus"></i> Add Post</a>
     </div>
     <div class="card-body">
+      <div class="d-flex justify-content-end  mb-3">
+        <!-- Form pencarian -->
+        <form method="GET" action="{{route('post.index')}}">
+            <div class="input-group">
+                <input type="text" class="form-control" name="search" placeholder="Search" value="{{ request()->get('search') }}">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+      </div>
       <div class="table-responsive">
         @if(count($posts)>0)
         <table class="table table-bordered table-hover" id="product-dataTable" width="100%" cellspacing="0">
@@ -20,8 +31,6 @@
             <tr>
               <th>No</th>
               <th>Title</th>
-              {{-- <th>Category</th>
-              <th>Tag</th> --}}
               <th>Author</th>
               <th>Photo</th>
               <th>Status</th>
@@ -29,24 +38,13 @@
             </tr>
           </thead>
           <tbody>
-
-            @php 
-                $counter = 1; 
-            @endphp
-           
-            @foreach($posts as $post)   
+            @foreach($posts as $index => $post)   
               @php 
               $author_info=DB::table('users')->select('name')->where('id',$post->added_by)->get();
-              // dd($sub_cat_info);
-              // dd($author_info);
-
               @endphp
                 <tr>
-                    <td>{{$counter++}}</td>
+                    <td>{{$posts->firstItem() + $index}}</td>
                     <td>{{$post->title}}</td>
-                    {{-- <td>{{$post->cat_info->title}}</td>
-                    <td>{{$post->tags}}</td> --}}
-
                     <td>
                       @foreach($author_info as $data)
                           {{$data->name}}
@@ -78,9 +76,16 @@
             @endforeach
           </tbody>
         </table>
-        <span style="float:right">{{$posts->links()}}</span>
+        <div class="pagination-container d-flex justify-content-between align-items-center">
+          <span>
+              Showing {{ $posts->firstItem() }} to {{ $posts->lastItem() }} of {{ $posts->total() }} entries
+          </span>
+          <div>
+              {{ $posts->links('pagination::bootstrap-4') }}
+          </div>
+        </div>
         @else
-          <h6 class="text-center">No posts found!!! Please create Post</h6>
+          <h6 class="text-center">No posts found!!!</h6>
         @endif
       </div>
     </div>
@@ -92,9 +97,7 @@
   <link href="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
   <style>
-      div.dataTables_wrapper div.dataTables_paginate{
-          display: block;
-      }
+      
       .zoom {
         transition: transform .2s; /* Animation */
       }
@@ -115,15 +118,6 @@
   <!-- Page level custom scripts -->
   <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>
   <script>
-      
-      $('#product-dataTable').DataTable( {
-            "columnDefs":[
-                {
-                    "orderable":false,
-                    "targets":[3,4,5]
-                }
-            ]
-        } );
 
         // Sweet alert
 

@@ -13,6 +13,17 @@
       <a href="{{route('users.create')}}" class="btn btn-primary btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Add User"><i class="fas fa-plus"></i> Add User</a>
     </div>
     <div class="card-body">
+      <div class="d-flex justify-content-end  mb-3">
+        <!-- Form pencarian -->
+        <form method="GET" action="{{route('users.index')}}">
+            <div class="input-group">
+                <input type="text" class="form-control" name="search" placeholder="Search" value="{{ request('search') }}">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+      </div>
       <div class="table-responsive">
         <table class="table table-bordered table-hover" id="user-dataTable" width="100%" cellspacing="0">
           <thead>
@@ -27,17 +38,14 @@
             </tr>
           </thead>
           <tbody>
-            @php 
-                $counter = 1; 
-            @endphp
-            @foreach($users as $user)   
+            @foreach($users as $index => $user)   
                 <tr>
-                    <td>{{$counter++}}</td>
+                    <td>{{$users->firstItem() + $index}}</td>
                     <td>{{$user->name}}</td>
                     <td>{{$user->email}}</td>
                     <td>
                         @if($user->photo)
-                            <img src="{{$user->photo}}" class="img-fluid rounded-circle" style="max-width:50px" alt="{{$user->photo}}">
+                            <img src="{{asset($user->photo)}}" class="img-fluid rounded-circle" style="max-width:50px" alt="{{$user->photo}}">
                         @else
                             <img src="{{asset('backend/img/avatar.png')}}" class="img-fluid rounded-circle" style="max-width:50px" alt="avatar.png">
                         @endif
@@ -58,31 +66,18 @@
                           <button class="btn btn-danger btn-sm dltBtn" data-id={{$user->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
                         </form>
                     </td>
-                    {{-- Delete Modal --}}
-                    {{-- <div class="modal fade" id="delModal{{$user->id}}" tabindex="-1" role="dialog" aria-labelledby="#delModal{{$user->id}}Label" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="#delModal{{$user->id}}Label">Delete user</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                              </button>
-                            </div>
-                            <div class="modal-body">
-                              <form method="post" action="{{ route('users.destroy',$user->id) }}">
-                                @csrf 
-                                @method('delete')
-                                <button type="submit" class="btn btn-danger" style="margin:auto; text-align:center">Parmanent delete user</button>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
-                    </div> --}}
                 </tr>  
             @endforeach
           </tbody>
         </table>
-        {{-- <span style="float:right">{{$users->links()}}</span> --}}
+        <div class="pagination-container d-flex justify-content-between align-items-center">
+          <span>
+              Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} entries
+          </span>
+          <div>
+              {{ $users->links('pagination::bootstrap-4') }}
+          </div>
+        </div>
       </div>
     </div>
 </div>
@@ -91,11 +86,6 @@
 @push('styles')
   <link href="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
-  <style>
-      div.dataTables_wrapper div.dataTables_paginate{
-          display: block;
-      }
-  </style>
 @endpush
 
 @push('scripts')
@@ -108,15 +98,6 @@
   <!-- Page level custom scripts -->
   <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>
   <script>
-      
-      $('#user-dataTable').DataTable( {
-            "columnDefs":[
-                {
-                    "orderable":false,
-                    "targets":[6,7]
-                }
-            ]
-        } );
 
         // Sweet alert
 

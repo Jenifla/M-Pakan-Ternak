@@ -1,7 +1,7 @@
 @extends('backend.layouts.master')
 
 @section('main-content')
- <!-- DataTales Example -->
+
  <div class="card shadow mb-4">
      <div class="row">
          <div class="col-md-12">
@@ -13,6 +13,17 @@
       <a href="{{route('category.create')}}" class="btn btn-primary btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Add User"><i class="fas fa-plus"></i> Add Category</a>
     </div>
     <div class="card-body">
+      <div class="d-flex justify-content-end  mb-3">
+        <!-- Form pencarian -->
+        <form method="GET" action="{{route('category.index')}}">
+            <div class="input-group">
+                <input type="text" class="form-control" name="search" placeholder="Search" value="{{ request()->get('search') }}">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+      </div>
       <div class="table-responsive">
         @if(count($categories)>0)
         <table class="table table-bordered table-hover" id="banner-dataTable" width="100%" cellspacing="0">
@@ -33,11 +44,11 @@
                 $counter = 1; 
             @endphp
 
-            @foreach($categories as $category)
+            @foreach($categories as $index => $category)
               @php
               @endphp
                 <tr>
-                    <td>{{$counter++ }}</td>
+                    <td>{{$categories->firstItem() + $index}}</td>
                     <td>{{$category->title}}</td>
                     <td>{{(($category->is_parent==1)? 'Yes': 'No')}}</td>
                     <td>
@@ -69,9 +80,17 @@
             @endforeach
           </tbody>
         </table>
-        {{-- <span style="float:right">{{$categories->links()}}</span> --}}
+        <div class="pagination-container d-flex justify-content-between align-items-center">
+          <span>
+              Showing {{ $categories->firstItem() }} to {{ $categories->lastItem() }} of {{ $categories->total() }} entries
+          </span>
+          <div>
+              {{ $categories->links('pagination::bootstrap-4') }}
+          </div>
+      </div>
+        
         @else
-          <h6 class="text-center">No Categories found!!! Please create Category</h6>
+          <h6 class="text-center">No Categories found!!!</h6>
         @endif
       </div>
     </div>
@@ -81,11 +100,7 @@
 @push('styles')
   <link href="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
-  <style>
-      div.dataTables_wrapper div.dataTables_paginate{
-          display: block;
-      }
-  </style>
+  
 @endpush
 
 @push('scripts')
@@ -98,15 +113,6 @@
   <!-- Page level custom scripts -->
   <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>
   <script>
-
-      $('#banner-dataTable').DataTable( {
-            "columnDefs":[
-                {
-                    "orderable":false,
-                    "targets":[3,4,5]
-                }
-            ]
-        } );
 
         // Sweet alert
 

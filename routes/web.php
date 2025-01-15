@@ -3,6 +3,7 @@
 use App\Services\RajaOngkirService;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\ShippingController;
 
@@ -60,12 +61,10 @@ Route::get('/cart',function(){
     return view('frontend.pages.cart');
 })->name('cart');
 Route::get('/checkout','AddressController@showAddressForm')->name('checkout')->middleware('user');
-// Route::get('/checkout','CartController@checkout')->name('checkout')->middleware('user');
 
 Route::post('cart/order','OrderController@store')->name('cart.order');
 Route::get('order/pdf/{id}','OrderController@pdf')->name('order.pdf');
 Route::get('/income','OrderController@incomeChart')->name('product.order.income');
-// Route::get('/user/chart','AdminController@userPieChart')->name('user.piechart');
 Route::get('order/invoice/{id}','FrontendController@invoice')->name('order.invoice');
 Route::get('/product-grids','FrontendController@productGrids')->name('product-grids');
 Route::get('/product-lists','FrontendController@productLists')->name('product-lists');
@@ -94,17 +93,6 @@ Route::post('/calculate-shipping-cost', [RajaOngkirService::class, 'getShippingC
 Route::get('/get-cities/{provinceId}', [CartController::class, 'getCities'])->name('get.cities');
 Route::post('/calculate-shipping-cost', [CartController::class, 'calculateShippingCost']);
 
-// Route::post('/addres/add', 'AddressController@store')->name('address.add');
-// // Route untuk menampilkan form edit alamat
-// Route::get('/addresses/{id}/edit', 'AddressController@')->name('address.edit');
-
-// // Route untuk memperbarui alamat
-// Route::put('/addresses/{id}', 'AddressController@')->name('address.update');
-
-// // Route untuk menghapus alamat
-// Route::delete('/addresses/{id}', 'AddressController@')->name('address.destroy');
-
-
 
 // Payment
 Route::post('/midtrans/token', 'PaymentController@generateToken')->name('midtrans.token');
@@ -128,6 +116,9 @@ Route::group(['prefix'=>'/admin','middleware'=>['auth','admin']],function(){
     Route::resource('users','UsersController');
     // Banner
     Route::resource('banner','BannerController');
+    // Refund
+    Route::resource('refund', 'RefundController');
+    Route::put('/refund/{refundId}/update', 'RefundController@update')->name('refund.update');
     // Profile
     Route::get('/profile','AdminController@profile')->name('admin-profile');
     Route::post('/profile/{id}','AdminController@profileUpdate')->name('profile-update');
@@ -145,6 +136,8 @@ Route::group(['prefix'=>'/admin','middleware'=>['auth','admin']],function(){
     
     // Order
     Route::resource('/order','OrderController');
+    Route::get('/orders', 'OrderController@index')->name('ordersrr');
+    Route::get('/orders/{tab}/{subtab?}', [OrderController::class, 'index'])->name('admin.orders');
     Route::put('/order/{orderId}/update-status', 'OrderController@updateStatus')->name('order.update.status');
     Route::put('/order/{orderId}/update', 'CancellationController@updateStatus')->name('order.cancel.update');
 
@@ -153,10 +146,6 @@ Route::group(['prefix'=>'/admin','middleware'=>['auth','admin']],function(){
     // Shipping
     Route::resource('/shipping','ShippingController');
     Route::post('/shipping/{id}','ShippingController@update')->name('shipping-update');
-    
-    // Settings
-    Route::get('settings','AdminController@settings')->name('settings');
-    Route::post('setting/update','AdminController@settingsUpdate')->name('settings.update');
 
     // Notification
     Route::get('/notification/{id}','NotificationController@show')->name('admin.notification');
@@ -176,22 +165,7 @@ Route::group(['prefix'=>'/admin','middleware'=>['auth','admin']],function(){
 
 
 
-// User section start
-Route::group(['prefix'=>'/user','middleware'=>['user']],function(){
-    Route::get('/','HomeController@index')->name('user');
-     // Profile
-     Route::get('/profile','HomeController@profile')->name('user-profile');
-     Route::post('/profile/{id}','HomeController@profileUpdate')->name('user-profile-update');
-    //  Order
-    Route::get('/order',"HomeController@orderIndex")->name('user.order.index');
-    Route::get('/order/show/{id}',"HomeController@orderShow")->name('user.order.show');
-    Route::delete('/order/delete/{id}','HomeController@userOrderDelete')->name('user.order.delete');
-    
-    // Password Change
-    Route::get('change-password', 'HomeController@changePassword')->name('user.change.password.form');
-    Route::post('change-password', 'HomeController@changPasswordStore')->name('change.password');
 
-});
 
 Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
     \UniSharp\LaravelFilemanager\Lfm::routes();

@@ -58,12 +58,6 @@
       margin-bottom: 20px;
     }
 
-    /* .bill-to h3, .invoice-details h3 {
-      font-size: 1.2rem;
-      color: #c66a00;
-      margin-bottom: 10px;
-    } */
-
     .invoice-details table {
             border-collapse: collapse; /* Menggabungkan batas */
             width: 100%; /* Mengatur lebar tabel */
@@ -119,7 +113,6 @@
     <div class="header">
       <img src="{{ public_path('images/Logo optima feed.png') }}" alt="Logo" style="max-height: 70px; width: 90px">
       <h1>INVOICE</h1>
-      {{-- <p class="company-info">148B, Northern Street Greater South Avenue New York 10001 U.S.A</p> --}}
     </div>
 
     <div class="bill-to">
@@ -138,14 +131,12 @@
           <tr>
             <th>Order Number</th>
             <th>Order Date</th>
-            {{-- <th>Payment Method</th> --}}
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>{{$order->order_number}}</td>
             <td>{{ date('d/m/Y', strtotime($order->date_order)) }}</td>
-            {{-- <td>{{$order->payment->method_payment}}</td> --}}
           </tr>
         </tbody>
       </table>
@@ -154,7 +145,6 @@
     <table>
       <thead>
         <tr>
-          {{-- <th>No</th> --}}
           <th>Product</th>
           <th>Price</th>
           <th>Quantity</th>
@@ -179,37 +169,31 @@
         $total_items += $cart->quantity;
     @endphp
         <tr>
-          {{-- <td>1</td> --}}
           <td>
             <span>{{$product->title}}</span>
         </td>
-        <td>Rp{{number_format($discountedPrice, 2)}}</td>
+        <td>Rp{{number_format($discountedPrice, 0, ',', '.')}}</td>
         <td>x{{$cart->quantity}}</td>
-        <td>Rp{{number_format($subtotal, 2)}}</td> 
+        <td>Rp{{number_format($subtotal,  0, ',', '.')}}</td> 
         </tr>
         @endforeach
       </tbody>
     </table>
 
     <div class="totals">
-      <p>Subtotal Product: <strong>Rp{{number_format($subtotal_cart,2)}}</</strong></p>
+      <p>Subtotal Product: <strong>Rp{{number_format($subtotal_cart, 0, ',', '.')}}</</strong></p>
       <p>Shipping Cost: <strong>Rp @if ($order->shipping->status_biaya == 0)
         {{ $order->ongkir, 0, ',', '.' }}
     @else
         {{ $order->shipping->price, 0, ',', '.' }}
     @endif</strong></p>
-      {{-- <p>Tax Rate (10%): <strong>$18.05</strong></p> --}}
-      <h3 class="balance-due">Total: Rp{{number_format($order->total_amount,2)}}</h3>
+      <h3 class="balance-due">Total: Rp{{number_format($order->total_amount,0, ',', '.')}}</h3>
     </div>
 
     <div class="notes">
       <p>PT. Agro Apis Palacio<br>
         Randuagung, Sukomoro, Kec. Magetan, Kabupaten Magetan, Jawa Timur 63391</p>
     </div>
-
-    {{-- <div class="terms">
-      <p><strong>Terms & Conditions:</strong> All payments must be made in full before the commencement of any design work.</p>
-    </div> --}}
   </div>
 </body>
 </html>

@@ -12,11 +12,24 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users=User::orderBy('id','ASC')->paginate(10);
-        return view('backend.users.index')->with('users',$users);
+        $search = $request->get('search');
+        $query = User::orderBy('id', 'ASC');
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%") 
+                ->orWhere('email', 'like', "%$search%")
+                ->orWhere('role', 'like', "%$search%"); 
+            });
+        }
+
+        $users = $query->paginate(10)->appends(['search' => $search]);
+
+        return view('backend.users.index', compact('users', 'search'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -41,10 +54,10 @@ class UsersController extends Controller
             'name'=>'string|required|max:30',
             'email'=>'string|required|unique:users',
             'password'=>'string|required',
-            'no_hp'=>'string|nullable|max:15',
+            'no_hp'=>'string|required|regex:/^62[0-9]{8,13}$/|max:15',
             'role'=>'required|in:admin,user',
             'status'=>'required|in:active,inactive',
-            'photo'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photo'=>'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
         // dd($request->all());
         $data=$request->all();
@@ -53,7 +66,7 @@ class UsersController extends Controller
             $photo = $request->file('photo');
             
             // Tentukan path tujuan untuk menyimpan foto
-            $destinationPath = public_path('images');
+            $destinationPath = public_path('images/');
             
             // Buat nama file yang unik
             $fileName = time() . '_' . $photo->getClientOriginalName();
@@ -62,7 +75,7 @@ class UsersController extends Controller
             $photo->move($destinationPath, $fileName);
             
             // Simpan path relatif dari foto ke dalam data
-            $data['photo'] = 'images' . $fileName;
+            $data['photo'] = 'images/' . $fileName;
         }
         $data['password']=Hash::make($request->password);
         // dd($data);
@@ -118,7 +131,7 @@ class UsersController extends Controller
             'no_hp'=>'string|nullable|max:15',
             'role'=>'required|in:admin,user',
             'status'=>'required|in:active,inactive',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
         // dd($request->all());
         $data=$request->all();
@@ -128,7 +141,7 @@ class UsersController extends Controller
             $photo = $request->file('photo');
             
             // Tentukan path tujuan untuk menyimpan foto
-            $destinationPath = public_path('images');
+            $destinationPath = public_path('images/');
             
             // Buat nama file yang unik
             $fileName = time() . '_' . $photo->getClientOriginalName();
@@ -137,7 +150,7 @@ class UsersController extends Controller
             $photo->move($destinationPath, $fileName);
             
             // Simpan path relatif dari foto ke dalam data
-            $data['photo'] = 'images' . $fileName;
+            $data['photo'] = 'images/' . $fileName;
         }else {
             // Jika tidak ada file gambar yang diunggah, gunakan gambar  yang lama
             $data['photo'] = $user->photo;

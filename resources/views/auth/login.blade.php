@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>Ecommerce Laravel - Login Panel</title>
+  <title>Admin - Login Panel</title>
   @include('backend.layouts.head')
 
 </head>
@@ -20,7 +20,8 @@
           <div class="card-body p-0">
             <!-- Nested Row within Card Body -->
             <div class="row">
-              <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+              <div class="col-lg-6 d-none d-lg-block bg-login-image"> <img src="{{ asset('images/bg-login.png') }}" alt="Background Image" style="width: 100%; height: auto;"/>
+              </div>
               <div class="col-lg-6">
                 <div class="p-5">
                   <div class="text-center">
@@ -45,7 +46,7 @@
                         @enderror
                     
                     </div>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
 
@@ -53,20 +54,20 @@
                                 {{ __('Remember Me') }}
                             </label>
                         </div>
-                    </div>
+                    </div> --}}
                     <button type="submit" class="btn btn-success btn-user btn-block">
                       Login
                     </button>
                   </form>
                   <hr>
                    
-                  <div class="text-center">
+                  {{-- <div class="text-center">
                     @if (Route::has('password.request'))
                         <a class="btn btn-link small" href="{{ route('password.request') }}">
                             {{ __('Forgot Your Password?') }}
                         </a>
                     @endif
-                  </div>
+                  </div> --}}
                 </div>
               </div>
             </div>

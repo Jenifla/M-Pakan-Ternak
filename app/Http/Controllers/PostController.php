@@ -16,11 +16,12 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $posts=Post::getAllPost();
-        // return $posts;
-        return view('backend.post.index')->with('posts',$posts);
+        $search = $request->get('search'); 
+        $posts = Post::getAllPost($search);
+
+        return view('backend.post.index', compact('posts', 'search'));
     }
 
     /**

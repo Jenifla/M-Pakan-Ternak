@@ -1,6 +1,6 @@
 @extends('frontend.layouts.master')
 
-@section('title','Ecommerce Laravel || Blog Page')
+@section('title','PT. Agro Apis Palacio || Artikel')
 
 @section('main-content')
     <!-- Breadcrumbs -->
@@ -48,9 +48,6 @@
                             </div>
                         @endforeach
                         <div class="col-12">
-                            <!-- Pagination -->
-                            {{-- {{$posts->appends($_GET)->links()}} --}}
-                            <!--/ End Pagination -->
                         </div>
                     </div>
                 </div>
@@ -64,28 +61,7 @@
                             </form>
                         </div>
                         <!--/ End Single Widget -->
-                        <!-- Single Widget -->
-                        {{-- <div class="single-widget category">
-                            <h3 class="title">Blog Categories</h3>
-                            <ul class="categor-list">
-                                @if(!empty($_GET['category']))
-                                    @php
-                                        $filter_cats=explode(',',$_GET['category']);
-                                    @endphp
-                                @endif
-                            <form action="{{route('blog.filter')}}" method="POST">
-                                    @csrf
-                                    
-                                    @foreach(Helper::postCategoryList('posts') as $cat)
-                                    <li>
-                                        <a href="{{route('blog.category',$cat->slug)}}">{{$cat->title}} </a>
-                                    </li>
-                                    @endforeach
-                                </form>
-
-                            </ul>
-                        </div> --}}
-                        <!--/ End Single Widget -->
+                        
                         <!-- Single Widget -->
                         <div class="single-widget recent-post">
                             <h3 class="title">Artikel Terbaru</h3>

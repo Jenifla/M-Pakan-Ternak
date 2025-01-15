@@ -17,9 +17,10 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products=Product::getAllProduct();
+        $search = $request->get('search');
+        $products = Product::getAllProduct($search);
         // return $products;
         return view('backend.product.index')->with('products',$products);
     }
@@ -164,8 +165,8 @@ class ProductController extends Controller
         // return $data;
         $status=$product->fill($data)->save();
 
-        if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $file) {
+        if ($request->hasFile('photo')) {
+            foreach ($request->file('photo') as $file) {
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $destinationPath = public_path('images');
                 $file->move($destinationPath, $filename);

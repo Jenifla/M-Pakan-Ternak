@@ -13,10 +13,19 @@ class ShippingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $shipping=Shipping::orderBy('id','DESC')->paginate(10);
-        return view('backend.shipping.index')->with('shippings',$shipping);
+        $search = $request->get('search');
+        $query = Shipping::orderBy('id', 'DESC');
+
+        if (!empty($search)) {
+            $query->where('type', 'like', "%$search%")
+                  ->orWhere('price', 'like', '%' . $search . '%'); 
+        }
+
+        $shippings = $query->paginate(10)->appends(['search' => $search]);
+
+        return view('backend.shipping.index', compact('shippings', 'search'));
     }
 
 

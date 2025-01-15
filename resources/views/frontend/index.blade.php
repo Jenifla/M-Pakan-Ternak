@@ -105,35 +105,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="product-info">
-                        {{-- <div class="nav-main">
-                            <!-- Tab Nav -->
-                            <ul class="nav nav-tabs filter-tope-group" id="myTab" role="tablist">
-                                @php
-                                    $categories=DB::table('categories')->where('status','active')->where('is_parent',1)->get();
-                                    // dd($categories);
-                                @endphp
-                                @if($categories)
-                                <button class="butn active" data-filter="*">
-                                    Recently Added
-                                </button>
-                                    @foreach($categories as $key=>$cat)
-
-                                    <button class="butn" data-filter=".{{$cat->id}}">
-                                        {{$cat->title}}
-                                    </button>
-                                    @endforeach
-                                @endif
-                            </ul>
-                            <!--/ End Tab Nav -->
-                        </div> --}}
                         <div class="tab-content isotope-grid" id="myTabContent">
-                            {{-- @php
-                                $recentlyAddedProducts = Product::with('gambarProduk') // Memuat relasi gambarProduk
-                            ->where('status', 'active')
-                            ->orderBy('created_at', 'desc')
-                            ->take(8) // Mengambil 8 produk terbaru
-                            ->get();
-                            @endphp --}}
                         @if($product_lists)
                             @foreach($product_lists as $key => $product)
                                 <div class=" isotope-item {{$product->cat_id}}">
@@ -174,8 +146,6 @@
                                                 $after_discount = ($product->price - ($product->price * $product->discount) / 100);
                                             @endphp
                                             <div class="product-price">
-                                                {{-- <span>Rp{{number_format($after_discount, 2)}}</span>
-                                                <del style="padding-left: 4%;">Rp{{number_format($product->price, 2)}}</del> --}}
                                                 @if($product->discount > 0)
                                                 <span>Rp{{ number_format($after_discount, 0, ',', '.') }}</span>
                                                 <del style="padding-left: 4%;">Rp{{ number_format($product->price, 0, ',', '.') }}</del>
@@ -205,11 +175,7 @@
             <div class="conten-info">
                 
                     <img src="{{ asset('images/kuning.png') }}" alt="cta">
-                
-                {{-- <div class="content">
-                   
-                <a href="{{route('product-cat',$cat->slug)}}">Shop Now <i class="ti-angle-right"></i></a>
-                </div> --}}
+
             </div>
         </div>
     
@@ -235,7 +201,6 @@
                     <div class="col-lg-4 col-md-6 col-12">
                         <!-- Start Single Animal  -->
                         <div class="shop-single-animal">
-                            {{-- <img src="{{ asset('images/kambing.png') }}" alt="kambing"> --}}
                             <img src="{{ asset('images/kambing.png') }}" 
                                 alt="kambing"
                                 onmouseover="this.src='{{ asset('images/hoverkambing.png') }}'"
@@ -250,7 +215,6 @@
                     <div class="col-lg-4 col-md-6 col-12">
                         <!-- Start Single Animal  -->
                         <div class="shop-single-animal">
-                            {{-- <img src="{{ asset('images/kambing.png') }}" alt="kambing"> --}}
                             <img src="{{ asset('images/domba.png') }}" 
                                 alt="domba"
                                 onmouseover="this.src='{{ asset('images/hoverdomba.png') }}'"
@@ -264,7 +228,6 @@
                     <div class="col-lg-4 col-md-6 col-12">
                         <!-- Start Single Animal  -->
                         <div class="shop-single-animal">
-                            {{-- <img src="{{ asset('images/kambing.png') }}" alt="kambing"> --}}
                             <img src="{{ asset('images/sapi.png') }}" 
                                 alt="sapi"
                                 onmouseover="this.src='{{ asset('images/hoversapi.png') }}'"
@@ -313,10 +276,6 @@
                                     
                                 </a>
                                 <div class="button-head">
-                                    {{-- <div class="product-action">
-                                        <a data-toggle="modal" data-target="#{{$product->id}}" title="Quick View" href="#"><i class=" ti-eye"></i><span>Quick Shop</span></a>
-                                        
-                                    </div> --}}
                                     <div class="product-action-2">
                                         <a href="{{route('add-to-cart',$product->slug)}}">Masukkan Keranjang</a>
                                     </div>
@@ -477,19 +436,6 @@
         bottom: 70px;
         }
 
-        /* Large Desktop (min-width: 1200px) */
-/* @media (min-width: 1200px) {
-    #Gslider .carousel-inner {
-        height: 650px;
-    }
-    #Gslider .carousel-inner .carousel-caption h1 {
-        font-size: 60px;
-    }
-    #Gslider .carousel-inner .carousel-caption p {
-        font-size: 20px;
-    }
-} */
-
 /* Tablet (max-width: 991px) */
 @media (max-width: 991px) {
     #Gslider .carousel-inner {
@@ -560,48 +506,7 @@
 
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
-{{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/> --}}
 
-    {{-- <script>
-
-        /*==================================================================
-        [ Isotope ]*/
-        var $topeContainer = $('.isotope-grid');
-        var $filter = $('.filter-tope-group');
-
-        // filter items on button click
-        $filter.each(function () {
-            $filter.on('click', 'button', function () {
-                var filterValue = $(this).attr('data-filter');
-                $topeContainer.isotope({filter: filterValue});
-            });
-
-        });
-
-        // init Isotope
-        $(window).on('load', function () {
-            var $grid = $topeContainer.each(function () {
-                $(this).isotope({
-                    itemSelector: '.isotope-item',
-                    layoutMode: 'fitRows',  /* Gunakan 'fitRows' untuk pengisian grid dengan baris teratur */
-        percentPosition: true
-                    
-                });
-            });
-        });
-
-        var isotopeButton = $('.filter-tope-group button');
-
-        $(isotopeButton).each(function(){
-            $(this).on('click', function(){
-                for(var i=0; i<isotopeButton.length; i++) {
-                    $(isotopeButton[i]).removeClass('how-active1');
-                }
-
-                $(this).addClass('how-active1');
-            });
-        });
-    </script> --}}
     <script>
          function cancelFullScreen(el) {
             var requestMethod = el.cancelFullScreen||el.webkitCancelFullScreen||el.mozCancelFullScreen||el.exitFullscreen;

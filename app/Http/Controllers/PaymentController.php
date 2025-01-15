@@ -41,6 +41,7 @@ class PaymentController extends Controller
 
         $customerDetails = [
             'first_name' => $user->name, // nama user dari tabel user
+            'last_name' => '',
             'email' => $user->email, // email user dari tabel user
         ];
 
@@ -51,13 +52,6 @@ class PaymentController extends Controller
 
         try {
             $snapToken = \Midtrans\Snap::getSnapToken($transaction);
-
-            // // Simpan status pembayaran di tabel payment jika diperlukan
-            // $payment = new Payment();
-            // $payment->order_id = $order->id;
-            // $payment->status = 'pending'; // Status awal
-            // $payment->snap_token = $snapToken;
-            // $payment->save();
 
             return response()->json(['token' => $snapToken]);
         } catch (\Exception $e) {
@@ -76,6 +70,11 @@ class PaymentController extends Controller
         // Pastikan signature key dari Midtrans valid
         if (!$this->isSignatureKeyValid($callbackData)) {
             return response()->json(['message' => 'Invalid signature key'], 403);
+        }
+
+        // Validasi data yang diperlukan ada
+        if (!isset($callbackData['order_id'], $callbackData['transaction_status'], $callbackData['gross_amount'], $callbackData['transaction_time'])) {
+            return response()->json(['message' => 'Incomplete callback data'], 400);
         }
 
         // Ambil data penting dari callback
@@ -106,14 +105,35 @@ class PaymentController extends Controller
                 $order->save();
                 break;
 
+            case 'capture': // Jika menggunakan kartu kredit
+                $order = $payment->order;
+                if (isset($callbackData['fraud_status']) && $callbackData['fraud_status'] === 'accept') {
+                    $payment->status = 'paid';
+                    $payment->date_payment = $paymentDate;
+                    $payment->total_bayar = $grossAmount;
+                    $order->status = 'to ship';
+                } else {
+                    $payment->status = 'failed';
+                    $order->status = 'cancel';
+                    $order->date_cancel = now();
+                    $order->alasan = 'Pembayaran gagal karena deteksi penipuan';
+                }
+                $order->save();
+                break;
+                
             case 'pending':  // Payment menunggu
-                $payment->status = 'unpaid';
+                $payment->status = 'pending';
                 break;
 
             case 'deny':  // Payment ditolak
             case 'expire':  // Payment kedaluwarsa
             case 'cancel':  // Payment dibatalkan
                 $payment->status = 'failed';
+                $order = $payment->order;
+                $order->status = 'cancel';
+                $order->date_cancel = now();
+                $order->alasan = $transactionStatus === 'expire' ? 'Pembayaran telah kedaluwarsa' : 'Pembayaran dibatalkan';
+                $order->save();
                 break;
         }
 

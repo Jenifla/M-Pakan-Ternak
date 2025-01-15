@@ -1,6 +1,6 @@
 @extends('frontend.pages.account.account')
 
-@section('title','Account Uset || Dashboard')
+@section('title','Akun User || Pesanan Saya')
 
 @section('account-content')
 <div >
@@ -12,29 +12,49 @@
             <!-- Additional Navigation for Order Status -->
             <ul class="nav nav-tabs" id="orderStatusTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="all-orders-tab" data-bs-toggle="tab" href="#all-orders" role="tab" aria-controls="all-orders" aria-selected="true">Semua</a>
+                    <a class="nav-link active" id="all-orders-tab" data-bs-toggle="tab" href="#all-orders" role="tab" aria-controls="all-orders" aria-selected="true">Semua
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="new-orders-tab" data-bs-toggle="tab" href="#new-orders" role="tab" aria-controls="new-orders" aria-selected="false">Pesanan Baru</a>
+                    <a class="nav-link" id="new-orders-tab" data-bs-toggle="tab" href="#new-orders" role="tab" aria-controls="new-orders" aria-selected="false">Pesanan Baru
+                        @if(!empty($orderCounts['new']) && $orderCounts['new'] > 0)
+                        <span class="count-badge">{{ $orderCounts['new'] }}</span>
+                        @endif
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="topay-orders-tab" data-bs-toggle="tab" href="#topay-orders" role="tab" aria-controls="topay-orders" aria-selected="false">Belum Bayar</a>
+                    <a class="nav-link" id="topay-orders-tab" data-bs-toggle="tab" href="#topay-orders" role="tab" aria-controls="topay-orders" aria-selected="false">Belum Bayar
+                        @if(!empty($orderCounts['topay']) && $orderCounts['topay'] > 0)
+                        <span class="count-badge">{{ $orderCounts['topay'] }}</span>
+                        @endif
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="toship-orders-tab" data-bs-toggle="tab" href="#toship-orders" role="tab" aria-controls="toship-orders" aria-selected="false">Dikemas</a>
+                    <a class="nav-link" id="toship-orders-tab" data-bs-toggle="tab" href="#toship-orders" role="tab" aria-controls="toship-orders" aria-selected="false">Dikemas
+                        @if(!empty($orderCounts['toship']) && $orderCounts['toship'] > 0)
+                        <span class="count-badge">{{ $orderCounts['toship'] }}</span>
+                        @endif
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="toreceive-orders-tab" data-bs-toggle="tab" href="#toreceive-orders" role="tab" aria-controls="toreceive-orders" aria-selected="false">Dikirim</a>
+                    <a class="nav-link" id="toreceive-orders-tab" data-bs-toggle="tab" href="#toreceive-orders" role="tab" aria-controls="toreceive-orders" aria-selected="false">Dikirim
+                        @if(!empty($orderCounts['toreceive']) && $orderCounts['toreceive'] > 0)
+                        <span class="count-badge">{{ $orderCounts['toreceive'] }}</span>
+                        @endif
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="completed-orders-tab" data-bs-toggle="tab" href="#completed-orders" role="tab" aria-controls="completed-orders" aria-selected="false">Selesai</a>
+                    <a class="nav-link" id="completed-orders-tab" data-bs-toggle="tab" href="#completed-orders" role="tab" aria-controls="completed-orders" aria-selected="false">Selesai
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="cancelled-orders-tab" data-bs-toggle="tab" href="#cancelled-orders" role="tab" aria-controls="cancelled-orders" aria-selected="false">Pembatalan</a>
+                    <a class="nav-link" id="cancelled-orders-tab" data-bs-toggle="tab" href="#cancelled-orders" role="tab" aria-controls="cancelled-orders" aria-selected="false">Pembatalan
+                    </a>
                 </li>
-                {{-- <li class="nav-item">
-                    <a class="nav-link" id="processing-orders-tab" data-bs-toggle="tab" href="#processing-orders" role="tab" aria-controls="processing-orders" aria-selected="false">Return Refund</a>
-                </li> --}}
+                <li class="nav-item">
+                    <a class="nav-link" id="rejected-orders-tab" data-bs-toggle="tab" href="#rejected-orders" role="tab" aria-controls="rejected-orders" aria-selected="false">Ditolak
+                    </a>
+                </li>
             </ul>
             <div class="tab-content">
                 <!-- All Orders Tab -->
@@ -48,19 +68,14 @@
                                     <div>
                                         <span >Order ID</span>
                                         <strong>{{ $order->order_number }}</strong>
-                                        {{-- <a href="#" class="btn btn-link btn-sm text-decoration-none">Chat</a>
-                                        <a href="#" class="btn btn-link btn-sm text-decoration-none">View Shop</a> --}}
+                                
                                     </div>
                                     <div>
-                                    
-                                        {{-- <span>Your order is under verification <strong></strong></span> --}}
-                                    
+      
                                             @if($order->status=='new')
                                                 <span>Pesanan Anda sedang diverifikasi <strong></strong></span>
                                             @elseif($order->status=='to pay')
                                                 <span>Harap selesaikan pembayaran sebelum <strong>{{ date('d-m-Y H:i:s', strtotime($order->paymentDeadline)) }}</strong></span>
-                                            @elseif($order->status=='to ship')
-                                                <span>Pesanan akan dikirim sebelum <strong>{{ date('d-m-Y', strtotime($order->shippedDeadline)) }}</strong></span>
                                             @elseif($order->status=='to receive')
                                                 <span>Pesanan sedang dalam perjalanan ke alamat tujuan <strong></strong></span>
                                             @elseif($order->status=='completed')
@@ -75,11 +90,14 @@
                                                 <span class="text-success">Pembatalan Disetujui</span>
                                             @elseif($order->cancel && $order->cancel->status_pembatalan == 'ditolak')
                                                 <span>Pembatalan Ditolak. Pesanan akan diproses lebih lanjut dan akan dikirim sebelum<strong>{{ date('d-m-Y', strtotime($order->shippedDeadline)) }}</strong>.</span>    
+                                            @elseif($order->status=='refunded')
+                                                <span>Pengembalian Dana Berhasil pada <strong>{{ date('d-m-Y', strtotime($order->refund->date_transfer)) }}</strong></span>
+                                            @elseif($order->status=='to ship')
+                                                <span>Pesanan akan dikirim sebelum <strong>{{ date('d-m-Y', strtotime($order->shippedDeadline)) }}</strong></span>
                                             @else
                                                 <span class="badge new-badge">{{$order->status}}</span>
                                             @endif
 
-                                    {{-- <span class="badge new-badge">New</span> --}}
                                             @if($order->status=='new')
                                             <span class="badge new-badge">Baru</span>
                                             @elseif($order->status=='to pay')
@@ -139,33 +157,110 @@
                                     </div>
                                     <div class="btn-container" >
                                             @if($order->status=='new')
-                                            <a href="#" class="btn-contact-seller">Hubungi Penjual</a>
-                                            <a href="#" class="btn-cancel-order">Batalkan Pesanan</a>
+                                                <a href="https://wa.me/{{ $admin->no_hp }}?text=Halo+Admin,+saya+{{ Auth::user()->name }},+dengan+nomor+pesanan+{{ $order->order_number }}.+Saya+ingin+menanyakan+tentang+pesanan+saya" class="btn-contact-seller">Hubungi Penjual</a>
+                                                <button type="button" class="btn-cancel-order" onclick="document.getElementById('form-allalasan-{{ $order->id }}').style.display = 'block';">
+                                                    Batalkan Pesanan
+                                                </button>
                                             @elseif($order->status=='to pay')
-                                            <a href="#" class="btn-contact-seller pay-now" data-order-id="{{ $order->id }}">Bayar Sekarang</a>
-                                            <a href="#" class="btn-cancel-order">Batalkan Pesanan</a>
+                                                <a href="#" class="btn-contact-seller pay-now" data-order-id="{{ $order->id }}">Bayar Sekarang</a>
+                                                <button type="button" class="btn-cancel-order" onclick="document.getElementById('form-allalasan-{{ $order->id }}').style.display = 'block';">
+                                                    Batalkan Pesanan
+                                                </button>
                                             @elseif($order->status=='to ship')
-                                            <a href="#" class="btn-contact-seller">Hubungi Penjual</a>
-                                            <a href="#" class="btn-cancel-order">Batalkan Pesanan</a>
+                                            <a href="https://wa.me/{{ $admin->no_hp }}?text=Halo+Admin,+saya+{{ Auth::user()->name }},+dengan+nomor+pesanan+{{ $order->order_number }}.+Saya+ingin+menanyakan+tentang+pesanan+saya" class="btn-contact-seller"> Hubungi Penjual</a>
+                                            @if(!$order->cancel)
+                                            <button type="button" class="btn-cancel-order" onclick="document.getElementById('form-cancel-{{ $order->id }}').style.display = 'block';">
+                                                Batalkan Pesanan
+                                            </button>
+                                            @endif
                                             @elseif($order->status=='to receive')
-                                            <a href="#" class="btn-contact-seller">Pesanan Diterima</a>
-                                            <a href="#" class="btn-cancel-order">Hubungi Penjual</a>
+                                            <form action="{{ route('order.updatestatus', $order->id) }}" method="POST" style="display: inline;">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="status" value="completed">
+                                                <button type="submit" class="btn-contact-seller" title="Received" >Pesanan Diterima</button>
+                                            </form>
+                                            <a href="https://wa.me/{{ $admin->no_hp }}?text=Halo+Admin,+saya+{{ Auth::user()->name }},+dengan+nomor+pesanan+{{ $order->order_number }}.+Saya+ingin+menanyakan+tentang+pesanan+saya" class="btn-cancel-order">Hubungi Penjual</a>
                                             @elseif($order->status=='completed')
-                                            <a href="#" class="btn-contact-seller">Beli Lagi</a>
-                                            <a href="#" class="btn-cancel-order">Hubungi Penjual</a>
+                                            <form action="{{route('buy.again', $order->id)}}" method="POST">
+                                                @csrf 
+                                                <button type="submit" class="btn-contact-seller">Beli Lagi</button>
+                                            </form>
+                                            <a href="https://wa.me/{{ $admin->no_hp }}?text=Halo+Admin,+saya+{{ Auth::user()->name }},+dengan+nomor+pesanan+{{ $order->order_number }}.+Saya+ingin+menanyakan+tentang+pesanan+saya" class="btn-cancel-order">Hubungi Penjual</a>
                                             @elseif($order->status=='cancel')
-                                            <a href="#" class="btn-contact-seller">Beli Lagi</a>
-                                            <a href="#" class="btn-cancel-order">Hubungi Penjual</a>
+                                            <form action="{{route('buy.again', $order->id)}}" method="POST">
+                                                @csrf 
+                                                <button type="submit" class="btn-contact-seller">Beli Lagi</button>
+                                            </form>
+                                            <a href="https://wa.me/{{ $admin->no_hp }}?text=Halo+Admin,+saya+{{ Auth::user()->name }},+dengan+nomor+pesanan+{{ $order->order_number }}.+Saya+ingin+menanyakan+tentang+pesanan+saya" class="btn-cancel-order" >
+                                                Hubungi Penjual
+                                            </a>
                                             @elseif($order->status=='rejected')
-                                            <a href="#" class="btn-contact-seller">Beli Lagi</a>
-                                            <a href="#" class="btn-cancel-order">Hubungi Penjual</a>
+                                            <form action="{{route('buy.again', $order->id)}}" method="POST">
+                                                @csrf 
+                                                <button type="submit" class="btn-contact-seller">Beli Lagi</button>
+                                            </form>
+                                            <a href="https://wa.me/{{ $admin->no_hp }}?text=Halo+Admin,+saya+{{ Auth::user()->name }},+dengan+nomor+pesanan+{{ $order->order_number }}.+Saya+ingin+menanyakan+tentang+pesanan+saya" class="btn-cancel-order" >
+                                                Hubungi Penjual
+                                            </a>
                                             @else
                                             <span class="badge new-badge">{{$order->status}}</span>
                                             @endif
-                                        {{-- <a href="#" class="btn-contact-seller" data-order-id="{{ $order->id }}">Contact Seller</a>
-                                        <a href="#" class="btn-cancel-order">Cancel Order</a> --}}
+           
                                     </div>
                                 </div>
+
+                                <form action="{{ route('order.updatestatus', $order->id) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="status" value="cancel">
+                                    <!-- Form Alasan (Tersembunyi Secara Default) -->
+                                    <div id="form-allalasan-{{ $order->id }}" style="display: none; margin-top: 10px;">
+                                        <label for="alasan-textarea-{{ $order->id }}">Alasan Pembatalan:</label>
+                                        <textarea name="alasan" id="alasan-textarea-{{ $order->id }}" class="form-control" rows="3" required></textarea>
+                                        <button type="submit" class="btn mt-2">Ajukan Pembatalan</button>
+                                        <button type="button" class="btn mt-2" onclick="document.getElementById('form-allalasan-{{ $order->id }}').style.display = 'none';">
+                                            Batal
+                                        </button>
+                                    </div>
+                                </form>
+                                <form action="{{ route('cancel.order') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="order_id" value="{{ $order->id }}">
+
+                                    <div id="form-cancel-{{ $order->id }}" style="display: none; margin-top: 10px;">
+                                        <label for="alasan-{{ $order->id }}">Alasan Pembatalan:</label>
+                                        <textarea name="alasan" id="alasan-{{ $order->id }}" class="form-control" rows="3" required></textarea>
+                                        @if($order->payment->method_payment == 'online payment')
+                                        <label for="bank_name" class="mt-2">Nama Bank:</label>
+                                        <input type="text" name="bank_name" id="bank_name" class="form-control" required>
+
+                                        <label for="bank_account" class="mt-2">Nomor Rekening:</label>
+                                        <input type="text" name="bank_account" id="bank_account" class="form-control" required>
+
+                                        <label for="bank_holder" class="mt-2">Pemegang Rekening:</label>
+                                        <input type="text" name="bank_holder" id="bank_holder" class="form-control" required>
+                                        @endif
+                                    
+                                        <button type="submit" class="btn mt-2">Ajukan Pembatalan</button>
+                                        <button type="button" class="btn mt-2" onclick="document.getElementById('form-cancel-{{ $order->id }}').style.display = 'none';">Batal</button>
+                                    </div>
+                                </form>
+                                @if($order->cancel && $order->cancel->status_pembatalan == 'ditolak')
+                                <div class="order-total-container">
+                                    <div>
+                                        <span class="order-total-text">Alasan:</span>
+                                        <strong class="order-total-amount">{{ $order->cancel->alasan }}</strong>
+                                    </div>
+                                </div>
+                                @elseif($order->status == 'cancel')
+                                <div class="order-total-container">
+                                    <div>
+                                        <span class="order-total-text">Alasan:</span>
+                                        <strong class="order-total-amount">{{ $order->alasan }}</strong>
+                                    </div>
+                                </div>
+                                @endif
                                 
                             </div>
                         </a>
@@ -174,90 +269,7 @@
                         <h6 class="text-center">Tidak ada pesanan yang ditemukan</h6>
                     @endif
                 </div>
-                {{-- <div class="tab-pane fade show active" id="all-orders" role="tabpanel" aria-labelledby="all-orders-tab">
-                    <div class="table-responsive">
-                        @if(count($orders)>0)
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Order</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                    <th>Total</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($orders as $order)
-                                <tr>
-                                    <td>{{$order->order_number}}</td>
-                                    <td>March 45, 2020</td>
-                                    <td>
-                                        @if($order->status=='new')
-                                        <span class="badge badge-primary">NEW</span>
-                                        @elseif($order->status=='process')
-                                        <span class="badge badge-warning">PROCESSING</span>
-                                        @elseif($order->status=='delivered')
-                                        <span class="badge badge-success">DELIVERED</span>
-                                        @else
-                                        <span class="badge badge-danger">{{$order->status}}</span>
-                                        @endif
-                                    </td>
-                                    <td>Rp{{number_format($order->total_amount, 0, ',', '.')}}</td>
-                                    <td><a class="tn" href="{{route('frontend.pages.account.detailorder',$order->id)}}" >View</a></td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                        @else
-                        <h6 class="text-center">No orders found!!! Please order some products</h6>
-                        @endif
-                    </div>
-                </div> --}}
-                <!-- New Orders Tab -->
-                {{-- <div class="tab-pane fade" id="new-orders" role="tabpanel" aria-labelledby="new-orders-tab">
-                    <div class="table-responsive">
-                         @php
-                            $newOrders = $orders->where('status', 'new');
-                        @endphp
-                        @if($newOrders->count() > 0)
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Order</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                    <th>Total</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($newOrders as $order)
-                                <tr>
-                                    <td>{{$order->order_number}}</td>
-                                    <td>March 45, 2020</td>
-                                    <td>
-                                        @if($order->status=='new')
-                                        <span class="badge badge-primary">NEW</span>
-                                        @elseif($order->status=='process')
-                                        <span class="badge badge-warning">PROCESSING</span>
-                                        @elseif($order->status=='delivered')
-                                        <span class="badge badge-success">DELIVERED</span>
-                                        @else
-                                        <span class="badge badge-danger">{{$order->status}}</span>
-                                        @endif
-                                    </td>
-                                    <td>Rp{{number_format($order->total_amount, 0, ',', '.')}}</td>
-                                    <td><a class="tn" href="{{route('frontend.pages.account.detailorder',$order->id)}}" >View</a></td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                        @else
-                        <h6 class="text-center">No orders found!!! Please order some products</h6>
-                        @endif
-                    </div>
-                </div> --}}
+
 
                 <div class="tab-pane fade" id="new-orders" role="tabpanel" aria-labelledby="new-orders-tab">
                     @if(count($orders->where('status', 'new')) > 0)
@@ -269,8 +281,7 @@
                                     <div>
                                         <span >Order ID</span>
                                         <strong>{{ $order->order_number }}</strong>
-                                        {{-- <a href="#" class="btn btn-link btn-sm text-decoration-none">Chat</a>
-                                        <a href="#" class="btn btn-link btn-sm text-decoration-none">View Shop</a> --}}
+     
                                     </div>
                                     <div>
                                     
@@ -312,11 +323,7 @@
                                         <strong class="order-total-amount">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</strong>
                                     </div>
                                     <div class="btn-container" >
-                                        <a href="https://wa.me/62894567890?text=Hello+I+would+like+to+contact+you+about+my+order" class="btn-contact-seller">Hubungi Penjual</a>
-                                        {{-- <button class="btn-contact-seller" >
-                                            Hubungi Penjual
-                                        </button> --}}
-                                        {{-- <a href="#" class="btn-cancel-order">Cancel Order</a> --}}
+                                        <a href="https://wa.me/{{ $admin->no_hp }}?text=Halo+Admin,+saya+{{ Auth::user()->name }},+dengan+nomor+pesanan+{{ $order->order_number }}.+Saya+ingin+menanyakan+tentang+pesanan+saya" class="btn-contact-seller">Hubungi Penjual</a>
                                          <!-- Tombol untuk Cancel Order -->
                                          <button type="button" class="btn-cancel-order" onclick="document.getElementById('form-alasan-{{ $order->id }}').style.display = 'block';">
                                             Batalkan Pesanan
@@ -362,8 +369,6 @@
                                     <div>
                                         <span >Order ID</span>
                                         <strong>{{ $order->order_number }}</strong>
-                                        {{-- <a href="#" class="btn btn-link btn-sm text-decoration-none">Chat</a>
-                                        <a href="#" class="btn btn-link btn-sm text-decoration-none">View Shop</a> --}}
                                     </div>
                                     <div>
                                     
@@ -407,7 +412,6 @@
                                     <div class="btn-container">
                                         <a href="#" class="btn-contact-seller pay-now" data-order-id="{{ $order->id }}">Bayar Sekarang</a>
 
-                                        {{-- <a href="#" class="btn-cancel-order">Cancel Order</a> --}}
                                         <button type="button" class="btn-cancel-order" onclick="document.getElementById('form-alasan-{{ $order->id }}').style.display = 'block';">
                                             Batalkan Pesanan
                                         </button>
@@ -438,76 +442,6 @@
                         <h6 class="text-center">Tidak ada pesanan belum bayar yang ditemukan</h6>
                     @endif
                 </div>
-                <!-- To Pay Orders Tab -->
-                {{-- <div class="tab-pane fade" id="topay-orders" role="tabpanel" aria-labelledby="topay-orders-tab">
-                    <div class="table-responsive">
-                        @php
-                            $toPayOrders = $orders->where('status', 'to pay');
-                        @endphp
-                        @if($toPayOrders->count() > 0)
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Order</th>
-                                        <th>Date</th>
-                                        <th>Status</th>
-                                        <th>Total</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($toPayOrders as $order)
-                                    <div class="card mb-3 p-3">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <!-- Store and Contact Section -->
-                                            <div>
-                                                <span class="badge bg-danger text-white">Star+</span>
-                                                <strong>{{ $order->store_name }}</strong>
-                                                <a href="#" class="btn btn-link btn-sm text-decoration-none">Chat</a>
-                                                <a href="#" class="btn btn-link btn-sm text-decoration-none">View Shop</a>
-                                            </div>
-                                            <div class="text-danger">TO SHIP</div>
-                                        </div>
-                                        <!-- Product Details -->
-                                        <div class="d-flex mb-3">
-                                            <img src="{{ asset($order->product_image) }}" alt="Product Image" class="me-3" style="width: 80px; height: 80px; object-fit: cover;">
-                                            <div>
-                                                <h6 class="mb-1">{{ $order->product_name }}</h6>
-                                                <p class="mb-0 text-muted">Variation: {{ $order->product_variation }}</p>
-                                                <p class="mb-0">x{{ $order->quantity }}</p>
-                                                <span class="badge bg-success text-white mt-1">Free Return</span>
-                                            </div>
-                                            <div class="ms-auto text-end">
-                                                <span class="text-muted text-decoration-line-through">Rp{{ number_format($order->original_price, 0, ',', '.') }}</span><br>
-                                                <strong class="text-danger">Rp{{ number_format($order->discounted_price, 0, ',', '.') }}</strong>
-                                            </div>
-                                        </div>
-                                        <!-- Shipping Info -->
-                                        <div class="text-muted mb-2">
-                                            Products will be shipped out by <strong></strong>
-                                        </div>
-                                        <!-- Order Total and Actions -->
-                                        <div class="d-flex justify-content-between align-items-center border-top pt-2">
-                                            <div>
-                                                <span class="text-muted">Order Total:</span>
-                                                <strong class="text-danger">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</strong>
-                                            </div>
-                                            <div>
-                                                <a href="" class="btn btn-warning btn-sm me-2">Contact Seller</a>
-                                                <a href="" class="btn btn-outline-secondary btn-sm">Cancel Order</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        @else
-                            <h6 class="text-center">No orders to pay found!</h6>
-                        @endif
-                    </div>
-                </div> --}}
-
-                
 
                 <!-- To Ship Orders Tab -->
                 <div class="tab-pane fade" id="toship-orders" role="tabpanel" aria-labelledby="toship-orders-tab">
@@ -520,21 +454,8 @@
                                     <div>
                                         <span >Order ID</span>
                                         <strong>{{ $order->order_number }}</strong>
-                                        {{-- <a href="#" class="btn btn-link btn-sm text-decoration-none">Chat</a>
-                                        <a href="#" class="btn btn-link btn-sm text-decoration-none">View Shop</a> --}}
                                     </div>
                                     <div>
-                                    
-                                        {{-- <span>Order will be shipped out by <strong>28-12-2024</strong></span>
-                                    
-                                    <span class="badge ship-badge">To Ship</span> --}}
-                                    {{-- @if($order->cancel && $order->cancel->status_pembatalan == 'pending')
-                                        <span>Pending, Pembatalan sedang diajukan</span>
-                                        <span class="badge new-badge">Pending</span>
-                                    @else
-                                        <span>Order will be shipped out by <strong>28-12-2024</strong></span>
-                                        <span class="badge ship-badge">To Ship</span>
-                                    @endif --}}
 
                                    
                                     @if($order->cancel && $order->cancel->status_pembatalan == 'pending')
@@ -544,7 +465,6 @@
                                         <span class="text-success">Pembatalan Disetujui</span>
                                         <span class="badge new-badge">Disetujui</span>
                                     @elseif($order->cancel && $order->cancel->status_pembatalan == 'ditolak')
-                                    {{-- <span class="text-danger">Pembatalan Ditolak. Pesanan akan diproses lebih lanjut dan akan dikirim pada tanggal <strong>23-08-2024</strong>.</span> --}}
                                     <span>Pembatalan Ditolak. Pesanan akan diproses lebih lanjut dan akan dikirim sebelum<strong>{{ date('d-m-Y', strtotime($order->shippedDeadline)) }}</strong>.</span>
                                     <span class="badge ship-badge">Dikemas</span>      
                                     @else
@@ -586,30 +506,44 @@
                                         <strong class="order-total-amount">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</strong>
                                     </div>
                                     <div class="btn-container">
-                                        <a href="https://wa.me/62894567890?text=Hello+I+would+like+to+contact+you+about+my+order" class="btn-contact-seller"> Hubungi Penjual</a>
-                                        {{-- <button class="btn-contact-seller" >
-                                            Hubungi Penjual
-                                        </button> --}}
-                                        {{-- <a href="#" class="btn-cancel-order">Cancel Order</a> --}}
+                                        <a href="https://wa.me/{{ $admin->no_hp }}?text=Halo+Admin,+saya+{{ Auth::user()->name }},+dengan+nomor+pesanan+{{ $order->order_number }}.+Saya+ingin+menanyakan+tentang+pesanan+saya" class="btn-contact-seller"> Hubungi Penjual</a>
+                                        @if(!$order->cancel)
                                         <button type="button" class="btn-cancel-order" onclick="document.getElementById('form-alasan-{{ $order->id }}').style.display = 'block';">
                                             Batalkan Pesanan
                                         </button>
+                                        @endif
                                     </div>
                                 </div>
+                                @if($order->cancel && $order->cancel->status_pembatalan == 'ditolak')
+                                <div class="order-total-container">
+                                    <div>
+                                        <span class="order-total-text">Alasan:</span>
+                                        <strong class="order-total-amount">{{ $order->cancel->alasan }}</strong>
+                                    </div>
+                                </div>
+                                @endif
+
+                                <!-- Form Pembatalan -->
                                 <form action="{{ route('cancel.order') }}" method="POST">
                                     @csrf
-                                    @method('POST')
                                     <input type="hidden" name="order_id" value="{{ $order->id }}">
-                                   
-                            
-                                    <!-- Form Alasan (Tersembunyi Secara Default) -->
+
                                     <div id="form-alasan-{{ $order->id }}" style="display: none; margin-top: 10px;">
-                                        <label for="alasan-textarea-{{ $order->id }}">Alasan Pembatalan:</label>
-                                        <textarea name="alasan" id="alasan-textarea-{{ $order->id }}" class="form-control" rows="3" required></textarea>
+                                        <label for="alasan-{{ $order->id }}">Alasan Pembatalan:</label>
+                                        <textarea name="alasan" id="alasan-{{ $order->id }}" class="form-control" rows="3" required></textarea>
+                                        @if($order->payment->method_payment == 'online payment')
+                                        <label for="bank_name" class="mt-2">Nama Bank:</label>
+                                        <input type="text" name="bank_name" id="bank_name" class="form-control" required>
+
+                                        <label for="bank_account" class="mt-2">Nomor Rekening:</label>
+                                        <input type="text" name="bank_account" id="bank_account" class="form-control" required>
+
+                                        <label for="bank_holder" class="mt-2">Pemegang Rekening:</label>
+                                        <input type="text" name="bank_holder" id="bank_holder" class="form-control" required>
+                                        @endif
+                                    
                                         <button type="submit" class="btn mt-2">Ajukan Pembatalan</button>
-                                        <button type="button" class="btn mt-2" onclick="document.getElementById('form-alasan-{{ $order->id }}').style.display = 'none';">
-                                            Batal
-                                        </button>
+                                        <button type="button" class="btn mt-2" onclick="document.getElementById('form-alasan-{{ $order->id }}').style.display = 'none';">Batal</button>
                                     </div>
                                 </form>
                                 
@@ -620,39 +554,6 @@
                         <h6 class="text-center">Tidak ada pesanan untuk dikirim yang ditemukan</h6>
                     @endif
                 </div>
-                {{-- <div class="tab-pane fade" id="toship-orders" role="tabpanel" aria-labelledby="toship-orders-tab">
-                    <div class="table-responsive">
-                        @php
-                            $toShipOrders = $orders->where('status', 'to ship');
-                        @endphp
-                        @if($toShipOrders->count() > 0)
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Order</th>
-                                        <th>Date</th>
-                                        <th>Status</th>
-                                        <th>Total</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($toShipOrders as $order)
-                                        <tr>
-                                            <td>{{ $order->order_number }}</td>
-                                            <td>{{ $order->created_at->format('F d, Y') }}</td>
-                                            <td><span class="badge badge-success">TO SHIP</span></td>
-                                            <td>Rp{{ number_format($order->total_amount, 0, ',', '.') }}</td>
-                                            <td><a class="tn" href="{{ route('frontend.pages.account.detailorder', $order->id) }}">View</a></td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        @else
-                            <h6 class="text-center">No orders to ship found!</h6>
-                        @endif
-                    </div>
-                </div> --}}
                 
                 <!-- To Receive Orders Tab -->
                 <div class="tab-pane fade" id="toreceive-orders" role="tabpanel" aria-labelledby="toreceive-orders-tab">
@@ -665,8 +566,6 @@
                                     <div>
                                         <span >Order ID</span>
                                         <strong>{{ $order->order_number }}</strong>
-                                        {{-- <a href="#" class="btn btn-link btn-sm text-decoration-none">Chat</a>
-                                        <a href="#" class="btn btn-link btn-sm text-decoration-none">View Shop</a> --}}
                                     </div>
                                     <div>
                                     
@@ -708,20 +607,13 @@
                                         <strong class="order-total-amount">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</strong>
                                     </div>
                                     <div class="btn-container">
-                                        {{-- <a href="#" class="btn-contact-seller">Order Received</a> --}}
                                         <form action="{{ route('order.updatestatus', $order->id) }}" method="POST" style="display: inline;">
                                             @csrf
                                             @method('PUT')
                                             <input type="hidden" name="status" value="completed">
                                             <button type="submit" class="btn-contact-seller" title="Received" >Pesanan Diterima</button>
                                         </form>
-                                        {{-- <button class="btn-cancel-order" >
-                                            Contact Seller
-                                        </button> --}}
-                                        {{-- <button class="btn-cancel-order" onclick="window.open('https://wa.me/62894567890?text=Hello%20I%20would%20like%20to%20contact%20you%20about%20my%20order', '_blank')">
-                                            Contact Seller
-                                        </button> --}}
-                                        <a href="https://wa.me/62894567890?text=Hello+I+would+like+to+contact+you+about+my+order" class="btn-cancel-order">Hubungi Penjual</a>
+                                        <a href="https://wa.me/{{ $admin->no_hp }}?text=Halo+Admin,+saya+{{ Auth::user()->name }},+dengan+nomor+pesanan+{{ $order->order_number }}.+Saya+ingin+menanyakan+tentang+pesanan+saya" class="btn-cancel-order">Hubungi Penjual</a>
                                     </div>
                                 </div>
                                 
@@ -744,8 +636,6 @@
                                     <div>
                                         <span >Order ID</span>
                                         <strong>{{ $order->order_number }}</strong>
-                                        {{-- <a href="#" class="btn btn-link btn-sm text-decoration-none">Chat</a>
-                                        <a href="#" class="btn btn-link btn-sm text-decoration-none">View Shop</a> --}}
                                     </div>
                                     <div>
                                     
@@ -791,11 +681,7 @@
                                             @csrf 
                                             <button type="submit" class="btn-contact-seller">Beli Lagi</button>
                                         </form>
-                                        {{-- <a href="#" class="btn-contact-seller">Buy</a> --}}
-                                        <a href="https://wa.me/62894567890?text=Hello+I+would+like+to+contact+you+about+my+order" class="btn-cancel-order">Hubungi Penjual</a>
-                                        {{-- <button class="btn-cancel-order" >
-                                            Hubungi Penjual
-                                        </button> --}}
+                                        <a href="https://wa.me/{{ $admin->no_hp }}?text=Halo+Admin,+saya+{{ Auth::user()->name }},+dengan+nomor+pesanan+{{ $order->order_number }}.+Saya+ingin+menanyakan+tentang+pesanan+saya" class="btn-cancel-order">Hubungi Penjual</a>
                                     </div>
                                 </div>
                                 
@@ -818,8 +704,6 @@
                                     <div>
                                         <span >Order ID</span>
                                         <strong>{{ $order->order_number }}</strong>
-                                        {{-- <a href="#" class="btn btn-link btn-sm text-decoration-none">Chat</a>
-                                        <a href="#" class="btn btn-link btn-sm text-decoration-none">View Shop</a> --}}
                                     </div>
                                     <div>
                                     
@@ -865,11 +749,15 @@
                                             @csrf 
                                             <button type="submit" class="btn-contact-seller">Beli Lagi</button>
                                         </form>
-                                        {{-- <a href="#" class="btn-contact-seller">Buy</a> --}}
-                                        {{-- <a href="#" class="btn-cancel-order">Contact Seller</a> --}}
-                                        <a href="https://wa.me/62894567890?text=Hello+I+would+like+to+contact+you+about+my+order" class="btn-cancel-order" >
+                                        <a href="https://wa.me/{{ $admin->no_hp }}?text=Halo+Admin,+saya+{{ Auth::user()->name }},+dengan+nomor+pesanan+{{ $order->order_number }}.+Saya+ingin+menanyakan+tentang+pesanan+saya" class="btn-cancel-order" >
                                             Hubungi Penjual
                                         </a>
+                                    </div>
+                                </div>
+                                <div class="order-total-container">
+                                    <div>
+                                        <span class="order-total-text">Alasan:</span>
+                                        <strong class="order-total-amount">{{ $order->alasan }}</strong>
                                     </div>
                                 </div>
                                 
@@ -882,85 +770,100 @@
                         
                 </div>
 
+                <!-- Refunded Orders Tab -->
+                <div class="tab-pane fade" id="rejected-orders" role="tabpanel" aria-labelledby="rejected-orders-tab"> 
+                    @if(count($orders->where('status', 'rejected')) > 0)
+                        @foreach($orders->where('status', 'rejected') as $order)
+                        <a href="{{route('frontend.pages.account.detailorder',$order->id)}}" class="order-link">
+                            <div class="order-co mb-3 p-3">
+                                <div class="d-flex">
+                                    <!-- Store and Contact Section -->
+                                    <div>
+                                        <span >Order ID</span>
+                                        <strong>{{ $order->order_number }}</strong>
+                                    </div>
+                                    <div>
+                                    
+                                        <span>Pesanan ditolak pada <strong>{{ date('d-m-Y', strtotime($order->date_cancel)) }}</strong></span>
+                                    
+                                    <span class="badge new-badge">Ditolak</span>
+                                    </div>
+                                </div>
+                                <!-- Product Details -->
+                                <!-- Loop untuk setiap item di dalam cart -->
+                                <div class="info-product">
+                                    @foreach($order->cart as $cart)
+                                    @php
+                                    $original_price = $cart->product['price']; // Harga asli produk
+                                    $discount = $cart->product['discount'] ?? 0; // Diskon produk
+                                    $price_after_discount = $original_price - ($original_price * $discount / 100); // Harga setelah diskon
+                                    @endphp
+                                    <div class="prdct">
+                                        @if($cart->product->gambarProduk->isNotEmpty())
+                                            <img src="{{ asset($cart->product->gambarProduk->first()->gambar) }}" alt="Product Image" class="me-3" style="width: 80px; height: 80px; object-fit: cover; border-radius:9px; margin-right:10px;">
+                                        @else
+                                            <img src="{{ asset('default-image.jpg') }}" alt="Default Image" class="me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                                        @endif
+                                        <div>
+                                            <h6 class="mb-1">{{ $cart->product->title }}</h6>
+                                            <p class="mb-0 text-muted">Rp {{ number_format($price_after_discount, 0, ',', '.') }}</p>
+                                            <p class="mb-0">x{{ $cart->quantity }}</p>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                                <!-- Shipping Info -->
+                                
+                                
+                                <!-- Order Total and Actions -->
+                                <div class="order-total-container">
+                                    <div>
+                                        <span class="order-total-text">Order Total:</span>
+                                        <strong class="order-total-amount">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</strong>
+                                    </div>
+                                    <div class="btn-container">
+                                        <form action="{{route('buy.again', $order->id)}}" method="POST">
+                                            @csrf 
+                                            <button type="submit" class="btn-contact-seller">Beli Lagi</button>
+                                        </form>
+                                        <a href="https://wa.me/{{ $admin->no_hp }}?text=Halo+Admin,+saya+{{ Auth::user()->name }},+dengan+nomor+pesanan+{{ $order->order_number }}.+Saya+ingin+menanyakan+tentang+pesanan+saya" class="btn-cancel-order" >
+                                            Hubungi Penjual
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </a>
+                        @endforeach
+                    @else
+                        <h6 class="text-center">Tidak ditemukan pesanan yang ditolak</h6>
+                    @endif
+                        
+                </div>
+
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal Popup -->
-{{-- <div class="modal fade" id="cancelOrderModal" tabindex="-1" role="dialog" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
-    <div class="modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="cancelOrderModalLabel">Cancel Order</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Form Alasan -->
-                <form id="resonForm">
-                    <div class="form-group">
-                        <label for="ala">Reason:</label>
-                        <textarea id="ala" class="form-control" required></textarea>
-                    </div>
-                    <button type="submit" class="subb">Submit</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div> --}}
-{{-- <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="cancelOrderModalLabel">Cancel Order</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="reasonForm">
-                    <div class="form-group">
-                        <label for="cancelReason">Reason for Cancellation</label>
-                        <textarea class="form-control" id="cancelReason" rows="3" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-danger">Submit Reason</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div> --}}
 
-{{-- <script>
-   $(document).ready(function () {
-    var currentForm; // To store the form that triggered the modal
-
-    // Event listener for Cancel Order button
-    $('.btn-cancel-order').click(function () {
-        currentForm = $(this).closest('form'); // Get the form related to this button
-        $('#cancelOrderModal').modal('show'); // Show the modal
-    });
-
-    // Handle form submission inside the modal
-    $('#reasonForm').on('submit', function (e) {
-        e.preventDefault(); // Prevent default modal form submission
-        var reason = $('#cancelReason').val().trim(); // Get the entered reason
-
-        if (reason === "") {
-            alert("Reason is required!");
-            return;
+<script>
+    function showCancelForm(orderId, paymentMethod) {
+        // Tampilkan formulir pembatalan
+        document.getElementById(`cancel-form-${orderId}`).style.display = 'block';
+        // Tampilkan input bank jika metode pembayaran adalah 'online'
+        if (paymentMethod === 'online payment') {
+            document.getElementById(`bank-info-${orderId}`).style.display = 'block';
         }
+    }
 
-        // Fill the hidden input in the actual form
-        currentForm.find('input[name="alasan"]').val(reason);
+    function hideCancelForm(orderId) {
+        // Sembunyikan formulir pembatalan
+        document.getElementById(`cancel-form-${orderId}`).style.display = 'none';
+        document.getElementById(`bank-info-${orderId}`).style.display = 'none';
+    }
+</script>
 
-        // Submit the original form
-        currentForm.submit();
-    });
-});
-
-</script> --}}
 <script>
     document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(function(tabElement) {
   tabElement.addEventListener('click', function(event) {
@@ -1018,7 +921,6 @@
 });
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-{{-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script> --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 @endsection
 @push('styles')
@@ -1053,6 +955,23 @@
        justify-content: space-between;
         align-items: center;
         margin-bottom: 10px;
+    }
+
+    .nav-link {
+        position: relative;
+    }
+    .nav-link .count-badge{
+        position: absolute;
+        top: 2px;
+        right: 1px;
+        background: #ff2c2b;
+        width: 18px;
+        height: 18px;
+        line-height: 18px;
+        text-align: center;
+        color: #fff;
+        border-radius: 100%;
+        font-size: 11px;
     }
 
     .new-badge {

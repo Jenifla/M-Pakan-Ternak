@@ -8,7 +8,19 @@
   </h5>
   <div class="card-body">
     @if($order)
-    
+    <div class="status-info mt-4">
+        @if($order->refund && $order->refund->status == 'completed')
+            <h5 >Pengembalian Dana Selesai</h5>
+            <p>Dana sebesar Rp{{ number_format($order->refund->total_refund, 0, ',', '.') }} telah dikembalikan pada {{ $order->refund->date_transfer }}</p>
+        @elseif($order->refund && $order->refund->status == 'approved')
+            <h3 >Pembatalan Disetujui</h3>
+            <p>Proses pengembalian dana sedang diproses.</p>
+        @elseif($order->refund && $order->refund->status == 'pending')
+            <h3 class="text-muted">Pembatalan Diajukan</h3>
+            <p>Menunggu persetujuan dari admin.</p>
+        @endif
+    </div>
+
     <section class="confirmation_part section_padding">
       <div class="order_boxes">
         <div class="row">
@@ -41,7 +53,6 @@
                             <span class="badge badge-warning">Cancel</span>
                             @else
                             <span class="badge badge-warning">Rejected</span>
-                            {{-- <span class="badge badge-primary">{{$order->status}}</span> --}}
                             @endif
                         </td>
                     </tr>
@@ -99,7 +110,6 @@
               <h4 class="text-center pb-4">Shipping Info</h4>
               <table class="table table-borderless">
                     <tr>
-                        {{-- <td>Address</td> --}}
                         <td><strong>{{ $order->address->full_nama }}</strong><br>{{ $order->address->kelurahan }}, {{ $order->address->detail_alamat }}<br>
                             {{ $order->address->kecamatan }}, {{ $order->address->kabupaten }}, {{ $order->address->provinsi }}, {{ $order->address->kode_pos }}<br>
                         <strong>Phone Number:</strong>{{ $order->address->no_hp }}
@@ -111,7 +121,7 @@
         </div>
       </div>
     </section>
-
+    
     <h4 class="text-center pb-4">Product Details</h4>
   <div class="table-responsive">
     <table class="table table-striped table-hover">
@@ -138,7 +148,6 @@
         $total_items += $cart->quantity;
         @endphp
         <tr>
-            {{-- <td>{{$cart->id}}</td> --}}
             <td>
                 @if($cart->product->gambarProduk->isNotEmpty())
                 <img src="{{ asset($cart->product->gambarProduk->first()->gambar) }}" alt="Product Image" class="me-3" style="width: 80px; height: 80px; object-fit: cover; border-radius:9px; margin-right:10px;">
@@ -151,7 +160,7 @@
             </div></td>
             <td>{{$cart->quantity}}</td>
             <td>Rp{{$price_after_discount}}</td>
-            <td>Rp{{number_format($total_price,2)}}</td>
+            <td>Rp{{number_format($total_price, 0, ',', '.')}}</td>
 
         </tr>
         @endforeach
@@ -162,21 +171,21 @@
       <tbody>
           <tr>
               <td class="label">Subtotal Product</td>
-              <td class="value">Rp{{number_format($subtotal_cart,2)}}</td>
+              <td class="value">Rp{{number_format($subtotal_cart, 0, ',', '.')}}</td>
           </tr>
           <tr>
               <td class="label">Shipping Cost</td>
               <td class="value">Rp
                 @if ($order->shipping->status_biaya == 0)
-                        {{ $order->ongkir, 0, ',', '.' }}
+                        {{number_format($order->ongkir, 0, ',', '.' )}}
                     @else
-                        {{ $order->shipping->price, 0, ',', '.' }}
+                        {{number_format($order->shipping->price, 0, ',', '.')}}
                     @endif
               </td>
           </tr>
           <tr>
               <td class="label">Order Total</td>
-              <td class="value">Rp{{number_format($order->total_amount,2)}}</td>
+              <td class="value">Rp{{number_format($order->total_amount, 0, ',', '.')}}</td>
           </tr>
       </tbody>
   </table>

@@ -50,7 +50,7 @@
         // dd($sub_cat_info);
 
         @endphp
-        {{-- {{$product->child_cat_id}} --}}
+        
         <div class="form-group {{(($product->child_cat_id)? '' : 'd-none')}}" id="child_cat_div">
           <label for="child_cat_id">Sub Category</label>
           <select name="child_cat_id" id="child_cat_id" class="form-control">
@@ -104,7 +104,7 @@
           <label for="inputPhoto" class="col-form-label">Photo <span class="text-danger">*</span></label>
           <div class="input-group">
               
-          <input id="photos" class="form-control" type="file" name="photo[]" multiple onchange="previewImages(event)">
+          <input id="photo" class="form-control" type="file" name="photo[]" multiple onchange="previewImages(event)">
         </div>
         @if (isset($product) && $product->gambarProduk->isNotEmpty())
         <div style="margin-top: 10px; display: flex; flex-wrap: wrap;">
@@ -159,7 +159,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 
 <script>
-    // $('#lfm').filemanager('image');
 
     $(document).ready(function() {
     $('#summary').summernote({

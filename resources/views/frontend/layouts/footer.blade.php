@@ -9,13 +9,13 @@
 						<!-- Single Widget -->
 						<div class="single-footer about">
 							<div class="logo">
-								<a href="index.html"><img src="{{asset('backend/img/avatar.png')}}" alt="#"></a>
+								<p class="text">Didukung oleh Jaringan Usaha Kami:</p>
+								<a href="index.html"><img src="{{ asset('images/Logo cv ttm.png') }}" alt="logo" style="width: 90px; height: auto; padding:10px;">
+									<img src="{{ asset('images/LOGO APIS.png') }}" alt="logo" style="width: 90px; height: auto; margin-right:10px;">
+									<img src="{{ asset('images/logo feed.png') }}" alt="logo" style="width: 80px; height: auto; "></a>
 							</div>
-							@php
-								$settings=DB::table('settings')->get();
-							@endphp
-							<p class="text">@foreach($settings as $data) {{$data->short_des}} @endforeach</p>
-							{{-- <p class="call">Got Question? Call us 24/7<span><a href="tel:123456789">@foreach($settings as $data) {{$data->phone}} @endforeach</a></span></p> --}}
+							<p class="text">Selamat datang di Situs Web Ecommerce Apis, tujuan utama Anda untuk mencari produk. Temukan koleksi jenis produk pilihan yang dirancang untuk meningkatkan kebutuhan Anda. Selami dunia yang berkualitas, inovasi di mana setiap pembelian menjamin kepuasan.</p>
+							
 						</div>
 						<!-- End Single Widget -->
 					</div>
@@ -38,11 +38,10 @@
 						<div class="single-footer links">
 							<h4>Tautan Cepat</h4>
 							<ul>
-								<li><a href="#">Produk Toko</a></li>
-								<li><a href="#">Keranjang</a></li>
-								<li><a href="#">Artikel</a></li>
-								<li><a href="#">Pesanan</a></li>
-								{{-- <li><a href="#">Privacy Policy</a></li> --}}
+								<li><a href="{{route('product-grids')}}">Produk Toko</a></li>
+								<li><a href="{{route('cart')}}">Keranjang</a></li>
+								<li><a href="{{route('blog')}}">Artikel</a></li>
+								<li><a href="{{ route('frontend.pages.account.order') }}">Pesanan</a></li>
 							</ul>
 						</div>
 						<!-- End Single Widget -->
@@ -54,18 +53,18 @@
 							<!-- Single Widget -->
 							<div class="contact">
 								<ul>
-									<li>@foreach($settings as $data) {{$data->address}} @endforeach</li>
-									<li>@foreach($settings as $data) {{$data->email}} @endforeach</li>
-									<li>@foreach($settings as $data) {{$data->phone}} @endforeach</li>
+									<li>Dsn Singget RT 04 RW 02 Randuagung, Desa Sukomoro, Kec. Sukomoro, Magetan, Jawa Timur</li>
+									<li>pakanmagetan@gmail.com</li>
+									<li>+62 821-3197-3213</li>
 								</ul>
 							</div>
 							<div class="social-media">
-								<a class="crl"> <img src="{{ asset('images/instagram.png') }}"></a>
-								<a class="crl"> <img src="{{ asset('images/wa.png') }}"></a>
-								<a class="crl"> <img src="{{ asset('images/fb.png') }}"></a>
+								<a class="crl" href="https://www.instagram.com/pakaninstanapis/?igsh=eTIycm12cDVsdXE0"> <img src="{{ asset('images/instagram.png') }}"></a>
+								<a class="crl" href="https://wa.me/6282131973213?text=Halo%2C%20saya%20tertarik%20dengan%20produk%20anda"> <img src="{{ asset('images/wa.png') }}"></a>
+								<a class="crl" href="https://www.facebook.com/pakaninstanapis/"> <img src="{{ asset('images/fb.png') }}"></a>
 							</div>
 							<!-- End Single Widget -->
-							{{-- <div class="sharethis-inline-follow-buttons"></div> --}}
+							
 						</div>
 						<!-- End Single Widget -->
 					</div>
@@ -82,11 +81,6 @@
 								<p>© {{date('Y')}} Developed By PT. Agro Apis Palacio  -  All Rights Reserved.</p>
 							</div>
 						</div>
-						{{-- <div class="col-lg-6 col-12">
-							<div class="right">
-								<img src="{{asset('backend/img/payments.png')}}" alt="#">
-							</div>
-						</div> --}}
 					</div>
 				</div>
 			</div>

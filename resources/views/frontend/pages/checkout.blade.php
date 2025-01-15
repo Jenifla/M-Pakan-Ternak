@@ -66,40 +66,6 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    {{-- <div class="col-lg-6 col-md-6 col-12">
-                                        <div class="form-group">
-                                            <label for="select-provinsi" >Provinsi <span>*</span></label>
-                                            <select id="province" name="province_id" class="nice-select" required>
-                                                <option value="">- Pilih Provinsi -</option>
-                                                @foreach($provinces as $province)
-                                                    <option value="{{ $province['province_id'] }}" 
-                                                        @if(old('province_id') == $province['province_id'] || isset($province_id) && $province_id == $province['province_id']) selected @endif>
-                                                        {{ $province['province'] }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                           
-                                            @error('province_id')
-                                                <span class='text-danger'>{{$message}}</span>
-                                            @enderror
-                                        </div>
-                                    </div> --}}
-                                    
-                                    
-                                    {{-- <div class="col-lg-6 col-md-6 col-12">
-                                        <div class="form-group">
-                                            <label>Kabupaten <span>*</span></label>
-                                            <select id="city_id" name="destination"class="nice-select"  required>
-                                                <option value="">- Pilih Kota -</option>
-                                                @foreach($cities as $city)
-                                                    <option value="{{ $city['city_id'] }}">{{ $city['city_name'] }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('destination')
-                                                <span class='text-danger'>{{$message}}</span>
-                                            @enderror
-                                        </div>
-                                    </div> --}}
                                     <div class="col-lg-6 col-md-6 col-12">
                                         <div class="form-group">
                                             <label>Kabupaten <span>*</span></label>
@@ -142,7 +108,7 @@
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-12">
                                         <div class="form-group">
-                                            <label>Postal Code</label>
+                                            <label>Kode Pos <span>*</span></label>
                                             <input type="text" name="kode_pos" placeholder="" value="{{old('kode_pos')}}">
                                             @error('kode_pos')
                                                 <span class='text-danger'>{{$message}}</span>
@@ -175,7 +141,11 @@
                                 @if($address->is_default)
                                     <div class="address-card" data-kabupaten="{{ $address->kabupaten }}">
                                         <div class="address">
-                                            <a href="{{ route('account-address') }}"><i class="ti-pencil"></i></a>
+                                            {{-- <a href="{{ route('account-address') }}"><i class="ti-pencil"></i></a> --}}
+                                            <a href="#" class="pen" data-bs-toggle="modal" data-bs-target="#addressModal">
+                                                <i class="ti-pencil"></i>
+                                            </a>
+                                            
                                             <h3>{{ $address->full_nama }}</h3>
                                             <p>{{ $address->kelurahan }}, {{ $address->detail_alamat }}<br>
                                                 {{ $address->kecamatan }}, {{ $address->kabupaten }}, {{ $address->provinsi }}, {{ $address->kode_pos }}</p>
@@ -188,6 +158,7 @@
 
                         @endif
                             </div>
+
                         </div>
                         <div class="col-lg-4 col-12">
                             <div class="order-details">
@@ -196,51 +167,22 @@
                                     <h2>TOTAL KERANJANG</h2>
                                     <div class="content">
                                         <ul>
-										    <li class="order_subtotal" data-price="{{Helper::totalCartPrice()}}">Subtotal Keranjang<span>Rp{{number_format(Helper::totalCartPrice(),2)}}</span></li>
+										    <li class="order_subtotal" data-price="{{Helper::totalCartPrice()}}">Subtotal Keranjang<span>Rp{{number_format(Helper::totalCartPrice(), 0, ',', '.')}}</span></li>
                                             <li class="shipping">
                                                 Biaya Pengiriman
-                                                {{-- @if(count(Helper::shipping())>0 && Helper::cartCount()>0)
-                                                    <select name="shipping" class="nice-select" required>
-                                                        <option value="">Select your address</option>
-                                                        @foreach(Helper::shipping() as $shipping)
-                                                        <option value="{{$shipping->id}}" class="shippingOption" data-price="{{$shipping->price}}">{{$shipping->type}}: Rp{{$shipping->price}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                @else 
-                                                    <span>Free</span>
-                                                @endif --}}
                                                 <select id="shipping-select" name="shipping" class="nice-select" required>
                                                     <option value="">- Pilih Pengiriman -</option>
                                                     <!-- Opsi pengiriman akan dimuat secara dinamis melalui JavaScript -->
                                                 </select>
-                                                {{-- <select name="courier" class="nice-select" required>
-                                                    <option value="">Select your address</option>
-                                                    
-                                                    @foreach($shippingCost['rajaongkir']['results'] as $shipping)
-                                                        <option 
-                                                            value="{{ $shipping['costs'][0]['service'] }}" 
-                                                            class="shippingOption" 
-                                                            data-price="{{ $shipping['costs'][0]['cost'][0]['value'] }}">
-                                                            {{ $shipping['code'] }}: Rp{{ number_format($shipping['costs'][0]['cost'][0]['value'], 0, ',', '.') }}
-                                                        </option>
-                                                    @endforeach
-                                                </select> --}}
                                             </li>
                                             
-                                            @if(session('coupon'))
-                                            <li class="coupon_price" data-price="{{session('coupon')['value']}}">You Save<span>Rp{{number_format(session('coupon')['value'],2)}}</span></li>
-                                            @endif
                                             @php
                                                 $total_amount=Helper::totalCartPrice();
-                                                if(session('coupon')){
-                                                    $total_amount=$total_amount-session('coupon')['value'];
-                                                }
+                                                
                                             @endphp
-                                            @if(session('coupon'))
-                                                <li class="last"  id="order_total_price">Total<span>Rp{{number_format($total_amount,0, ',', '.')}}</span></li>
-                                            @else
-                                                <li class="last"  id="order_total_price">Total<span>Rp{{number_format($total_amount,0, ',', '.')}}</span></li>
-                                            @endif
+                                            
+                                                <li class="last"  id="order_total_price">Total<span>Rp{{number_format($total_amount, 0, ',', '.')}}</span></li>
+                                           
                                         </ul>
                                     </div>
                                 </div>
@@ -253,7 +195,6 @@
                                         
                                         <form-group>
                                             <input name="payment_method"  type="radio" value="cod" required> <label>Bayar Di Tempat</label><br>
-                                            <!-- <input name="payment_method"  type="radio" value="paypal"> <label> PayPal</label><br> -->
                                             <input name="payment_method"  type="radio" value="online payment" required> <label> Pembayaran Online/Transfer</label><br>
                                         </form-group>
                                     </div>
@@ -279,8 +220,46 @@
     </section>
     <!--/ End Checkout -->
     
-    
+                                <!-- Modal Daftar Alamat -->
+                                <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                              
+                                                <button type="button" style="background: transparent; border: none; margin-right: 10px; font-size:20px;" data-bs-dismiss="modal" aria-label="Close"><span class="ti-close" aria-hidden="true"></span></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div id="address-list" style="padding: 30px;">
+                                                    <h5 style="margin-bottom: 20px;" id="addressModalLabel">Alamat Saya</h5>
+                                                    @foreach($user->addresses as $address)
+                                                        <div class="address-card" data-id="{{ $address->id }}">
+                                                            <div class="address">
+                                                                <h3>{{ $address->full_nama }}</h3>
+                                                                <p>{{ $address->kelurahan }}, {{ $address->detail_alamat }}<br>
+                                                                    {{ $address->kecamatan }}, {{ $address->kabupaten }}, {{ $address->provinsi }}, {{ $address->kode_pos }}</p>
+                                                                <p><strong>Nomor Telepon:</strong> {{ $address->no_hp }}</p>
+                                                                <form action="{{ route('set-default', $address->id) }}" method="POST">
+                                                                    @csrf
+                                                                    <input type="hidden" name="address_id" value="{{ $address->id }}">
+                                                                    <button type="submit" style="background: transparent; border: none; color:#007bff;">Pilih Alamat</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 @endsection
+
+
 @push('styles')
 	<style>
 		li.shipping{
@@ -390,38 +369,6 @@
 			document.getElementById(box).style.display=vis;
 		}
 	</script>
-	{{-- <script>
-		$(document).ready(function(){
-			$('.shipping select[name=shipping]').change(function(){
-				let cost = parseFloat( $(this).find('option:selected').data('price') ) || 0;
-				let subtotal = parseFloat( $('.order_subtotal').data('price') ); 
-				let coupon = parseFloat( $('.coupon_price').data('price') ) || 0; 
-				// alert(coupon);
-				$('#order_total_price span').text('Rp'+(subtotal + cost-coupon).toFixed(2));
-			});
-
-		});
-	</script> --}}
-
-    {{-- <script>
-        document.getElementById('shipping-select').addEventListener('change', function () {
-        const selectedOption = this.options[this.selectedIndex];
-        const shippingPrice = selectedOption.getAttribute('data-price') 
-            ? parseFloat(selectedOption.getAttribute('data-price')) 
-            : 0;
-
-        // Ambil subtotal cart dari atribut data-price
-        const cartSubtotalElement = document.querySelector('.order_subtotal');
-        const cartSubtotal = parseFloat(cartSubtotalElement.getAttribute('data-price'));
-
-        // Hitung total keseluruhan
-        const grandTotal = cartSubtotal + shippingPrice;
-
-        // Perbarui elemen total
-        const cartTotalElement = document.querySelector('#order_total_price span');
-        cartTotalElement.textContent = `Rp${grandTotal.toLocaleString('id-ID')}`;
-    });
-    </script> --}}
 
 <script>
     $(document).ready(function() {
@@ -434,11 +381,6 @@
         });
     });
 </script>
-
-{{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -578,22 +520,6 @@ integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="ano
                 console.log("data shipp: ", data)
                 const shippingSelect = document.getElementById('shipping-select');
                 shippingSelect.innerHTML = ''; // Reset opsi
-                // if (data.length > 0) {
-                //     data.forEach(shipping => {
-                //         const option = document.createElement('option');
-                //         option.value = shipping.id;
-                //         option.setAttribute('data-price', shipping.price); 
-                //         option.textContent = `${shipping.type}: Rp${shipping.price.toLocaleString('id-ID') ?? 'Belum Diketahui'}`;
-                //         shippingSelect.appendChild(option);
-                //     });
-                //     $(shippingSelect).niceSelect('update');
-                //     // shippingSelect.disabled = false;
-                // } else {
-                //     const noOption = document.createElement('option');
-                //     noOption.value = '';
-                //     noOption.textContent = 'Pengiriman tidak tersedia';
-                //     shippingSelect.appendChild(noOption);
-                // }
                 if (data.length === 1) {
                     // Jika hanya ada satu opsi, pilih otomatis
                     const shipping = data[0];
@@ -649,10 +575,11 @@ integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="ano
 
         // Hitung total keseluruhan
         const grandTotal = cartSubtotal + shipping;
+        const formattedGrandTotal = new Intl.NumberFormat('id-ID').format(grandTotal);
 
         // Perbarui elemen total
         const cartTotalElement = document.querySelector('#order_total_price span');
-        cartTotalElement.textContent = `Rp${grandTotal}`;
+        cartTotalElement.textContent = `Rp${formattedGrandTotal}`;
     }
 
 
@@ -704,129 +631,8 @@ integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="ano
         }
 });
 
-// document.getElementById('shipping-select').addEventListener('change', function () {
-//         const selectedOption = this.options[this.selectedIndex];
-//         const shippingPrice = selectedOption.getAttribute('data-price') 
-//             ? parseFloat(selectedOption.getAttribute('data-price')) 
-//             : 0;
-
-//         // Perbarui total dengan biaya pengiriman baru
-//         updateTotalPrice(shippingPrice);
-//     });
-
     
 
 </script>
-
-
-{{-- <script>
-    // Ketika provinsi dipilih
-    
-    $(document).ready(function() {
-    // Menginisialisasi Nice Select
-    $('select').niceSelect();
-
-    // Event listener untuk perubahan pada dropdown provinsi
-    $('#province').on('change', function() {
-        var provinceId = $(this).val();
-        console.log('Provinsi ID yang dipilih:', provinceId);
-        
-        // Pastikan ID provinsi valid
-        if (provinceId) {
-            $.ajax({
-                url: `/get-cities/${provinceId}`,
-                method: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    console.log('Data Kota:', data);
-                    var citySelect = $('#city_id');
-                    citySelect.empty(); // Clear previous options
-                    citySelect.append('<option value="">- Pilih Kota -</option>'); // Add default option
-
-                    // Add new options based on city data
-                    if (data.length > 0) {
-                        $.each(data, function(index, city) {
-                            citySelect.append($('<option>', {
-                                value: city.city_id,
-                                text: city.city_name
-                            }));
-                        });
-                    } else {
-                        citySelect.append($('<option>', {
-                            value: '',
-                            text: 'Tidak ada kota tersedia'
-                        }));
-                    }
-                    citySelect.niceSelect('update');
-                },
-                error: function(error) {
-                    console.error('Error fetching cities:', error);
-                }
-            });
-        } else {
-            // Clear city dropdown if no province is selected
-            $('#city_id').empty().append('<option value="">- Pilih Kota -</option>');
-        }
-    });
-});
-
-$(document).ready(function() {
-    // Ketika ada perubahan pada kota tujuan
-    $('#city_id').on('change', function() {
-        var cityId = $(this).val();
-        console.log('City ID selected:', cityId);
-        
-        // Ambil data produk di keranjang (misalnya dari session atau form)
-        var cartItems = [
-            { product_id: 1, quantity: 2 },
-            { product_id: 2, quantity: 1 }
-        ];
-
-        // Kirim data ke backend menggunakan AJAX
-        $.ajax({
-            url: '/calculate-shipping-cost',
-            method: 'POST',
-            data: {
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                destination: cityId,
-                cart_items: cartItems
-            },
-            success: function(response) {
-                console.log('Shipping cost data:', response);
-
-                // Kosongkan dropdown terlebih dahulu
-                var shippingSelect = $('select[name="courier"]');
-                shippingSelect.empty();
-                
-                // Tambahkan opsi default
-                shippingSelect.append('<option value="">Select your address</option>');
-
-                // Tambahkan opsi ongkos kirim berdasarkan data yang diterima
-                if (response.length > 0) {
-                    $.each(response, function(index, shipping) {
-                        var service = shipping['costs'][0]['service'];
-                        var price = shipping['costs'][0]['cost'][0]['value'];
-                        var formattedPrice = 'Rp' + price.toLocaleString('id-ID');  // Format harga ke IDR
-
-                        // Append option untuk setiap service ongkos kirim
-                        shippingSelect.append($('<option>', {
-                            value: service,
-                            class: 'shippingOption',
-                            'data-price': price,
-                            text: `${shipping['code']}: ${formattedPrice}`
-                        }));
-                    });
-                } else {
-                    shippingSelect.append('<option value="">Ongkos kirim tidak tersedia</option>');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Error calculating shipping:', error);
-                alert('Terjadi kesalahan dalam perhitungan ongkir');
-            }
-        });
-    });
-});
-</script> --}}
 
 @endpush

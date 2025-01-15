@@ -12,11 +12,20 @@ class BannerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $banner=Banner::orderBy('id','DESC')->paginate(10);
-        return view('backend.banner.index')->with('banners',$banner);
+        $search = $request->get('search'); // Ambil parameter pencarian
+        $query = Banner::orderBy('id', 'DESC');
+
+        if (!empty($search)) {
+            $query->where('title', 'like', "%$search%"); 
+        }
+
+        $banners = $query->paginate(10)->appends(['search' => $search]);
+
+        return view('backend.banner.index', compact('banners', 'search'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -117,13 +126,6 @@ class BannerController extends Controller
             'status'=>'required|in:active,inactive',
         ]);
         $data=$request->all();
-        // $slug=Str::slug($request->title);
-        // $count=Banner::where('slug',$slug)->count();
-        // if($count>0){
-        //     $slug=$slug.'-'.date('ymdis').'-'.rand(0,999);
-        // }
-        // $data['slug']=$slug;
-        // return $slug;
         if ($request->hasFile('photo')) {
             // Ambil file foto yang diupload
             $photo = $request->file('photo');

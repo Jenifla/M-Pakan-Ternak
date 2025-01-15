@@ -1,6 +1,6 @@
 @extends('frontend.pages.account.account')
 
-@section('title','Account Uset || Dashboard')
+@section('title','Akun User || Edit Alamat')
 
 @section('account-content')
 <div >

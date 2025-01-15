@@ -15,10 +15,6 @@
         <span class="text-danger">This field is required.</span>
         @enderror
         </div> 
-        {{-- <div class="form-group">
-          <label for="gratis_ongkir">Free Shipping</label><br>
-          <input type="checkbox" name='gratis_ongkir' id='gratis_ongkir' value='{{$shipping->gratis_ongkir}}' {{(($shipping->gratis_ongkir) ? 'checked' : '')}}> Yes                        
-        </div>     --}}
         <div class="form-group">
           <label for="status_biaya" class="col-form-label">Cost Status<span class="text-danger">*</span></label>
           <select name="status_biaya" class="form-control">

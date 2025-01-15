@@ -48,9 +48,6 @@
           <label for="child_cat_id">Sub Category</label>
           <select name="child_cat_id" id="child_cat_id" class="form-control">
               <option value="">--Select any category--</option>
-              {{-- @foreach($parent_cats as $key=>$parent_cat)
-                  <option value='{{$parent_cat->id}}'>{{$parent_cat->title}}</option>
-              @endforeach --}}
           </select>
           
         </div>
@@ -114,14 +111,6 @@
           </ul>
           @endif
         </div>
-        
-        {{-- <!-- Div untuk menampilkan preview gambar -->
-        <div class="form-group">
-          <label for="photos_preview" class="col-form-label">Preview:</label>
-          <div id="photos_preview" style="display: flex; gap: 10px; flex-wrap: wrap;">
-              <!-- Preview gambar akan muncul di sini -->
-          </div>
-      </div> --}}
 
         <div class="form-group">
           <label for="status" class="col-form-label">Status <span class="text-danger">*</span></label>
@@ -148,12 +137,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
 @endpush
 @push('scripts')
-{{-- <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script> --}}
 <script src="{{asset('backend/summernote/summernote.min.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 
 <script>
-    // $('#lfm').filemanager('image');
 
     $(document).ready(function() {
       $('#summary').summernote({

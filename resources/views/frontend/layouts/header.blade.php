@@ -3,10 +3,6 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 col-md-2">
-                    <!-- Mobile Menu Trigger -->
-                    {{-- <div class="mobile-nav-trigger">
-                        <i class="ti-menu"></i>
-                    </div> --}}
                     <div class="menu-area">
                         <!-- Main Menu -->
                         <nav class="navbar navbar-expand-lg">
@@ -32,28 +28,16 @@
                 <div class="col-lg-1 col-md-6 col-sm-6 col-6">
                     <!-- Logo -->
                     <div class="logo">
-                        @php
-                            $settings=DB::table('settings')->get();
-                        @endphp                    
-                        <a href="{{route('home')}}"><img src="@foreach($settings as $data) {{ asset($data->logo) }} @endforeach" alt="logo"></a>
+                        <img src="{{ asset('images/Logo optima feed.png') }}" alt="logo" >
                     </div>
                     <!--/ End Logo -->
                 </div>
-                {{-- <div class="col-lg-2 col-md-2 col-12">
-                   
-                    
-                </div> --}}
+
                 <div class="col-lg-5 col-md-2 col-sm-6 col-6">
                     <div class="right-bar">
                         <div class="sinlge-bar search">
                             <div class="search-bar-top">
                                 <div class="search-bar">
-                                    {{-- <select>
-                                        <option >All Category</option>
-                                        @foreach(Helper::getAllCategory() as $cat)
-                                            <option>{{$cat->title}}</option>
-                                        @endforeach
-                                    </select> --}}
                                     <form method="POST" action="{{route('product.search')}}">
                                         @csrf
                                         <input name="search" placeholder="Cari Produk disini..." type="search">
@@ -62,11 +46,6 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        {{-- <!-- Mobile Menu Trigger -->
-                        <div class="search-trigger">
-                            <i class="ti-search"></i>
-                        </div> --}}
                         
                         <div class="sinlge-bar dropdown">
                            <a class="single-icon"> <i class="ti-search"></i></a>
@@ -90,10 +69,13 @@
                                         <a href="{{route('cart')}}">Lihat Keranjang</a>
                                     </div>
                                     <ul class="shopping-list">
-                                        {{-- {{Helper::getAllProductFromCart()}} --}}
+                                       
                                             @foreach(Helper::getAllProductFromCart() as $data)
                                                     @php
-                                                        $photo=explode(',',$data->product['photo']);
+                                                        $product = $data->product;
+                                                        $original_price = $product->price; // Harga asli produk
+                                                        $discount = $product->discount; // Diskon produk
+                                                        $price_after_discount = $original_price - ($original_price * $discount / 100); // Harga setelah diskon
                                                     @endphp
                                                     <li>
                                                         <a href="{{route('cart-delete',$data->id)}}" class="remove" title="Remove this item"><i class="fa fa-remove"></i></a>
@@ -105,14 +87,14 @@
                                                             @endif
                                                         </a>
                                                         <h4><a href="{{route('product-detail',$data->product['slug'])}}" target="_blank">{{$data->product['title']}}</a></h4>
-                                                        <p class="quantity">{{$data->quantity}} x - <span class="amount">Rp{{number_format($data->price,2)}}</span></p>
+                                                        <p class="quantity">{{$data->quantity}} x - <span class="amount">Rp{{number_format($price_after_discount, 0, ',', '.')}}</span></p>
                                                     </li>
                                             @endforeach
                                     </ul>
                                     <div class="bottom">
                                         <div class="total">
                                             <span>Total</span>
-                                            <span class="total-amount">Rp{{number_format(Helper::totalCartPrice(),2)}}</span>
+                                            <span class="total-amount">Rp{{number_format(Helper::totalCartPrice(), 0, ',', '.')}}</span>
                                         </div>
                                         <a href="{{route('checkout')}}" class="btn animate">Checkout</a>
                                     </div>
@@ -122,7 +104,6 @@
                         </div>
                         <div class="sinlge-bar shopping">
                             <ul class="list-main">
-                                {{-- <li><i class="ti-alarm-clock"></i> <a href="#">Daily deal</a></li> --}}
                                 @auth
                                     <li class="user-dropdown">
                                         <a href="#" class="single-icon" id="userDropdown" role="button"  aria-haspopup="true" aria-expanded="false">
@@ -144,37 +125,6 @@
                                         </a>
                                     </li>
                                 @endauth
-
-                                {{-- Check for JWT token in localStorage --}}
-                                {{-- <script>
-                                    document.addEventListener('DOMContentLoaded', function() {
-                                        const token = localStorage.getItem('token');
-
-                                        if (token) {
-                                            // Decode the token to get user information
-                                            const payload = JSON.parse(atob(token.split('.')[1]));
-                                            const userRole = payload.role; // Adjust this if your token doesn't contain role directly
-                                            console.log(payload);
-
-                                            // Display admin or user link based on role
-                                            if (userRole === 'admin') {
-                                                document.querySelector('.user-role').innerHTML = '<li><a href="{{ route('admin') }}" class="single-icon" target="_blank"><i class="ti-user"></i></a></li>';
-                                            } else if (userRole === 'user') {  // Pastikan peran pengguna adalah 'user'
-                                                document.querySelector('.user-role').innerHTML = '<li><a href="{{ route('user') }}" class="single-icon" target="_blank"><i class="ti-user"></i></a></li>';
-                                            } else {
-                                                document.querySelector('.user-role').innerHTML = '<li><a href="#" class="single-icon" target="_blank"><i class="ti-user"></i> Unknown Role</a></li>';
-                                            }
-                                            // Display logout option
-                                            document.querySelector('.logout').innerHTML = '<li><i class="ti-power-off"></i><a href="{{ route('user.logout') }}">Logout</a></li>';
-                                        } else {
-                                            // If no token, show login/register links
-                                            document.querySelector('.auth-links').innerHTML = '<li><i class="fa fa-sign-in"></i><a href="{{ route('login.form') }}">Login /</a> <a href="{{ route('register.form') }}">Register</a></li>';
-                                        }
-                                    });
-                                </script> --}}
-                                {{-- <li class="user-role"></li> 
-                                <li class="logout"></li>      
-                                <li class="auth-links"></li>   --}}
                             </ul>
                         </div>
 
@@ -188,20 +138,6 @@
                     
                 </div>
             </div>
-
-       <!-- Search Form -->
-       <!-- Modal Pencarian -->
-{{-- <div class="modal-search" id="searchModal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <form method="POST" action="{{route('product.search')}}">
-            @csrf
-            <input type="text" placeholder="Search here..." name="search">
-            <button type="submit"><i class="ti-search"></i></button>
-        </form>
-    </div>
-</div> --}}
-    <!--/ End Search Form -->
         </div>
     </div>
    
@@ -265,15 +201,6 @@ document.addEventListener('click', function (event) {
     position: relative;
     display: none;
 }
-
-/* .dropbtn {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 16px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-} */
 
 .dropdown-content {
     display: none; /* Awalnya disembunyikan */
@@ -509,50 +436,6 @@ document.addEventListener('click', function (event) {
         cursor: pointer;
         margin-right: 10px;
     }
-    
-    /* .single-icon i {
-        font-size: 60px; 
-    }
-
-    .dropdown i.ti-search {
-        font-size: 60px; 
-    }
-    
-    .single-icon i.ti-user,
-    .single-icon i.ti-power-off {
-    font-size: 100px;
-}
-
-    .mobile-nav-trigger i{
-        font-size: 60px;
-    }
-    .logo img {
-        width: 20%; 
-    } */
-    
-    
-    /* .mobile-menu {
-        height: 100vh;
-        padding-top: 30px;
-    }
-
-    .close-icon {
-        top: 20px;
-        right: 20px;
-        font-size: 22px;
-    }
-
-    .mobile-menu ul li a {
-        font-size: 1rem;
-    }
-
-    .dropdown-content {
-        min-width: 100%;
-    }
-
-    .dropdown-menu {
-        max-width: 100%;
-    } */
 }
 
 

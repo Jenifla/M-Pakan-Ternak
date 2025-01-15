@@ -56,7 +56,7 @@
         </div>
       </form>
     </div>
-</div><!-- Visit 'codeastro' for more projects -->
+</div>
 
 @endsection
 
@@ -67,7 +67,7 @@
 <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
 <script src="{{asset('backend/summernote/summernote.min.js')}}"></script>
 <script>
-    // $('#lfm').filemanager('image');
+    
 
     $(document).ready(function() {
     $('#description').summernote({
