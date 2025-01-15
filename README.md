@@ -1,0 +1,2 @@
+# Ecommerce Pakan Ternak
+Website e-commerce pakan ternak ini dirancang untuk memudahkan peternak dalam membeli pakan ternak berkualitas secara online. Dengan website ini, peternak dapat lebih efisien dalam membeli pakan ternak yang dibutuhkan tanpa harus datang langsung ke toko atau distributor. Website ini dirancang untuk menyediakan produk pakan ternak dari satu penyedia yang terpercaya dan menyediakan pakan dengan kualitas terbaik
