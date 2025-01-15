@@ -18,7 +18,7 @@ class CreateShippingsTable extends Migration
             $table->string('type');
             $table->decimal('price');
             $table->boolean('status_biaya')->default(false);
-            $table->enum('status',['active','active'])->default('aktif');
+            $table->enum('status',['active','inactive'])->default('active');
             $table->timestamps();
         });
     }

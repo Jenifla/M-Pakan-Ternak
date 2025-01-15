@@ -19,7 +19,7 @@ class CreatePaymentsTable extends Migration
             $table->unsignedBigInteger('user_id')->nullable();
             $table->enum('method_payment',['cod','online payment'])->default('cod');
             $table->float('total_bayar');
-            $table->timestamps('date_payment');
+            $table->timestamp('date_payment')->nullable();
             $table->enum('status',['paid','unpaid','pending','failed'])->default('unpaid');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('SET NULL');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('CASCADE');

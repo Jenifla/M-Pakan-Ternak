@@ -24,7 +24,7 @@ class CreateAddressesTable extends Migration
             $table->string('kecamatan');
             $table->string('kelurahan');
             $table->string('detail_alamat');
-            $table->int('kode_pos');
+            $table->integer('kode_pos');
             $table->enum('jenis_alamat',['Rumah','Kantor'])->default('Rumah');
             $table->boolean('is_default')->default(0);
             $table->timestamps();

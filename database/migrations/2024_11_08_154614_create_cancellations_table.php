@@ -18,8 +18,8 @@ class CreateCancellationsTable extends Migration
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->enum('status_pembatalan',['pending','ditolak','disetujui'])->default('pending');
-            $table->timestamps('tgl_diajukan');
-            $table->timestamps('tgl_diproses');
+            $table->timestamp('tgl_diajukan')->nullable();
+            $table->timestamp('tgl_diproses')->nullable();
             $table->string('alasan');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('SET NULL');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('CASCADE');

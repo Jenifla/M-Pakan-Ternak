@@ -22,7 +22,7 @@ class CreateRefundsTable extends Migration
             $table->string('bank_account')->nullable();
             $table->string('bank_holder')->nullable();
             $table->string('bukti_transfer')->nullable();
-            $table->timestamps('date_transfer');
+            $table->timestamp('date_transfer')->nullable();
             $table->enum('status', ['pending',  'approved', 'rejected', 'completed'])->default('pending'); 
             $table->foreign('cancellation_id')->references('id')->on('cancellations')->onDelete('CASCADE')->unique();
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('CASCADE')->unique();
